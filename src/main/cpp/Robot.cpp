@@ -9,8 +9,15 @@
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-void Robot::RobotInit() 
-{
+void Robot::RobotInit() {
+    ctre::phoenix::motorcontrol::FeedbackDevice qE = QuadEncoder;
+    _lMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
+    _rMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
+
+    _lMotorFront->SetSensorPhase(false);
+    _lMotorBack->SetSensorPhase(false);
+    _rMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, rMotorFrontNum);
+    _lMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, lMotorFrontNum);
 
 }
 
