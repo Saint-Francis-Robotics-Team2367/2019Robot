@@ -11,8 +11,10 @@
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <ctre/Phoenix.h>
-#include <SFDrive.h>
+#include "SFDrive.h"
 #include <frc/Joystick.h>
+#include <frc/BuiltInAccelerometer.h>
+#include <frc/DriverStation.h>
 
 using namespace frc;
 
@@ -25,6 +27,7 @@ class Robot : public frc::TimedRobot {
     void TeleopInit() override;
     void TeleopPeriodic() override;
     void TestPeriodic() override;
+    void ConfigPIDS();
     const int joystickNum = 0;
     const int rMotorFrontNum = 5;
     const int rMotorBackNum = 4;
@@ -48,4 +51,5 @@ class Robot : public frc::TimedRobot {
     WPI_TalonSRX * _rMotorBack = new WPI_TalonSRX(rMotorBackNum);
     SFDrive *myRobot = new SFDrive(_lMotorFront, _rMotorFront);
     Joystick *stick = new Joystick(joystickNum);
+    BuiltInAccelerometer accelerometer;
 };
