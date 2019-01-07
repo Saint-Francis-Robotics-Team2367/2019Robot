@@ -91,7 +91,7 @@ void Robot::TestPeriodic()
   
 }
 
-void ConfigPIDS(){
+void Robot::ConfigPIDS(){
     DriverStation::ReportError("PID Config Started");
     
     _rMotorBack->SetNeutralMode(Brake);
