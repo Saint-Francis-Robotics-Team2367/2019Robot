@@ -11,14 +11,16 @@
 #include <frc/SmartDashboard/SmartDashboard.h>
 
 using namespace frc;
-SFDrive::SFDrive(WPI_TalonSRX *lMotor, WPI_TalonSRX *rMotor)
-{
+SFDrive::SFDrive(WPI_TalonSRX *lMotor, WPI_TalonSRX *rMotor, double P , double I, double D, double F ){
    m_leftMotor = lMotor;
    m_rightMotor = rMotor;
+   m_P = P;
+   m_I = I;
+   m_D = D;
+   m_F = F;
 }
 
-void SFDrive::ArcadeDrive(double xSpeed, double zRotation)
-{
+void SFDrive::ArcadeDrive(double xSpeed, double zRotation){
    double leftMotorOutput;
    double rightMotorOutput;
 
@@ -61,8 +63,7 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation)
    m_rightMotor->Set(-rightMotorOutput);
 }
 
-bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVelocityAtEnd)
-{
+bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVelocityAtEnd){
 
    int setPoint = 0;
    double startTime, currStepTime, lastStepTime, deltaTime;
@@ -145,8 +146,7 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
    }
 }
 
-bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float timeout, bool ZeroVelocityAtEnd)
-{
+bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float timeout, bool ZeroVelocityAtEnd){
 
    int setPoint = 0, endPoint, innerChordLen;
    float endAngle = abs(degreesClockwise);
@@ -250,8 +250,7 @@ bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float 
 }
 
 
-void SFDrive::initPID()
-{
+void SFDrive::initPID(){
    m_leftMotor->Config_kP(0, m_P, m_canTimeout);
    m_leftMotor->Config_kI(0, m_I, m_canTimeout);
    m_leftMotor->Config_kD(0, m_D, m_canTimeout);
@@ -261,15 +260,16 @@ void SFDrive::initPID()
    m_rightMotor->Config_kD(0, m_D, m_canTimeout);
 }
 
-void SFDrive::enableP()
-{
+void SFDrive::enableP(){
    m_leftMotor->Config_kP(0, m_P, m_canTimeout);
    m_rightMotor->Config_kP(0, m_P, m_canTimeout);
 }
 
-void SFDrive::disableP()
-{
-
+void SFDrive::disableP(){
    m_leftMotor->Config_kP(0, 0, m_canTimeout);
    m_rightMotor->Config_kP(0, 0, m_canTimeout);
+}
+
+void SFDrive::setAccel(float accl){
+   m_maxAccl = accl;
 }

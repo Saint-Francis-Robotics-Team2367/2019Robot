@@ -60,36 +60,45 @@ void Robot::RobotInit() {
 
     //config acceleraometer
     accelerometer.SetRange(frc::Accelerometer::kRange_8G);
-
 }
 
-void Robot::RobotPeriodic() 
-{
+void Robot::RobotPeriodic(){}
+void Robot::AutonomousInit(){}
+void Robot::AutonomousPeriodic(){}
 
+void Robot::TeleopInit(){
+    DriverStation::ReportError("TeleopInit Started");
+    //Set encoder positions to 0
+    ConfigPIDS();
+    myRobot->ArcadeDrive(0.0, 0.0);
+    DriverStation::ReportError("TeleopInit Completed");
+
+    //list testing block in shuffleboard.
+    SmartDashboard::PutNumber("maxVel", 55.0);
+    SmartDashboard::PutNumber("auto Timeout", 4.0);
+    SmartDashboard::PutNumber("maxAccl", 10000);
+    DriverStation::ReportError("TestInit Completed");
 }
 
-void Robot::AutonomousInit() {
+void Robot::TeleopPeriodic(){
+    myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
 
+    myRobot->setAccel(SmartDashboard::GetNumber("maxAccl", 8000));
+    SmartDashboard::PutNumber("Left Encoder", _lMotorFront->GetSelectedSensorPosition(0));
+    SmartDashboard::PutNumber("Right Encoder", _rMotorFront->GetSelectedSensorPosition(0));
+
+    //set the rumble
+    double acceleration = std::pow(accelerometer.GetX() * accelerometer.GetX() + accelerometer.GetY() * accelerometer.GetY(), 0.5);
+    rumbleMultiplier = SmartDashboard::GetNumber("Rumble Multiplier", rumbleMultiplier);
+    rumbleDeadzone = SmartDashboard::GetNumber("Rumble Deadzone", rumbleDeadzone);
+    if(acceleration < rumbleDeadzone){
+        acceleration=0;
+    }
+    stick->SetRumble(GenericHID::RumbleType::kLeftRumble, acceleration * rumbleMultiplier);
+    stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
 }
 
-void Robot::AutonomousPeriodic() {
-
-}
-
-void Robot::TeleopInit() 
-{
-
-}
-
-void Robot::TeleopPeriodic() 
-{
-
-}
-
-void Robot::TestPeriodic() 
-{
-  
-}
+void Robot::TestPeriodic(){}
 
 void Robot::ConfigPIDS(){
     DriverStation::ReportError("PID Config Started");

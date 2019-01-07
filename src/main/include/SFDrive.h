@@ -19,17 +19,19 @@ class SFDrive {
    float m_currVelocity = 0;
    float m_maxAccl = 8000;
    const float m_minDecelVel = 27 / m_wheelCircumference * m_ticksPerRev;
-   const float m_P = 1;
-   const float m_I = 0;
-   const float m_D = 10;
+   double m_P;
+   double m_I;
+   double m_D;
+   double m_F;
    const float m_wheelTrack = 24;
 
  public:
-  SFDrive(WPI_TalonSRX * lMotor, WPI_TalonSRX * rMotor);
+  SFDrive(WPI_TalonSRX * lMotor, WPI_TalonSRX * rMotor, double P , double I, double D, double F );
   void ArcadeDrive(double xSpeed, double zRotation);
   bool PIDDrive(float inches, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);
   bool PIDTurn(float degreesClockwise, float radius, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);
   void disableP();
   void enableP();
   void initPID();
+  void setAccel(float);
 };
