@@ -16,6 +16,7 @@ void Robot::RobotInit() {
     _lMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
     _rMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
 
+    //Use when controller forward/reverse output doesn't correlate to appropriate forward/reverse reading of sensor
     _lMotorFront->SetSensorPhase(false);
     _lMotorBack->SetSensorPhase(false);
 
@@ -29,8 +30,7 @@ void Robot::RobotInit() {
     _lMotorBack->SetName("Left Back");
     _rMotorBack->SetName("Right Back");
 
-     //Set drive motor max voltage to 30 amps
-
+     //Set drive motor max voltage to 30 amps and current
     _lMotorFront->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
     _rMotorFront->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
     _lMotorBack->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
@@ -54,7 +54,7 @@ void Robot::RobotInit() {
     //Shuffle board 
     SmartDashboard::PutNumber("Rumble Multiplier", rumbleMultiplier);
     SmartDashboard::PutNumber("Rumble Deadzone", rumbleDeadzone);
-    SmartDashboard::PutNumber("maxVel", 55.0);
+    //SmartDashboard::PutNumber("maxVel", 55.0);
     SmartDashboard::PutNumber("auto Timeout", 4.0);
     SmartDashboard::PutNumber("maxAccl", 10000);
 
@@ -96,6 +96,12 @@ void Robot::TeleopPeriodic(){
     }
     stick->SetRumble(GenericHID::RumbleType::kLeftRumble, acceleration * rumbleMultiplier);
     stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
+
+    if(stick->GetRawButton(2)){//b
+        Robot::ConfigPIDS();
+        _lMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 24);
+        _rMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 24);
+    }
 }
 
 void Robot::TestPeriodic(){}

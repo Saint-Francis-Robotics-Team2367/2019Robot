@@ -34,9 +34,9 @@ class Robot : public frc::TimedRobot {
       const int lMotorFrontNum = 3;
       const int lMotorBackNum = 2;
       const double TICKS_PER_INCH = 217.3;
-      double pConstantDrive = 0;
+      double pConstantDrive = 1;
       double iConstantDrive = 0;
-      double dConstantDrive = 0;
+      double dConstantDrive = 10;
       double fConstantDrive = 0;
       double maxDriveMotorCurrent = 30;
       int checkTimeout = 0;
