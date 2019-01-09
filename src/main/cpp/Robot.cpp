@@ -63,7 +63,11 @@ void Robot::RobotInit() {
 }
 
 void Robot::RobotPeriodic(){}
-void Robot::AutonomousInit(){}
+void Robot::AutonomousInit(){
+            Robot::ConfigPIDS();
+        _lMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 18.84);
+        _rMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 18.84);
+}
 void Robot::AutonomousPeriodic(){}
 
 void Robot::TeleopInit(){
@@ -96,12 +100,6 @@ void Robot::TeleopPeriodic(){
     }
     stick->SetRumble(GenericHID::RumbleType::kLeftRumble, acceleration * rumbleMultiplier);
     stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
-
-    if(stick->GetRawButton(2)){//b
-        Robot::ConfigPIDS();
-        _lMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 24);
-        _rMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 24);
-    }
 }
 
 void Robot::TestPeriodic(){}
