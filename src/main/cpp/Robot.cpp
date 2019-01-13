@@ -63,12 +63,15 @@ void Robot::RobotInit() {
 }
 
 void Robot::RobotPeriodic(){}
-void Robot::AutonomousInit(){
-            Robot::ConfigPIDS();
-        _lMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 18.84);
-        _rMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Position, Robot::TICKS_PER_INCH * 18.84);
+void Robot::AutonomousInit(){}   
+void Robot::AutonomousPeriodic(){
+    if(spark->GetMotorType == MotorType::kBrushless){
+       spark->Set(stick->GetRawAxis(1)*0.5 + 1.5);
+    }else{
+        spark->SetMotorType(MotorType::kBrushless);
+        spark->set(stick->GetRawAxis(1)*0.5 + 1.5);
+    }  
 }
-void Robot::AutonomousPeriodic(){}
 
 void Robot::TeleopInit(){
     DriverStation::ReportError("TeleopInit Started");
