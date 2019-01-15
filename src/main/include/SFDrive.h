@@ -5,6 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 #include <ctre/Phoenix.h>
+#include <rev/CANSparkMax.h>
 
 #pragma once
 
@@ -24,6 +25,7 @@ class SFDrive {
    double m_D;
    double m_F;
    const float m_wheelTrack = 24;
+   int CANspark = 0;
 
  public:
   SFDrive(WPI_TalonSRX * lMotor, WPI_TalonSRX * rMotor, double P , double I, double D, double F );
@@ -34,4 +36,5 @@ class SFDrive {
   void enableP();
   void initPID();
   void setAccel(float);
+  rev::CANSparkMax * spark = new rev::CANSparkMax(CANspark, rev::CANSparkMax::MotorType::kBrushless);
 };

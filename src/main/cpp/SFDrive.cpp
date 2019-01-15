@@ -59,8 +59,8 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation){
          rightMotorOutput = xSpeed - zRotation;
       }
    }
-   m_leftMotor->Set(leftMotorOutput);
-   m_rightMotor->Set(-rightMotorOutput);
+   spark->Set(leftMotorOutput);
+   //m_rightMotor->Set(-rightMotorOutput);
 }
 
 bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVelocityAtEnd){

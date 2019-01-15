@@ -63,14 +63,9 @@ void Robot::RobotInit() {
 }
 
 void Robot::RobotPeriodic(){}
-void Robot::AutonomousInit(){}   
+void Robot::AutonomousInit(){
+}   
 void Robot::AutonomousPeriodic(){
-    if(spark->GetMotorType == MotorType::kBrushless){
-       spark->Set(stick->GetRawAxis(1)*0.5 + 1.5);
-    }else{
-        spark->SetMotorType(MotorType::kBrushless);
-        spark->set(stick->GetRawAxis(1)*0.5 + 1.5);
-    }  
 }
 
 void Robot::TeleopInit(){
@@ -85,6 +80,7 @@ void Robot::TeleopInit(){
     SmartDashboard::PutNumber("auto Timeout", 4.0);
     SmartDashboard::PutNumber("maxAccl", 10000);
     DriverStation::ReportError("TestInit Completed");
+    myRobot->spark->SetMotorType(rev::CANSparkMax::MotorType::kBrushless);
 }
 
 void Robot::TeleopPeriodic(){
