@@ -15,6 +15,7 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
+#include <rev/CANSparkMax.h>
 
 using namespace frc;
 
@@ -46,11 +47,12 @@ class Robot : public frc::TimedRobot {
       double scale = 1;
 
    private:
-      WPI_TalonSRX * _lMotorFront = new WPI_TalonSRX(lMotorFrontNum);
-      WPI_TalonSRX * _lMotorBack = new WPI_TalonSRX(lMotorBackNum);
-      WPI_TalonSRX * _rMotorFront = new WPI_TalonSRX(rMotorFrontNum);
-      WPI_TalonSRX * _rMotorBack = new WPI_TalonSRX(rMotorBackNum);
-      SFDrive *myRobot = new SFDrive(_lMotorFront, _rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
+      WPI_TalonSRX * lMotorFront = new WPI_TalonSRX(lMotorFrontNum);
+      WPI_TalonSRX * lMotorBack = new WPI_TalonSRX(lMotorBackNum);
+      WPI_TalonSRX * rMotorFront = new WPI_TalonSRX(rMotorFrontNum);
+      WPI_TalonSRX * rMotorBack = new WPI_TalonSRX(rMotorBackNum);
+      rev::CANSparkMax * spark = new rev::CANSparkMax(0, rev::CANSparkMax::MotorType::kBrushless);
+      SFDrive * myRobot = new SFDrive(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
 };
