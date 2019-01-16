@@ -83,7 +83,10 @@ void Robot::TeleopInit(){
 }
 
 void Robot::TeleopPeriodic(){
-    myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
+    //To test
+    spark->Set(stick->GetRawAxis(1));
+
+    //myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
 
     myRobot->setAccel(SmartDashboard::GetNumber("maxAccl", 8000));
     SmartDashboard::PutNumber("Left Encoder", lMotorFront->GetSelectedSensorPosition(0));
