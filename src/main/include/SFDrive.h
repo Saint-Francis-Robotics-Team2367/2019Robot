@@ -15,11 +15,12 @@ class SFDrive {
    const float m_canTimeout = 0;
    float m_currVelocity = 0;
    float m_maxAccl = 8000;
-   const float m_minDecelVel = 27 / m_wheelCircumference * m_ticksPerRev;
+   float m_minDecelVel;
    double m_P;
    double m_I;
    double m_D;
    double m_F;
+   const double m_PI = 3.14159265; //Shut up instellisense
    const float m_wheelTrack = 24;
    const double m_timeoutMs = 0;
 

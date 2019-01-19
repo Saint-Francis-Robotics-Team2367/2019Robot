@@ -7,8 +7,7 @@
 
 #include "SFDrive.h"
 #include <frc/Timer.h>
-#include <frc/SmartDashboard/SendableChooser.h>
-#include <frc/SmartDashboard/SmartDashboard.h>
+#include <math.h>
 
 using namespace frc;
 
@@ -98,9 +97,6 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
          if (setPoint > endPoint)
             setPoint = endPoint;
 
-         SmartDashboard::PutNumber("Left Encoder", endPoint - setPoint);
-         SmartDashboard::PutNumber("Right Encoder", endPoint - setPoint);
-
          setLeftMotorSetpoint(std::copysign(setPoint, inches) * -1);
          setRightMotorSetpoint(std::copysign(setPoint, inches));
       }
@@ -154,8 +150,8 @@ bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float 
 
    if (radius < m_wheelTrack / 2)
       radius = m_wheelTrack / 2.0f;
-   endPoint = (((endAngle / 360.0f) * ((radius + m_wheelTrack / 2.0f) * 2 * M_PI)) / m_wheelCircumference) * m_ticksPerRev;
-   innerChordLen = (((endAngle / 360.0f) * ((radius - m_wheelTrack / 2.0f) * 2 * M_PI)) / m_wheelCircumference) * m_ticksPerRev;
+   endPoint = (((endAngle / 360.0f) * ((radius + m_wheelTrack / 2.0f) * 2 * m_PI)) / m_wheelCircumference) * m_ticksPerRev;
+   innerChordLen = (((endAngle / 360.0f) * ((radius - m_wheelTrack / 2.0f) * 2 * m_PI)) / m_wheelCircumference) * m_ticksPerRev;
 
    startTime = lastStepTime = Timer().GetFPGATimestamp();
 
