@@ -21,6 +21,7 @@ class SFDrive {
    double m_D;
    double m_F;
    const float m_wheelTrack = 24;
+   const double m_timeoutMs = 0;
 
  public:
   void ArcadeDrive(double xSpeed, double zRotation);
@@ -32,13 +33,13 @@ class SFDrive {
   void setAccel(float);
 
  protected:
-  virtual void setLeftMotor(double value);
-  virtual void setRightMotor(double value);
-  virtual void setLeftMotorPosition(int ticks);
-  virtual void setRightMotorPosition(int ticks);
-  virtual void setLeftMotorSetpoint(int ticks);
-  virtual void setRightMotorSetpoint(int ticks);
-  virtual void setP(double value);
-  virtual void setI(double value);
-  virtual void setD(double value);
+  virtual void setLeftMotor(double value) = 0;
+  virtual void setRightMotor(double value) = 0;
+  virtual void setLeftMotorPosition(int ticks) = 0;
+  virtual void setRightMotorPosition(int ticks) = 0;
+  virtual void setLeftMotorSetpoint(int ticks) = 0;
+  virtual void setRightMotorSetpoint(int ticks) = 0;
+  virtual void setP(double value) = 0;
+  virtual void setI(double value) = 0;
+  virtual void setD(double value) = 0;
 };
