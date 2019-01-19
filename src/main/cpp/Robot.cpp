@@ -10,7 +10,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 
-void Robot::RobotInit() {
+void Robot::RobotInit() 
+{
     //set the encoders to quadrature
     ctre::phoenix::motorcontrol::FeedbackDevice qE = QuadEncoder;
     lMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
@@ -62,13 +63,23 @@ void Robot::RobotInit() {
     accelerometer.SetRange(frc::Accelerometer::kRange_8G);
 }
 
-void Robot::RobotPeriodic(){}
-void Robot::AutonomousInit(){
-}   
-void Robot::AutonomousPeriodic(){
+void Robot::RobotPeriodic()
+{
+
 }
 
-void Robot::TeleopInit(){
+void Robot::AutonomousInit()
+{
+    myRobot->initPID();
+}   
+
+void Robot::AutonomousPeriodic()
+{
+
+}
+
+void Robot::TeleopInit()
+{
     DriverStation::ReportError("TeleopInit Started");
     //Set encoder positions to 0
     ConfigPIDS();
@@ -82,7 +93,8 @@ void Robot::TeleopInit(){
     DriverStation::ReportError("TestInit Completed");
 }
 
-void Robot::TeleopPeriodic(){
+void Robot::TeleopPeriodic()
+{
     //To test
     spark->Set(stick->GetRawAxis(1));
 
@@ -103,9 +115,13 @@ void Robot::TeleopPeriodic(){
     stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
 }
 
-void Robot::TestPeriodic(){}
+void Robot::TestPeriodic()
+{
 
-void Robot::ConfigPIDS(){
+}
+
+void Robot::ConfigPIDS()
+{
     DriverStation::ReportError("PID Config Started");
     
     rMotorBack->SetNeutralMode(Brake);

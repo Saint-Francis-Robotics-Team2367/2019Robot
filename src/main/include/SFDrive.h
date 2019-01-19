@@ -11,7 +11,7 @@ class SFDrive {
   protected:
    double m_deadband = 0.08;
    const float m_wheelCircumference = 6 * 3.14;
-   const float m_ticksPerRev = 1024 * 4;
+   float m_ticksPerRev;
    const float m_canTimeout = 0;
    float m_currVelocity = 0;
    float m_maxAccl = 8000;

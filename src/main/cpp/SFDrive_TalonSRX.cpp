@@ -15,6 +15,7 @@ SFDrive_TalonSRX::SFDrive_TalonSRX(WPI_TalonSRX *lMotor, WPI_TalonSRX *rMotor, d
    m_I = I;
    m_D = D;
    m_F = F;
+   m_ticksPerRev = 4096;
 }
 
 void SFDrive_TalonSRX::setLeftMotor(double value)

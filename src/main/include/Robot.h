@@ -12,10 +12,10 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <ctre/Phoenix.h>
 #include "SFDrive_TalonSRX.h"
+#include "SFDrive_SparkMax.h"
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
-#include <rev/CANSparkMax.h>
 
 using namespace frc;
 
