@@ -8,7 +8,7 @@
 
 #pragma once
 
-class SFDrive {
+class SFDrive_TalonSRX {
 
  private:
    WPI_TalonSRX * m_leftMotor, *m_rightMotor;
@@ -26,7 +26,7 @@ class SFDrive {
    const float m_wheelTrack = 24;
 
  public:
-  SFDrive(WPI_TalonSRX * lMotor, WPI_TalonSRX * rMotor, double P , double I, double D, double F );
+  SFDrive_TalonSRX(WPI_TalonSRX * lMotor, WPI_TalonSRX * rMotor, double P , double I, double D, double F );
   void ArcadeDrive(double xSpeed, double zRotation);
   bool PIDDrive(float inches, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);
   bool PIDTurn(float degreesClockwise, float radius, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);

@@ -11,7 +11,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <ctre/Phoenix.h>
-#include "SFDrive.h"
+#include "SFDrive_TalonSRX.h"
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
@@ -52,7 +52,7 @@ class Robot : public frc::TimedRobot {
       WPI_TalonSRX * rMotorFront = new WPI_TalonSRX(rMotorFrontNum);
       WPI_TalonSRX * rMotorBack = new WPI_TalonSRX(rMotorBackNum);
       rev::CANSparkMax * spark = new rev::CANSparkMax(0, rev::CANSparkMax::MotorType::kBrushless);
-      SFDrive * myRobot = new SFDrive(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
+      SFDrive_TalonSRX * myRobot = new SFDrive_TalonSRX(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
 };
