@@ -323,5 +323,9 @@ void SFDrive::stopAutoThread()
 
 void SFDrive::joinAutoThread()
 {
+   if(thread == nullptr)
+   {
+      return;
+   }
    thread->join();
 }
