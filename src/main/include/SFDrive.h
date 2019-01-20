@@ -23,6 +23,9 @@ class SFDrive {
    const double m_PI = 3.14159265; //Shut up instellisense
    const float m_wheelTrack = 24;
    const double m_timeoutMs = 0;
+   std::thread * thread = nullptr;
+   bool stopThread = false;
+   bool threadFinished = true;
 
  public:
   void ArcadeDrive(double xSpeed, double zRotation);
@@ -32,6 +35,10 @@ class SFDrive {
   void enableP();
   void initPID();
   void setAccel(float);
+  bool PIDDriveThread(float inches, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);
+  bool PIDTurnThread(float degreesClockwise, float radius, float maxVel, float timeout, bool ZeroVelocityAtEnd);
+  void joinAutoThread();
+  void stopAutoThread();
 
  protected:
   virtual void setLeftMotor(double value) = 0;

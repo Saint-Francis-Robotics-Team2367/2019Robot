@@ -8,6 +8,7 @@
 #include "SFDrive.h"
 #include <frc/Timer.h>
 #include <math.h>
+#include <thread>
 
 using namespace frc;
 
@@ -67,7 +68,6 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
    disableP();
    setLeftMotorPosition(0);
    setRightMotorPosition(0);
-   
    enableP();
 
    if (ZeroVelocityAtEnd)
@@ -75,6 +75,11 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
       startTime = lastStepTime = Timer().GetFPGATimestamp();
       while ((int) setPoint < (int) endPoint && startTime + timeout > lastStepTime)
       {
+         if(stopThread)
+         {
+            stopThread = false;
+            break;
+         }
          //handle timing
          currStepTime = Timer().GetFPGATimestamp();
          deltaTime = currStepTime - lastStepTime;
@@ -106,6 +111,11 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
       startTime = lastStepTime = Timer().GetFPGATimestamp();
       while ((int) setPoint < (int) endPoint && startTime + timeout > lastStepTime)
       {
+         if(stopThread)
+         {
+            stopThread = false;
+            break;
+         }
          //handle timing
          currStepTime = Timer().GetFPGATimestamp();
          deltaTime = currStepTime - lastStepTime;
@@ -123,6 +133,8 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
       }
    }
 
+   threadFinished = true;
+
    if (lastStepTime > startTime + timeout) //simple error check, did we finish the motion before we ran out of time
    {
       return false;
@@ -131,6 +143,25 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
    {
       return true;
    }
+}
+
+bool SFDrive::PIDDriveThread(float inches, float maxVel, float timeout, bool ZeroVelocityAtEnd){
+   stopThread = false; //Idiot proofing
+   if(thread == nullptr) //If there's no thread, make one
+   {
+      threadFinished = false;
+      thread = new std::thread(SFDrive::PIDDrive, inches, maxVel, timeout, ZeroVelocityAtEnd);
+      return true;
+   }
+   if(threadFinished) //If there is a thread but it's done, delete it and make another one
+   {
+      threadFinished = false;
+      joinAutoThread();
+      delete thread;
+      thread = new std::thread(SFDrive::PIDDrive, inches, maxVel, timeout, ZeroVelocityAtEnd);
+      return true;
+   }
+   return false; //If thread already executing, do nothing
 }
 
 bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float timeout, bool ZeroVelocityAtEnd){
@@ -160,6 +191,11 @@ bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float 
       startTime = lastStepTime = Timer().GetFPGATimestamp();
       while ((int) setPoint < (int) endPoint && startTime + timeout > lastStepTime)
       {
+         if(stopThread)
+         {
+            stopThread = false;
+            break;
+         }
          //handle timing
          currStepTime = Timer().GetFPGATimestamp();
          deltaTime = currStepTime - lastStepTime;
@@ -199,6 +235,11 @@ bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float 
    {
       while ((int) setPoint < (int) endPoint && startTime + timeout > lastStepTime)
       {
+         if(stopThread)
+         {
+            stopThread = false;
+            break;
+         }
          //handle timing
          currStepTime = Timer().GetFPGATimestamp();
          deltaTime = currStepTime - lastStepTime;
@@ -226,6 +267,8 @@ bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float 
       }
    }
 
+   threadFinished = true;
+
    if (lastStepTime > startTime + timeout) //simple error check, did we finish the motion before we ran out of time
    {
       return false;
@@ -236,6 +279,23 @@ bool SFDrive::PIDTurn(float degreesClockwise, float radius, float maxVel, float 
    }
 }
 
+bool SFDrive::PIDTurnThread(float degreesClockwise, float radius, float maxVel, float timeout, bool ZeroVelocityAtEnd){
+   stopThread = false; //Idiot proofing
+   if(thread == nullptr) //If there's no thread, make one
+   {
+      thread = new std::thread(SFDrive::PIDTurn, degreesClockwise, radius, maxVel, timeout, ZeroVelocityAtEnd);
+      return true;
+   }
+   if(threadFinished) //If there is a thread but it's done, delete it and make another one
+   {
+      threadFinished = false;
+      joinAutoThread();
+      delete thread;
+      thread = new std::thread(SFDrive::PIDTurn, degreesClockwise, radius, maxVel, timeout, ZeroVelocityAtEnd);
+      return true;
+   }
+   return false; //If thread already executing, do nothing
+}
 
 void SFDrive::initPID(){
    setP(m_P);
@@ -253,4 +313,15 @@ void SFDrive::disableP(){
 
 void SFDrive::setAccel(float accl){
    m_maxAccl = accl;
+}
+
+void SFDrive::stopAutoThread()
+{
+   stopThread = true;
+   joinAutoThread();
+}
+
+void SFDrive::joinAutoThread()
+{
+   thread->join();
 }

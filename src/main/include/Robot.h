@@ -28,6 +28,7 @@ class Robot : public frc::TimedRobot {
       void TeleopInit() override;
       void TeleopPeriodic() override;
       void TestPeriodic() override;
+      void DisabledInit() override;
       void ConfigPIDS();
       const int joystickNum = 0;
       const int rMotorFrontNum = 5;

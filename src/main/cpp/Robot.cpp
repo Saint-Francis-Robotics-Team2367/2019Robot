@@ -155,6 +155,11 @@ void Robot::ConfigPIDS()
     DriverStation::ReportError("PID Config Completed");
 }
 
+void Robot::DisabledInit()
+{
+    myRobot->stopAutoThread();
+}
+
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }
 #endif
