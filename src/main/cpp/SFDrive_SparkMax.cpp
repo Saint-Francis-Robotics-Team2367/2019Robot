@@ -16,8 +16,8 @@ SFDrive_SparkMax::SFDrive_SparkMax(rev::CANSparkMax * lMotor, rev::CANSparkMax *
    m_D = D;
    m_F = F;
    m_ticksPerRev = 42;
-   m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition();
-   m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition();
+   m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition() * 42;
+   m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition() * 42;
    m_minDecelVel = 27 / m_wheelCircumference * m_ticksPerRev;
 }
 
@@ -33,12 +33,12 @@ void SFDrive_SparkMax::setRightMotor(double value)
 
 void SFDrive_SparkMax::setLeftMotorPosition(int ticks)
 {
-    m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition() - ticks;
+    m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition() * 42 - ticks;
 }
 
 void SFDrive_SparkMax::setRightMotorPosition(int ticks)
 {
-    m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition() - ticks;
+    m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition() * 42 - ticks;
 }
 
 void SFDrive_SparkMax::setLeftMotorSetpoint(int ticks)
