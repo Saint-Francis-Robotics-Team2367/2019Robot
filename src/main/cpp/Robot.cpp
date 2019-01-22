@@ -96,7 +96,7 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
     //To test
-    spark->Set(stick->GetRawAxis(1));
+    //spark->Set(stick->GetRawAxis(1));
 
     //myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
 
