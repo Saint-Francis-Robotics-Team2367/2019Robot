@@ -11,6 +11,8 @@ SFDrive_SparkMax::SFDrive_SparkMax(rev::CANSparkMax * lMotor, rev::CANSparkMax *
 {  
    m_leftMotor = lMotor;
    m_rightMotor = rMotor;
+   m_leftMotor->SetParameter(rev::CANSparkMaxLowLevel::ConfigParameter::kCtrlType, rev::ControlType::kPosition);
+   m_rightMotor->SetParameter(rev::CANSparkMaxLowLevel::ConfigParameter::kCtrlType, rev::ControlType::kPosition);
    m_P = P;
    m_I = I;
    m_D = D;
