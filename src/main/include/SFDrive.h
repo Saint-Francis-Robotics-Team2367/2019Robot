@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <thread>
+
 class SFDrive {
   protected:
    double m_deadband = 0.08;

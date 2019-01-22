@@ -8,7 +8,6 @@
 #include "SFDrive.h"
 #include <frc/Timer.h>
 #include <math.h>
-#include <thread>
 
 using namespace frc;
 
@@ -150,7 +149,7 @@ bool SFDrive::PIDDriveThread(float inches, float maxVel, float timeout, bool Zer
    if(thread == nullptr) //If there's no thread, make one
    {
       threadFinished = false;
-      thread = new std::thread(SFDrive::PIDDrive, inches, maxVel, timeout, ZeroVelocityAtEnd);
+      thread = new std::thread(&SFDrive::PIDDrive, this, inches, maxVel, timeout, ZeroVelocityAtEnd);
       return true;
    }
    if(threadFinished) //If there is a thread but it's done, delete it and make another one
@@ -158,7 +157,7 @@ bool SFDrive::PIDDriveThread(float inches, float maxVel, float timeout, bool Zer
       threadFinished = false;
       joinAutoThread();
       delete thread;
-      thread = new std::thread(SFDrive::PIDDrive, inches, maxVel, timeout, ZeroVelocityAtEnd);
+      thread = new std::thread(&SFDrive::PIDDrive, this, inches, maxVel, timeout, ZeroVelocityAtEnd);
       return true;
    }
    return false; //If thread already executing, do nothing
@@ -283,7 +282,7 @@ bool SFDrive::PIDTurnThread(float degreesClockwise, float radius, float maxVel, 
    stopThread = false; //Idiot proofing
    if(thread == nullptr) //If there's no thread, make one
    {
-      thread = new std::thread(SFDrive::PIDTurn, degreesClockwise, radius, maxVel, timeout, ZeroVelocityAtEnd);
+      thread = new std::thread(&SFDrive::PIDTurn, this, degreesClockwise, radius, maxVel, timeout, ZeroVelocityAtEnd);
       return true;
    }
    if(threadFinished) //If there is a thread but it's done, delete it and make another one
@@ -291,7 +290,7 @@ bool SFDrive::PIDTurnThread(float degreesClockwise, float radius, float maxVel, 
       threadFinished = false;
       joinAutoThread();
       delete thread;
-      thread = new std::thread(SFDrive::PIDTurn, degreesClockwise, radius, maxVel, timeout, ZeroVelocityAtEnd);
+      thread = new std::thread(&SFDrive::PIDTurn, this, degreesClockwise, radius, maxVel, timeout, ZeroVelocityAtEnd);
       return true;
    }
    return false; //If thread already executing, do nothing
