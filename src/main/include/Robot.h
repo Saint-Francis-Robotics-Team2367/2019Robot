@@ -38,7 +38,7 @@ class Robot : public frc::TimedRobot {
       const double TICKS_PER_INCH = 217.3;
       double pConstantDrive = 1;
       double iConstantDrive = 0;
-      double dConstantDrive = 10;
+      double dConstantDrive = 0;
       double fConstantDrive = 0;
       double maxDriveMotorCurrent = 30;
       int checkTimeout = 0;
@@ -53,7 +53,7 @@ class Robot : public frc::TimedRobot {
       WPI_TalonSRX * rMotorFront = new WPI_TalonSRX(rMotorFrontNum);
       WPI_TalonSRX * rMotorBack = new WPI_TalonSRX(rMotorBackNum);
       rev::CANSparkMax * sparkLeft = new rev::CANSparkMax(0, rev::CANSparkMax::MotorType::kBrushless);
-      rev::CANSparkMax * sparkRight = new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless);
+      rev::CANSparkMax * sparkRight = new rev::CANSparkMax(0, rev::CANSparkMax::MotorType::kBrushless);
       SFDrive_SparkMax * sparks = new SFDrive_SparkMax(sparkLeft, sparkRight, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       SFDrive_TalonSRX * myRobot = new SFDrive_TalonSRX(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       Joystick *stick = new Joystick(joystickNum);

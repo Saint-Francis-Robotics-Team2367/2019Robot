@@ -70,12 +70,14 @@ void Robot::RobotPeriodic()
 
 void Robot::AutonomousInit()
 {
-    myRobot->initPID();
-}   
+    sparks->initPID();
+    sparks->PIDDrive(10, 10);
+}
+
 
 void Robot::AutonomousPeriodic()
 {
-
+    DriverStation::ReportError(std::to_string(sparkLeft->GetEncoder().GetPosition()));
 }
 
 void Robot::TeleopInit()
@@ -83,7 +85,7 @@ void Robot::TeleopInit()
     DriverStation::ReportError("TeleopInit Started");
     //Set encoder positions to 0
     ConfigPIDS();
-    myRobot->ArcadeDrive(0.0, 0.0);
+    sparks->ArcadeDrive(0.0, 0.0);
     DriverStation::ReportError("TeleopInit Completed");
 
     //list testing block in shuffleboard.
@@ -99,7 +101,7 @@ void Robot::TeleopPeriodic()
     //spark->Set(stick->GetRawAxis(1));
 
     //myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
-
+/*
     myRobot->setAccel(SmartDashboard::GetNumber("maxAccl", 8000));
     SmartDashboard::PutNumber("Left Encoder", lMotorFront->GetSelectedSensorPosition(0));
     SmartDashboard::PutNumber("Right Encoder", rMotorFront->GetSelectedSensorPosition(0));
@@ -113,6 +115,8 @@ void Robot::TeleopPeriodic()
     }
     stick->SetRumble(GenericHID::RumbleType::kLeftRumble, acceleration * rumbleMultiplier);
     stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
+*/
+    sparks->ArcadeDrive(stick->GetRawAxis(1), stick->GetRawAxis(4));
 }
 
 void Robot::TestPeriodic()

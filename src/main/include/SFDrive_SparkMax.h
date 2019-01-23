@@ -16,7 +16,7 @@ class SFDrive_SparkMax : public SFDrive {
   float m_leftZeroPoint, m_rightZeroPoint;
  
  public:
-  SFDrive_SparkMax(rev::CANSparkMax * lMotor, rev::CANSparkMax * rMotor, double P, double I, double D, double F);
+  SFDrive_SparkMax(rev::CANSparkMax * lMotor, rev::CANSparkMax * Mrotor, double P, double I, double D, double F);
 
  private:
   virtual void setLeftMotor(double value);
