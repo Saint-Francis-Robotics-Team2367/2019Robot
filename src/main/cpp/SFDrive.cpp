@@ -50,7 +50,7 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation){
          rightMotorOutput = xSpeed - zRotation;
       }
    }
-   setLeftMotor(leftMotorOutput);
+   setLeftMotor(leftMotorOutput * -1);
    setRightMotor(rightMotorOutput);
 }
 
@@ -127,7 +127,7 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
          if (setPoint > endPoint)
             setPoint = endPoint;
 
-         setLeftMotorSetpoint(std::copysign(setPoint, inches) * -1);
+         setLeftMotorSetpoint(std::copysign(setPoint, inches));
          setRightMotorSetpoint(std::copysign(setPoint, inches));
       }
    }
