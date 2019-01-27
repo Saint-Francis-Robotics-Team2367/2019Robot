@@ -100,7 +100,12 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    sparks->ArcadeDrive(stick->GetRawAxis(1), -1.0 *stick->GetRawAxis(4));
+    if(stick->GetRawAxis(4)>=0){
+        turning = stick->GetRawAxis(4) * stick->GetRawAxis(4);
+    }else{
+        turning = -1.0 *( stick->GetRawAxis(4) * stick->GetRawAxis(4));
+    }
+    sparks->ArcadeDrive(stick->GetRawAxis(1), -1.0 *turning);
     
 }
 

@@ -46,6 +46,7 @@ class Robot : public frc::TimedRobot {
       double rumbleMultiplier = 1.0/8.0;
       double rumbleDeadzone = 0.5;
       double scale = 1;
+      double turning = 0;
 
    private:
       WPI_TalonSRX * lMotorFront = new WPI_TalonSRX(lMotorFrontNum);
