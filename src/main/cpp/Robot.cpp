@@ -16,8 +16,7 @@ void Robot::RobotInit()
     ctre::phoenix::motorcontrol::FeedbackDevice qE = QuadEncoder;
     lMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
     rMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
-    sparkRight->SetInverted(true);
-    sparkRightSlave->Follow(*sparkRight, false);
+
     //Use when controller forward/reverse output doesn't correlate to appropriate forward/reverse reading of sensor
     lMotorFront->SetSensorPhase(false);
     lMotorBack->SetSensorPhase(false);
@@ -98,7 +97,26 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    sparks->ArcadeDrive(stick->GetRawAxis(1), -1.0 *stick->GetRawAxis(4));
+    //To test
+    //spark->Set(stick->GetRawAxis(1));
+
+    //myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
+/*
+    myRobot->setAccel(SmartDashboard::GetNumber("maxAccl", 8000));
+    SmartDashboard::PutNumber("Left Encoder", lMotorFront->GetSelectedSensorPosition(0));
+    SmartDashboard::PutNumber("Right Encoder", rMotorFront->GetSelectedSensorPosition(0));
+
+    //set the rumble
+    double acceleration = std::pow(accelerometer.GetX() * accelerometer.GetX() + accelerometer.GetY() * accelerometer.GetY(), 0.5);
+    rumbleMultiplier = SmartDashboard::GetNumber("Rumble Multiplier", rumbleMultiplier);
+    rumbleDeadzone = SmartDashboard::GetNumber("Rumble Deadzone", rumbleDeadzone);
+    if(acceleration < rumbleDeadzone){
+        acceleration=0;
+    }
+    stick->SetRumble(GenericHID::RumbleType::kLeftRumble, acceleration * rumbleMultiplier);
+    stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
+*/
+    sparks->ArcadeDrive(stick->GetRawAxis(1), stick->GetRawAxis(4));
 }
 
 void Robot::TestPeriodic()
