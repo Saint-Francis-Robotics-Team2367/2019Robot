@@ -14,46 +14,10 @@ void Robot::RobotInit()
 {
     //set the encoders to quadrature
     ctre::phoenix::motorcontrol::FeedbackDevice qE = QuadEncoder;
-    lMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
-    rMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
-    sparkRight->SetInverted(true);
-    sparkRightSlave->Follow(*sparkRight, false);
-
-
-    //Use when controller forward/reverse output doesn't correlate to appropriate forward/reverse reading of sensor
-    lMotorFront->SetSensorPhase(false);
-    lMotorBack->SetSensorPhase(false);
-
-    //set back motors to follower mode
-    rMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, rMotorFrontNum);
-    lMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, lMotorFrontNum);
-
-    //set the names of the talons
-    lMotorFront->SetName("Left Front");
-    rMotorFront->SetName("Right Front");
-    lMotorBack->SetName("Left Back");
-    rMotorBack->SetName("Right Back");
-
-     //Set drive motor max voltage to 30 amps and current
-    lMotorFront->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
-    rMotorFront->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
-    lMotorBack->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
-    rMotorBack->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
-
-    lMotorFront->ConfigPeakCurrentLimit(maxDriveMotorCurrent, checkTimeout);
-    rMotorFront->ConfigPeakCurrentLimit(maxDriveMotorCurrent, checkTimeout);
-    lMotorBack->ConfigPeakCurrentLimit(maxDriveMotorCurrent, checkTimeout);
-    rMotorBack->ConfigPeakCurrentLimit(maxDriveMotorCurrent, checkTimeout);
-
-    lMotorFront->ConfigPeakCurrentDuration(0, checkTimeout);
-    rMotorFront->ConfigPeakCurrentDuration(0, checkTimeout);
-    lMotorBack->ConfigPeakCurrentDuration(0, checkTimeout);
-    rMotorBack->ConfigPeakCurrentDuration(0, checkTimeout);
-
-    lMotorFront->EnableCurrentLimit(true);
-    rMotorFront->EnableCurrentLimit(true);
-    lMotorBack->EnableCurrentLimit(true);
-    rMotorBack->EnableCurrentLimit(true);
+    rMotorFront->SetInverted(true);
+    rMotorBack->Follow(*rMotorFront, false);
+    lMotorFront->SetInverted(false);
+    lMotorBack->Follow(*lMotorFront, false);
 
     //Shuffle board 
     SmartDashboard::PutNumber("Rumble Multiplier", rumbleMultiplier);
@@ -73,14 +37,15 @@ void Robot::RobotPeriodic()
 
 void Robot::AutonomousInit()
 {
-    sparks->initPID();
-    sparks->PIDDrive(10, 10);
+    myRobot->initPID();
+    lMotorFront->GetPIDController().SetReference(-10, rev::ControlType::kPosition, 0, 0);
+    rMotorFront->GetPIDController().SetReference(10, rev::ControlType::kPosition, 0, 0);
 }
 
 
 void Robot::AutonomousPeriodic()
 {
-    DriverStation::ReportError(std::to_string(sparkLeft->GetEncoder().GetPosition()));
+    DriverStation::ReportError(std::to_string(lMotorFront->GetEncoder().GetPosition()));
 }
 
 void Robot::TeleopInit()
@@ -88,7 +53,7 @@ void Robot::TeleopInit()
     DriverStation::ReportError("TeleopInit Started");
     //Set encoder positions to 0
     ConfigPIDS();
-    sparks->ArcadeDrive(0.0, 0.0);
+    myRobot->ArcadeDrive(0.0, 0.0);
     DriverStation::ReportError("TeleopInit Completed");
 
     //list testing block in shuffleboard.
@@ -105,7 +70,7 @@ void Robot::TeleopPeriodic()
     }else{
         turning = -1.0 *( stick->GetRawAxis(4) * stick->GetRawAxis(4));
     }
-    sparks->ArcadeDrive(stick->GetRawAxis(1), -1.0 *turning);
+    myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 *turning);
     
 }
 
@@ -118,33 +83,7 @@ void Robot::ConfigPIDS()
 {
     DriverStation::ReportError("PID Config Started");
     
-    rMotorBack->SetNeutralMode(Brake);
-    lMotorBack->SetNeutralMode(Brake);
-
-    rMotorFront->GetSensorCollection().SetQuadraturePosition(0, checkTimeout);
-    rMotorBack->GetSensorCollection().SetQuadraturePosition(0, checkTimeout);
-    lMotorFront->GetSensorCollection().SetQuadraturePosition(0, checkTimeout);
-    lMotorBack->GetSensorCollection().SetQuadraturePosition(0, checkTimeout);
-
-    lMotorFront->Config_kP(0, pConstantDrive, checkTimeout);
-    lMotorFront->Config_kI(0, iConstantDrive, checkTimeout);
-    lMotorFront->Config_kD(0, dConstantDrive, checkTimeout);
-    lMotorFront->Config_kF(0, fConstantDrive, checkTimeout);
-
-    lMotorBack->Config_kP(0, pConstantDrive, checkTimeout);
-    lMotorBack->Config_kI(0, iConstantDrive, checkTimeout);
-    lMotorBack->Config_kD(0, dConstantDrive, checkTimeout);
-    lMotorBack->Config_kF(0, fConstantDrive, checkTimeout);
-
-    rMotorFront->Config_kP(0, pConstantDrive, checkTimeout);
-    rMotorFront->Config_kI(0, iConstantDrive, checkTimeout);
-    rMotorFront->Config_kD(0, dConstantDrive, checkTimeout);
-    rMotorFront->Config_kF(0, fConstantDrive, checkTimeout);
-
-    rMotorBack->Config_kP(0, pConstantDrive, checkTimeout);
-    rMotorBack->Config_kI(0, iConstantDrive, checkTimeout);
-    rMotorBack->Config_kD(0, dConstantDrive, checkTimeout);
-    rMotorBack->Config_kF(0, fConstantDrive, checkTimeout);
+    //todo
 
     DriverStation::ReportError("PID Config Completed");
 }
