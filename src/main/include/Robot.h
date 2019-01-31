@@ -56,4 +56,6 @@ class Robot : public frc::TimedRobot {
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
+      rev::CANEncoder * encoderLeft = new rev::CANEncoder(*lMotorFront);
+      rev::CANEncoder * encoderRight = new rev::CANEncoder(*rMotorFront);
 };

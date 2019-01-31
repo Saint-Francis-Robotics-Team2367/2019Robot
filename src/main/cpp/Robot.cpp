@@ -65,12 +65,10 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    if(stick->GetRawAxis(4)>=0){
-        turning = stick->GetRawAxis(4) * stick->GetRawAxis(4);
-    }else{
-        turning = -1.0 *( stick->GetRawAxis(4) * stick->GetRawAxis(4));
-    }
+    turning = stick->GetRawAxis(4) * stick->GetRawAxis(4) * stick->GetRawAxis(4);
     myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 *turning);
+    frc::DriverStation::ReportError(std::to_string(encoderLeft->GetPosition()));
+
     
 }
 
