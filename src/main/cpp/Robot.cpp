@@ -25,6 +25,12 @@ void Robot::RobotInit()
     rMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, rMotorFrontNum);
     lMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, lMotorFrontNum);
 
+    //set the names of the talons
+    lMotorFront->SetName("Left Front");
+    rMotorFront->SetName("Right Front");
+    lMotorBack->SetName("Left Back");
+    rMotorBack->SetName("Right Back");
+
      //Set drive motor max voltage to 30 amps and current
     lMotorFront->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
     rMotorFront->ConfigContinuousCurrentLimit(maxDriveMotorCurrent - 5, checkTimeout);
@@ -64,13 +70,14 @@ void Robot::RobotPeriodic()
 
 void Robot::AutonomousInit()
 {
-
+    sparks->initPID();
+    sparks->PIDDrive(10, 10);
 }
 
 
 void Robot::AutonomousPeriodic()
 {
-
+    DriverStation::ReportError(std::to_string(sparkLeft->GetEncoder().GetPosition()));
 }
 
 void Robot::TeleopInit()
@@ -78,7 +85,7 @@ void Robot::TeleopInit()
     DriverStation::ReportError("TeleopInit Started");
     //Set encoder positions to 0
     ConfigPIDS();
-    myRobot->ArcadeDrive(0.0, 0.0);
+    sparks->ArcadeDrive(0.0, 0.0);
     DriverStation::ReportError("TeleopInit Completed");
 
     //list testing block in shuffleboard.
@@ -109,13 +116,29 @@ void Robot::TeleopPeriodic()
     stick->SetRumble(GenericHID::RumbleType::kLeftRumble, acceleration * rumbleMultiplier);
     stick->SetRumble(GenericHID::RumbleType::kRightRumble, acceleration * rumbleMultiplier);
 */
-    myRobot->ArcadeDrive(stick->GetRawAxis(1), -1 * stick->GetRawAxis(4));
+    //sparks->ArcadeDrive(stick->GetRawAxis(1), stick->GetRawAxis(4));
+    
+    //basic arcade drive
+    myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
+
+    //single spark implemented with left and right triggers
+    if (stick->GetRawAxis (2)>0) //left trigger
+    {
+        this->_hatchMech->SetSpeed(-stick->GetRawAxis (2));
+    }
+    else if (stick->GetRawAxis (3)>0) //right trigger
+    {
+        this->_hatchMech->SetSpeed(stick->GetRawAxis (3));
+    }
+    else
+    {
+        this->_hatchMech->Set(0);
+    }
 }
 
 void Robot::TestPeriodic()
 {
-    WPI_TalonSRX * daddy = new WPI_TalonSRX(2);
-    daddy->Set(0.5);
+
 }
 
 void Robot::ConfigPIDS()
