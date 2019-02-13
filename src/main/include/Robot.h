@@ -16,6 +16,7 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
+#include <Spark.h>
 
 using namespace frc;
 
@@ -53,6 +54,7 @@ class Robot : public frc::TimedRobot {
       WPI_TalonSRX * rMotorFront = new WPI_TalonSRX(rMotorFrontNum);
       WPI_TalonSRX * rMotorBack = new WPI_TalonSRX(rMotorBackNum);
       SFDrive_TalonSRX * myRobot = new SFDrive_TalonSRX(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
+      Spark * _hatchMech = new Spark(0);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
 };

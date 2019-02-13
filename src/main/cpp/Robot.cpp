@@ -70,14 +70,16 @@ void Robot::RobotPeriodic()
 
 void Robot::AutonomousInit()
 {
-    sparks->initPID();
-    sparks->PIDDrive(10, 10);
+    //sparks->initPID();
+    //sparks->PIDDrive(10, 10);
+    myRobot->initPID();
+    myRobot->PIDDrive(10, 10);
 }
 
 
 void Robot::AutonomousPeriodic()
 {
-    DriverStation::ReportError(std::to_string(sparkLeft->GetEncoder().GetPosition()));
+    //DriverStation::ReportError(std::to_string(lMotorBack->encoder;
 }
 
 void Robot::TeleopInit()
@@ -85,7 +87,8 @@ void Robot::TeleopInit()
     DriverStation::ReportError("TeleopInit Started");
     //Set encoder positions to 0
     ConfigPIDS();
-    sparks->ArcadeDrive(0.0, 0.0);
+    //sparks->ArcadeDrive(0.0, 0.0);
+    myRobot->ArcadeDrive(0.0, 0.0);
     DriverStation::ReportError("TeleopInit Completed");
 
     //list testing block in shuffleboard.
