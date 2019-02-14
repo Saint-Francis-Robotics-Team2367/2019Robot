@@ -33,9 +33,9 @@ class Robot : public frc::TimedRobot {
       void ConfigPIDS();
       const int joystickNum = 0;
       const int rMotorFrontNum = 2;
-      const int rMotorBackNum = 6;
-      const int lMotorFrontNum = 10;
-      const int lMotorBackNum = 5;
+      const int rMotorBackNum = 10;
+      const int lMotorFrontNum = 1;
+      const int lMotorBackNum = 8;
       const double TICKS_PER_INCH = 217.3;
       double pConstantDrive = 1;
       double iConstantDrive = 0;
@@ -53,7 +53,7 @@ class Robot : public frc::TimedRobot {
       WPI_TalonSRX * lMotorBack = new WPI_TalonSRX(lMotorBackNum);
       WPI_TalonSRX * rMotorFront = new WPI_TalonSRX(rMotorFrontNum);
       WPI_TalonSRX * rMotorBack = new WPI_TalonSRX(rMotorBackNum);
-      SFDrive_TalonSRX * myRobot = new SFDrive_TalonSRX(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
+      SFDrive_TalonSRX * myRobot = new SFDrive_TalonSRX(lMotorBack, rMotorBack, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       Spark * _hatchMech = new Spark(0);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
