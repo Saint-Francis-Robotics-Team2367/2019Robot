@@ -32,10 +32,10 @@ class Robot : public frc::TimedRobot {
       void DisabledInit() override;
       void ConfigPIDS();
       const int joystickNum = 0;
-      const int rMotorFrontNum = 2;
-      const int rMotorBackNum = 6;
-      const int lMotorFrontNum = 10;
-      const int lMotorBackNum = 5;
+      const int rMotorFrontNum = 10;
+      const int rMotorBackNum = 2;
+      const int lMotorFrontNum = 1;
+      const int lMotorBackNum = 8;
       const double TICKS_PER_INCH = 217.3;
       double pConstantDrive = 1;
       double iConstantDrive = 0;
