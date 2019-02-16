@@ -58,6 +58,8 @@ void Robot::RobotInit()
     //SmartDashboard::PutNumber("maxVel", 55.0);
     SmartDashboard::PutNumber("auto Timeout", 4.0);
     SmartDashboard::PutNumber("maxAccl", 10000);
+    SmartDashboard::PutNumber("max_servo_angle", max_servo_angle);
+    SmartDashboard::PutNumber("min_servo_angle", min_servo_angle);
 
     //config acceleraometer
     accelerometer.SetRange(frc::Accelerometer::kRange_8G);
@@ -137,6 +139,9 @@ void Robot::TeleopPeriodic()
     {
         this->_hatchMech->Set(0);
     }
+    max_servo_angle = SmartDashboard::GetNumber("max_servo_angle", 180);
+    min_servo_angle = SmartDashboard::GetNumber("min_servo_angle", 0);
+    servo->SetAngle(stick->GetRawAxis(2)*max_servo_angle + ((-stick->GetRawAxis(2) + 1) * min_servo_angle) );
 }
 
 void Robot::TestPeriodic()

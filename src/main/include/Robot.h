@@ -16,7 +16,8 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
-#include <Spark.h>
+#include <frc/Spark.h>
+#include <frc/Servo.h>
 
 using namespace frc;
 
@@ -47,6 +48,13 @@ class Robot : public frc::TimedRobot {
       double rumbleMultiplier = 1.0/8.0;
       double rumbleDeadzone = 0.5;
       double scale = 1;
+      int servo_channel = 1;
+
+      int servo_angle = 0;
+
+      int min_servo_angle = 0;
+
+      int max_servo_angle = 180;
 
    private:
       WPI_TalonSRX * lMotorFront = new WPI_TalonSRX(lMotorFrontNum);
@@ -57,4 +65,5 @@ class Robot : public frc::TimedRobot {
       Spark * _hatchMech = new Spark(0);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
+      Servo * servo = new Servo(servo_channel);
 };
