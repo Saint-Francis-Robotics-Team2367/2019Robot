@@ -77,12 +77,15 @@ void Robot::AutonomousInit()
     //sparks->initPID();
     //sparks->PIDDrive(10, 10);
     myRobot->initPID();
-    myRobot->PIDDrive(500, 40);
+    DriverStation::ReportError(std::to_string(myRobot->PIDDriveThread(500, 40)));
+    myRobot->joinAutoThread();
+    DriverStation::ReportError(std::to_string(myRobot->PIDDriveThread(-500, 40)));
+
 }
 
 void Robot::AutonomousPeriodic()
 {
-    DriverStation::ReportError(std::to_string(rMotorBack->GetClosedLoopError()));
+    //DriverStation::ReportError(std::to_string(rMotorBack->GetClosedLoopError()));
 }
 
 void Robot::TeleopInit()
