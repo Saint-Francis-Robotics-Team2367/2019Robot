@@ -18,12 +18,14 @@ void Robot::RobotInit()
     rMotorFront->ConfigSelectedFeedbackSensor(qE, 0, checkTimeout);
 
     //Use when controller forward/reverse output doesn't correlate to appropriate forward/reverse reading of sensor
-    lMotorFront->SetSensorPhase(false);
-    lMotorBack->SetSensorPhase(false);
+    lMotorFront->SetSensorPhase(true);
+    lMotorBack->SetSensorPhase(true);
+    rMotorFront->SetSensorPhase(true);
+    rMotorBack->SetSensorPhase(true);
 
     //set back motors to follower mode
-    rMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, rMotorFrontNum);
-    lMotorBack->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, lMotorFrontNum);
+    rMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, rMotorBackNum);
+    lMotorFront->Set(ctre::phoenix::motorcontrol::ControlMode::Follower, lMotorBackNum);
 
     //set the names of the talons
     lMotorFront->SetName("Left Front");
@@ -75,13 +77,12 @@ void Robot::AutonomousInit()
     //sparks->initPID();
     //sparks->PIDDrive(10, 10);
     myRobot->initPID();
-    myRobot->PIDDrive(10, 10);
+    myRobot->PIDDrive(500, 40);
 }
-
 
 void Robot::AutonomousPeriodic()
 {
-    //DriverStation::ReportError(std::to_string(lMotorBack->encoder;
+    DriverStation::ReportError(std::to_string(rMotorBack->GetClosedLoopError()));
 }
 
 void Robot::TeleopInit()
@@ -143,7 +144,7 @@ void Robot::TeleopPeriodic()
     }
     max_servo_angle = SmartDashboard::GetNumber("max_servo_angle", 180);
     min_servo_angle = SmartDashboard::GetNumber("min_servo_angle", 0);
-    servo->SetAngle(stick->GetRawAxis(2)*max_servo_angle + ((-stick->GetRawAxis(2) + 1) * min_servo_angle) );
+    servo->SetAngle(stick->GetRawAxis(2)*max_servo_angle + ((-stick->GetRawAxis(2) + 1) * min_servo_angle));
 }
 
 void Robot::TestPeriodic()

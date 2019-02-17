@@ -55,7 +55,6 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation){
 }
 
 bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVelocityAtEnd){
-
    int setPoint = 0;
    double startTime, currStepTime, lastStepTime, deltaTime;
 
@@ -101,8 +100,8 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
          if (setPoint > endPoint)
             setPoint = endPoint;
 
-         setLeftMotorSetpoint(std::copysign(setPoint, inches) * -1);
-         setRightMotorSetpoint(std::copysign(setPoint, inches));
+         setLeftMotorSetpoint(std::copysign(setPoint, inches));
+         setRightMotorSetpoint(std::copysign(setPoint, inches) * -1);
       }
    }
    else
@@ -126,9 +125,8 @@ bool SFDrive::PIDDrive(float inches, float maxVel, float timeout, bool ZeroVeloc
          setPoint += m_currVelocity * deltaTime;
          if (setPoint > endPoint)
             setPoint = endPoint;
-
          setLeftMotorSetpoint(std::copysign(setPoint, inches));
-         setRightMotorSetpoint(std::copysign(setPoint, inches));
+         setRightMotorSetpoint(std::copysign(setPoint, inches) * -1);
       }
    }
 
@@ -297,6 +295,7 @@ bool SFDrive::PIDTurnThread(float degreesClockwise, float radius, float maxVel, 
 }
 
 void SFDrive::initPID(){
+   stopThread = false;
    setP(m_P);
    setI(m_I);
    setD(m_D);

@@ -16,7 +16,7 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
-#include <Spark.h>
+#include <frc/Spark.h>
 #include <frc/Spark.h>
 #include <frc/Servo.h>
 

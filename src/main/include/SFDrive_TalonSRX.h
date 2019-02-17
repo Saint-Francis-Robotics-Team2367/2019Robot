@@ -16,8 +16,6 @@ class SFDrive_TalonSRX : public SFDrive {
 
  public:
   SFDrive_TalonSRX(WPI_TalonSRX * lMotor, WPI_TalonSRX * rMotor, double P , double I, double D, double F);
-
- private:
   virtual void setLeftMotor(double value);
   virtual void setRightMotor(double value);
   virtual void setLeftMotorPosition(int ticks);
