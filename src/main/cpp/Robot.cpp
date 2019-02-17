@@ -98,6 +98,8 @@ void Robot::TeleopInit()
     SmartDashboard::PutNumber("auto Timeout", 4.0);
     SmartDashboard::PutNumber("maxAccl", 10000);
     DriverStation::ReportError("TestInit Completed");
+    SmartDashboard::PutNumber("max_servo_angle", max_servo_angle);
+    SmartDashboard::PutNumber("min_servo_angle", min_servo_angle);
 }
 
 void Robot::TeleopPeriodic()
