@@ -322,7 +322,7 @@ void SFDrive::stopAutoThread()
 
 void SFDrive::joinAutoThread()
 {
-   if(thread == nullptr)
+   if(thread == nullptr || !thread->joinable())
    {
       return;
    }
