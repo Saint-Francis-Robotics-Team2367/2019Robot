@@ -10,6 +10,12 @@
 #include <string>
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/I2C.h>
+#include <frc/DriverStation.h>
+#include<frc/Spark.h>
+
+using namespace frc;
+using namespace std;
 
 class Robot : public frc::TimedRobot {
  public:
@@ -20,7 +26,12 @@ class Robot : public frc::TimedRobot {
   void TeleopInit() override;
   void TeleopPeriodic() override;
   void TestPeriodic() override;
+  void DisabledInit() override;
+  const int MAXBYTES = 32;
+  Spark *test = new Spark(1);
+
 
  private:
- 
+    I2C * arduino1;
+    uint8_t * ourData;
 };
