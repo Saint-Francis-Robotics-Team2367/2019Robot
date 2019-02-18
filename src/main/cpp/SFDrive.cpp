@@ -317,6 +317,7 @@ void SFDrive::stopAutoThread()
 {
    stopThread = true;
    joinAutoThread();
+   stopThread = false;
 }
 
 void SFDrive::joinAutoThread()
