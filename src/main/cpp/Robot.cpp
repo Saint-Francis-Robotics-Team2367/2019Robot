@@ -65,16 +65,13 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    turning = stick->GetRawAxis(4) * stick->GetRawAxis(4) * stick->GetRawAxis(4);
-    myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 *turning);
+    myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 * stick->GetRawAxis(4));
     frc::DriverStation::ReportError(std::to_string(encoderLeft->GetPosition()));
-
-    
 }
 
 void Robot::TestPeriodic()
 {
-
+    
 }
 
 void Robot::ConfigPIDS()
