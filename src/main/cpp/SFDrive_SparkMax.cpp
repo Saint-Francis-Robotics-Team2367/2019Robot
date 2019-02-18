@@ -32,12 +32,12 @@ void SFDrive_SparkMax::setRightMotor(double value)
 
 void SFDrive_SparkMax::setLeftMotorPosition(int ticks)
 {
-    m_leftMotor->GetEncoder().SetPosition(0);
+    m_leftMotor->GetEncoder().SetPosition(ticks);
 }
 
 void SFDrive_SparkMax::setRightMotorPosition(int ticks)
 {
-    m_rightMotor->GetEncoder().SetPosition(0);
+    m_rightMotor->GetEncoder().SetPosition(ticks);
 }
 
 void SFDrive_SparkMax::setLeftMotorSetpoint(int ticks)
