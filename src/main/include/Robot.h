@@ -27,7 +27,7 @@ class Robot : public frc::TimedRobot {
   void TeleopPeriodic() override;
   void TestPeriodic() override;
   void DisabledInit() override;
-  const int MAXBYTES = 32;
+  const int MAXBYTES = 32;  
   Spark *test = new Spark(1);
 
 

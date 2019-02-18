@@ -36,22 +36,23 @@ void loop()
 // this function is registered as an event, see setup()
 void receiveEvent()
 {
-  /*uint8_t myTestInteger3 = 65;
+  uint8_t myTestInteger3 = 65;
   //char ourChar = 'a';
   while ( Wire.available() > 0 )
   {
     //uint8_t n=Wire.read();
     //Serial.println(n);
     Wire.write(myTestInteger3);
-  }*/
+  }
   
 }
 
 void requestEvent(){
-  output = "test";
+  //output = "test";
   uint8_t myTestInteger3 = 65;
+  Wire.write(myTestInteger3);
   while ( Wire.available() > 0 )
   {
-    Wire.write(output.c_str());
+    Wire.write(myTestInteger3);
   }
 }
