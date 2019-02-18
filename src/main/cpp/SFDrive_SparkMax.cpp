@@ -49,7 +49,7 @@ void SFDrive_SparkMax::setLeftMotorSetpoint(int ticks)
 
 void SFDrive_SparkMax::setRightMotorSetpoint(int ticks)
 {
-    m_rightMotor->GetPIDController().SetReference((ticks + m_leftZeroPoint) / m_ticksPerRev, rev::ControlType::kPosition, 0, 0);
+    m_rightMotor->GetPIDController().SetReference((ticks + m_rightZeroPoint) / m_ticksPerRev, rev::ControlType::kPosition, 0, 0);
 }
 
 void SFDrive_SparkMax::setP(double value)
