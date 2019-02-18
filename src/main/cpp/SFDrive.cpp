@@ -295,7 +295,6 @@ bool SFDrive::PIDTurnThread(float degreesClockwise, float radius, float maxVel, 
 }
 
 void SFDrive::initPID(){
-   stopThread = false;
    setP(m_P);
    setI(m_I);
    setD(m_D);
