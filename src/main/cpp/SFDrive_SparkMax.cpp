@@ -17,8 +17,6 @@ SFDrive_SparkMax::SFDrive_SparkMax(rev::CANSparkMax * lMotor, rev::CANSparkMax *
    m_F = F;
    initPID();
    m_ticksPerRev = 42;
-   m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition() * m_ticksPerRev;
-   m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition() * m_ticksPerRev;
    m_minDecelVel = 27 / m_wheelCircumference * m_ticksPerRev;
 }
 
@@ -34,22 +32,22 @@ void SFDrive_SparkMax::setRightMotor(double value)
 
 void SFDrive_SparkMax::setLeftMotorPosition(int ticks)
 {
-    m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition() * m_ticksPerRev - ticks;
+    m_leftMotor->GetEncoder().SetPosition(0);
 }
 
 void SFDrive_SparkMax::setRightMotorPosition(int ticks)
 {
-    m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition() * m_ticksPerRev - ticks;
+    m_rightMotor->GetEncoder().SetPosition(0);
 }
 
 void SFDrive_SparkMax::setLeftMotorSetpoint(int ticks)
 {
-    m_leftMotor->GetPIDController().SetReference((ticks + m_leftZeroPoint) / m_ticksPerRev, rev::ControlType::kPosition, 0, 0);
+    m_leftMotor->GetPIDController().SetReference(ticks / m_ticksPerRev, rev::ControlType::kPosition, 0, 0);
 }
 
 void SFDrive_SparkMax::setRightMotorSetpoint(int ticks)
 {
-    m_rightMotor->GetPIDController().SetReference((ticks + m_rightZeroPoint) / m_ticksPerRev, rev::ControlType::kPosition, 0, 0);
+    m_rightMotor->GetPIDController().SetReference(ticks / m_ticksPerRev, rev::ControlType::kPosition, 0, 0);
 }
 
 void SFDrive_SparkMax::setP(double value)
