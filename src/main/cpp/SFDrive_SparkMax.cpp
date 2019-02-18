@@ -16,8 +16,6 @@ SFDrive_SparkMax::SFDrive_SparkMax(rev::CANSparkMax * lMotor, rev::CANSparkMax *
    m_D = D;
    m_F = F;
    initPID();
-   m_leftMotor->GetPIDController().SetOutputRange(0, 1, 0);
-   m_rightMotor->GetPIDController().SetOutputRange(0, 1, 0);
    m_ticksPerRev = 42;
    m_leftZeroPoint = m_leftMotor->GetEncoder().GetPosition() * m_ticksPerRev;
    m_rightZeroPoint = m_rightMotor->GetEncoder().GetPosition() * m_ticksPerRev;
