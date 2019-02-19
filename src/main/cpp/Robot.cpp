@@ -95,15 +95,15 @@ void Robot::TeleopPeriodic()
 
     if(stick->GetRawButton(3))
     {
-        motorB->Set(1);
+        motorC->Set(1);
     }
     else if(stick->GetRawButton(1))
     {
-        motorB->Set(-1);
+        motorC->Set(-1);
     }
     else
     {
-        motorB->Set(0);
+        motorC->Set(0);
     }
 }
 
