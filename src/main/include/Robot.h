@@ -49,6 +49,9 @@ class Robot : public frc::TimedRobot {
       double turning = 0;
 
    private:
+      WPI_TalonSRX * motorA = new WPI_TalonSRX(99);
+      WPI_TalonSRX * motorB = new WPI_TalonSRX(99);
+      WPI_TalonSRX * motorC = new WPI_TalonSRX(99);
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(lMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * rMotorBack = new rev::CANSparkMax(rMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);

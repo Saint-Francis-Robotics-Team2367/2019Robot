@@ -66,11 +66,45 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
     myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 * stick->GetRawAxis(4));
-    //frc::DriverStation::ReportError(std::to_string(encoderLeft->GetPosition()));
-    //rMotorFront->Set(0.3);
-    //lMotorFront->Set(0.3);
-    //DriverStation::ReportError(lMotorFront->GetFirmwareString());
-    //DriverStation::ReportError(std::to_string(lMotorFront->GetError().GetCode()));
+    
+    if(stick->GetRawAxis(3))
+    {
+        motorA->Set(stick->GetRawAxis(3));
+    }
+    else if(stick->GetRawAxis(2))
+    {
+        motorA->Set(-1.0 * stick->GetRawAxis(2));
+    }
+    else
+    {
+        motorA->Set(0);
+    }
+
+    if(stick->GetRawButton(4))
+    {
+        motorB->Set(1);
+    }
+    else if(stick->GetRawButton(2))
+    {
+        motorB->Set(-1);
+    }
+    else
+    {
+        motorB->Set(0);
+    }
+
+    if(stick->GetRawButton(3))
+    {
+        motorB->Set(1);
+    }
+    else if(stick->GetRawButton(1))
+    {
+        motorB->Set(-1);
+    }
+    else
+    {
+        motorB->Set(0);
+    }
 }
 
 void Robot::TestPeriodic()
