@@ -14,7 +14,7 @@ void Robot::RobotInit()
 {
     //set the encoders to quadrature
     ctre::phoenix::motorcontrol::FeedbackDevice qE = QuadEncoder;
-    rMotorFront->SetInverted(true);
+    rMotorFront->SetInverted(false);
     rMotorBack->Follow(*rMotorFront, false);
     lMotorFront->SetInverted(false);
     lMotorBack->Follow(*lMotorFront, false);
@@ -65,8 +65,12 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 * stick->GetRawAxis(4));
-    frc::DriverStation::ReportError(std::to_string(encoderLeft->GetPosition()));
+   //myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 * stick->GetRawAxis(4));
+    //frc::DriverStation::ReportError(std::to_string(encoderLeft->GetPosition()));
+    //rMotorFront->Set(0.3);
+    lMotorFront->Set(-0.3);
+    DriverStation::ReportError(lMotorFront->GetFirmwareString());
+    //DriverStation::ReportError(std::to_string(lMotorFront->GetError().GetCode()));
 }
 
 void Robot::TestPeriodic()

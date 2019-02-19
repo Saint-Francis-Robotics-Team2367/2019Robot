@@ -31,10 +31,10 @@ class Robot : public frc::TimedRobot {
       void DisabledInit() override;
       void ConfigPIDS();
       const int joystickNum = 0;
-      const int rMotorFrontNum = 1;
-      const int rMotorBackNum = 2;
-      const int lMotorFrontNum = 3;
-      const int lMotorBackNum = 4;
+      const int rMotorFrontNum = 15;
+      const int rMotorBackNum = 16;
+      const int lMotorFrontNum = 13;
+      const int lMotorBackNum = 14;
       const double TICKS_PER_INCH = 217.3;
       double pConstantDrive = 1;
       double iConstantDrive = 0;
@@ -49,10 +49,10 @@ class Robot : public frc::TimedRobot {
       double turning = 0;
 
    private:
-      rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless);
-      rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(0, rev::CANSparkMax::MotorType::kBrushless);
-      rev::CANSparkMax * rMotorBack = new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless);
-      rev::CANSparkMax * rMotorFront = new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless);
+      rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
+      rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(lMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
+      rev::CANSparkMax * rMotorBack = new rev::CANSparkMax(rMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
+      rev::CANSparkMax * rMotorFront = new rev::CANSparkMax(rMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       Joystick *stick = new Joystick(joystickNum);
       BuiltInAccelerometer accelerometer;
