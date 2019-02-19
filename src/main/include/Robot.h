@@ -12,7 +12,8 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/I2C.h>
 #include <frc/DriverStation.h>
-#include<frc/Spark.h>
+#include <frc/Spark.h>
+#include <frc/SerialPort.h>
 
 using namespace frc;
 using namespace std;
@@ -32,6 +33,8 @@ class Robot : public frc::TimedRobot {
 
 
  private:
-    I2C * arduino1;
-    uint8_t * ourData;
+    //I2C * arduino1;
+    //uint8_t * ourData;
+    char * ourData;
+    SerialPort * arduino1;
 };

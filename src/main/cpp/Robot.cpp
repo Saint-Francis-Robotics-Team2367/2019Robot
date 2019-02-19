@@ -30,9 +30,14 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() 
 {
+    /*I2C communication init
     arduino1 = new I2C(I2C::Port::kOnboard, 4);
     uint8_t test = 1;
     ourData = &test;
+    */
+    arduino1 = new SerialPort(9600, SerialPort::Port::kUSB1, 8, SerialPort::kParity_None, SerialPort::kStopBits_One);
+    arduino1->SetReadBufferSize(8);
+    //arduino1->Read(ourData,32);
 }
 
 void Robot::TeleopPeriodic() 
@@ -60,6 +65,7 @@ void Robot::TeleopPeriodic()
         //string myBirdie(reinterpret_cast< char const* >(line_buf)); //some uint8_t operation to string
 	    //DriverStation::ReportError(myBirdie);
     //}
+    /*I2C Test Code
     uint8_t testInteger5 = 4;
     uint8_t receiveTestInteger = 0;
     uint8_t * bro = &testInteger5;
@@ -70,6 +76,7 @@ void Robot::TeleopPeriodic()
     rekt += (unsigned int) *again;
     //string rekt = string((char*)browskies);
     DriverStation::ReportError(rekt);
+    */
     //string output(data);//create a string from the byte array
     //uint8_t receiveCheckInteger = 2;
     //if(receiveCheckInteger == receiveTestInteger) DriverStation::ReportError("BRUH");
@@ -79,10 +86,23 @@ void Robot::TeleopPeriodic()
     
     //I have to use UART for Arduino to RoboRio
     //I have to continue to use I2C communication for IR Sensor
-
     
     //DriverStation::ReportError(myTestString);
+
+    //char testChar = ' ';
+    //char * otherTestChar = &testChar;
+    char * otherTestChar;
+    arduino1->Read(otherTestChar,4);
+    int recvd = (int) *otherTestChar;
+    arduino1->SetTimeout(0.1);
+    //might have to setup a timeout to give it time to read
+    arduino1->EnableTermination('\n');
+    string data = to_string(recvd);
+    DriverStation::ReportError(data);
+
 }
+
+
 
 void Robot::TestPeriodic() 
 {
