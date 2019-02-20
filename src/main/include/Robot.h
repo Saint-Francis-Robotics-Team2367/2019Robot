@@ -40,6 +40,8 @@ class Robot : public frc::TimedRobot {
       bool rumbleDriver = false;
       bool rumbleOperator = false;
       int driveMotorCurrentLimit = 30;
+      int servoUpAngle = 180;
+      int servoDownAngle = 0;
 
       //Motor IDs
       const int rMotorFrontNum = 15;

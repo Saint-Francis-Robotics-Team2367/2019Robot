@@ -169,6 +169,31 @@ void Robot::TeleopPeriodic()
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
         }
     }
+
+    //Trigger logic
+    if(operatorInCargoMode)
+    {
+        hatchMechSolenoid->Set(false); //Idiot proofing hatch mech solenoid
+    }
+    else
+    {
+        cargoMechLeftSolenoid->Set(false); //Idiot proofing cargo mech solenoid
+        cargoMechRightSolenoid->Set(false); //Idiot proofing cargo mech solenoid
+        if(operatorStick->GetRawAxis(2) > 0.5) //Servo down (left trigger)
+        {
+            hatchMechServo->SetAngle(servoDownAngle);
+        }
+
+        if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
+        {
+            hatchMechServo->SetAngle(servoUpAngle);
+            hatchMechSolenoid->Set(true);
+        }
+        else
+        {
+            hatchMechSolenoid->Set(false);
+        }
+    }
 }
 
 void Robot::AutonomousInit()
