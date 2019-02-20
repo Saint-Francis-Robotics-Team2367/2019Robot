@@ -9,7 +9,6 @@
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-
 void Robot::RobotInit() 
 {
     //Set followers and inverts for drive motors
@@ -29,6 +28,12 @@ void Robot::RobotInit()
     elevatorMotor->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0, 0);
     elevatorMotor->SetName("Elevator Motor");
     elevatorMotor->SetSelectedSensorPosition(0);
+
+    //Name the other talons
+    cargoIntakeMotor->SetName("Cargo Intake");
+    cargoLeftMotor->SetName("Cargo Left");
+    cargoRightMotor->SetName("Cargo Right");
+    cargoTopMotor->SetName("Cargo Top");
 
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
@@ -62,32 +67,11 @@ void Robot::RobotPeriodic()
     }
 }
 
-void Robot::AutonomousInit()
-{
-    myRobot->initPID();
-    lMotorFront->GetPIDController().SetReference(-10, rev::ControlType::kPosition, 0, 0);
-    rMotorFront->GetPIDController().SetReference(10, rev::ControlType::kPosition, 0, 0);
-}
-
-
-void Robot::AutonomousPeriodic()
-{
-    DriverStation::ReportError(std::to_string(lMotorFront->GetEncoder().GetPosition()));
-}
-
 void Robot::TeleopInit()
 {
     DriverStation::ReportError("TeleopInit Started");
-    //Set encoder positions to 0
-    ConfigPIDS();
     myRobot->ArcadeDrive(0.0, 0.0);
     DriverStation::ReportError("TeleopInit Completed");
-
-    //list testing block in shuffleboard.
-    SmartDashboard::PutNumber("maxVel", 55.0);
-    SmartDashboard::PutNumber("auto Timeout", 4.0);
-    SmartDashboard::PutNumber("maxAccl", 10000);
-    DriverStation::ReportError("TestInit Completed");
 }
 
 void Robot::TeleopPeriodic()
@@ -103,18 +87,20 @@ void Robot::TeleopPeriodic()
     
 }
 
+void Robot::AutonomousInit()
+{
+    myRobot->initPID();
+}
+
+
+void Robot::AutonomousPeriodic()
+{
+    //Teleop?
+}
+
 void Robot::TestPeriodic()
 {
     
-}
-
-void Robot::ConfigPIDS()
-{
-    DriverStation::ReportError("PID Config Started");
-    
-    //todo
-
-    DriverStation::ReportError("PID Config Completed");
 }
 
 void Robot::DisabledInit()
