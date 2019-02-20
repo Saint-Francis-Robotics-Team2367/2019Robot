@@ -71,7 +71,6 @@ void Robot::TeleopPeriodic()
     uint8_t * bro = &testInteger5;
     uint8_t * again = &receiveTestInteger;
     arduino1->Transaction(NULL, 0, again, 32);
-
     string rekt = ""; 
     rekt += (unsigned int) *again;
     //string rekt = string((char*)browskies);
@@ -89,12 +88,13 @@ void Robot::TeleopPeriodic()
     
     //DriverStation::ReportError(myTestString);
 
-    //char testChar = ' ';
-    //char * otherTestChar = &testChar;
-    char * otherTestChar;
-    arduino1->Read(otherTestChar,4);
+    char testChar = ' ';
+    char * otherTestChar = &testChar;
+    //char * otherTestChar;
+    arduino1->Read(otherTestChar,1);
     int recvd = (int) *otherTestChar;
-    arduino1->SetTimeout(0.1);
+    arduino1->SetTimeout(0.05);
+
     //might have to setup a timeout to give it time to read
     arduino1->EnableTermination('\n');
     string data = to_string(recvd);
