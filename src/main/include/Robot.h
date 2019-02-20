@@ -59,12 +59,24 @@ class Robot : public frc::TimedRobot {
       //Servo IDs
       const int hatchMechServoNum = 99;
 
-      //PIDs
-      double pConstantDrive = 1;
-      double iConstantDrive = 0;
-      double dConstantDrive = 0;
-      double fConstantDrive = 0;
-   
+      //Drive Constants
+      const double pConstantDrive = 1;
+      const double iConstantDrive = 0;
+      const double dConstantDrive = 0;
+      const double fConstantDrive = 0;
+
+      //Elevator Constants
+      const int cargoRocket1 = 0;
+      const int cargoRocket2 = 0;
+      const int cargoRocket3 = 0;
+      const int cargoShip = 0;
+      const int hatchRocket1 = 0;
+      const int hatchRocket2 = 0;
+      const int hatchRocket3 = 0;
+      const double pConstantElevator = 1;
+      const double iConstantElevator = 0;
+      const double dConstantElevator = 0;
+
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(lMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);

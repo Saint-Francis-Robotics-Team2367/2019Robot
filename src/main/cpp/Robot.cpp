@@ -28,6 +28,9 @@ void Robot::RobotInit()
     elevatorMotor->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0, 0);
     elevatorMotor->SetName("Elevator Motor");
     elevatorMotor->SetSelectedSensorPosition(0);
+    elevatorMotor->Config_kP(0, pConstantElevator, 0);
+    elevatorMotor->Config_kI(0, iConstantElevator, 0);
+    elevatorMotor->Config_kD(0, dConstantElevator, 0);
 
     //Name the other talons
     cargoIntakeMotor->SetName("Cargo Intake");
@@ -41,6 +44,8 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic()
 {
+    SmartDashboard::PutNumber("Elevator Position", elevatorMotor->GetSelectedSensorPosition(0));
+
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
 
@@ -69,9 +74,7 @@ void Robot::RobotPeriodic()
 
 void Robot::TeleopInit()
 {
-    DriverStation::ReportError("TeleopInit Started");
-    myRobot->ArcadeDrive(0.0, 0.0);
-    DriverStation::ReportError("TeleopInit Completed");
+    myRobot->ArcadeDrive(0, 0);
 }
 
 void Robot::TeleopPeriodic()
