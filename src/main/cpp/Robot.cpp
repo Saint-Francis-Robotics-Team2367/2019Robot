@@ -85,18 +85,22 @@ void Robot::TeleopPeriodic()
     //Invert button check
     if(driverStick->GetRawButton(7)) //Back button un-inverts controls
     {
+        DriverStation::ReportError("Driver Mode: Uninverted");
         driverIsInverted = false;
     }
     else if(driverStick->GetRawButton(8)) // Start button inverts controls
     {
+        DriverStation::ReportError("Driver Mode: Inverted");
         driverIsInverted = true;
     }
     if(operatorStick->GetRawButton(7)) //Back button un-inverts controls
     {
+        DriverStation::ReportError("Operator Mode: Hatch");
         operatorInCargoMode = false;
     }
     else if(operatorStick->GetRawButton(8)) // Start button inverts controls
     {
+        DriverStation::ReportError("Operator Mode: Cargo");
         operatorInCargoMode = true;
     }
 
@@ -113,6 +117,7 @@ void Robot::TeleopPeriodic()
     //Operator Granular Elevator Control
     if(operatorStick->GetRawAxis(1) > 0.1 || operatorStick->GetRawAxis(1) < -0.1)
     {
+        //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
         elevatorMotor->Set(operatorStick->GetRawAxis(1) * 0.3);
     }
     else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
@@ -121,51 +126,60 @@ void Robot::TeleopPeriodic()
     }
     
     //Operator elevator levels
-    if(operatorStick->GetRawButton(1)) //ground level (A button)
+    if(operatorStick->GetRawButtonPressed(1)) //ground level (A button)
     {
+        DriverStation::ReportError("Elevator Set to Ground Level");
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, 0);
     }
-    if(operatorStick->GetRawButton(3)) //level 1 (X button)
+    if(operatorStick->GetRawButtonPressed(3)) //level 1 (X button)
     {
         if(operatorInCargoMode)
         {
+            DriverStation::ReportError("Elevator Set to Cargo Rocket 1");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
         }
         else
         {
+            DriverStation::ReportError("Elevator Set to Hatch Rocket 1");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
         }
     }
-    if(operatorStick->GetRawButton(2)) //level 2 (B button)
+    if(operatorStick->GetRawButtonPressed(2)) //level 2 (B button)
     {
         if(operatorInCargoMode)
         {
+            DriverStation::ReportError("Elevator Set to Cargo Rocket 2");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
         }
         else
         {
+            DriverStation::ReportError("Elevator Set to Hatch Rocket 2");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
         }
     }
-    if(operatorStick->GetRawButton(4)) //level 3 (Y button)
+    if(operatorStick->GetRawButtonPressed(4)) //level 3 (Y button)
     {
         if(operatorInCargoMode)
         {
+            DriverStation::ReportError("Elevator Set to Cargo Rocket 3");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
         }
         else
         {
+            DriverStation::ReportError("Elevator Set to Hatch Rocket 3");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
         }
     }
-    if(operatorStick->GetRawButton(10)) //Cargo ship (push down on the secondary joystick)
+    if(operatorStick->GetRawButtonPressed(10)) //Cargo ship (push down on the secondary joystick)
     {
         if(operatorInCargoMode)
         {
+            DriverStation::ReportError("Elevator Set to Cargo Ship");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
         }
         else
         {
+            DriverStation::ReportError("Elevator Set to Hatch Ship");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
         }
     }
@@ -176,11 +190,13 @@ void Robot::TeleopPeriodic()
         hatchMechSolenoid->Set(false); //Idiot proofing hatch mech solenoid
         if(operatorStick->GetRawButtonPressed(6)) //intake pneumatics out (right trigger button)
         {
+            DriverStation::ReportError("Intake Pneumatics Out");
             cargoMechLeftSolenoid->Set(true);
             cargoMechLeftSolenoid->Set(true);
         }
         if(operatorStick->GetRawButtonPressed(5)) //intake pneumatics out (right trigger button)
         {
+            DriverStation::ReportError("Intake Pneumatics In");
             cargoMechLeftSolenoid->Set(false);
             cargoMechLeftSolenoid->Set(false);
         }
@@ -202,11 +218,13 @@ void Robot::TeleopPeriodic()
             {
                 outputtingCargo = true;
                 outputtingCargoStartTime = Timer().GetFPGATimestamp();
+                DriverStation::ReportError("Intake Wheels Out");
             }
             else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
             {
                 //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
                 cargoIntakeMotor->Set(1);
+                DriverStation::ReportError("Intake Wheels Fire");
             }
         }
         else
