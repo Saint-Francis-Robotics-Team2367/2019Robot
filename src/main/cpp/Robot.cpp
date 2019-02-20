@@ -129,44 +129,44 @@ void Robot::TeleopPeriodic()
     {
         if(operatorInCargoMode)
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
         }
         else
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
         }
     }
     if(operatorStick->GetRawButton(2)) //level 2 (B button)
     {
         if(operatorInCargoMode)
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
         }
         else
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
         }
     }
     if(operatorStick->GetRawButton(4)) //level 3 (Y button)
     {
         if(operatorInCargoMode)
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
         }
         else
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
         }
     }
     if(operatorStick->GetRawButton(10)) //Cargo ship (push down on the secondary joystick)
     {
         if(operatorInCargoMode)
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
         }
         else
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
         }
     }
 
@@ -174,6 +174,48 @@ void Robot::TeleopPeriodic()
     if(operatorInCargoMode)
     {
         hatchMechSolenoid->Set(false); //Idiot proofing hatch mech solenoid
+        if(operatorStick->GetRawButtonPressed(6)) //intake pneumatics out (right trigger button)
+        {
+            cargoMechLeftSolenoid->Set(true);
+            cargoMechLeftSolenoid->Set(true);
+        }
+        if(operatorStick->GetRawButtonPressed(5)) //intake pneumatics out (right trigger button)
+        {
+            cargoMechLeftSolenoid->Set(false);
+            cargoMechLeftSolenoid->Set(false);
+        }
+
+        if(operatorStick->GetRawAxis(2) > 0.5) //Intake wheels in (left trigger)
+        {
+            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+            cargoLeftMotor->Set(-1);
+            cargoRightMotor->Set(-1);
+            cargoIntakeMotor->Set(-1);
+            outputtingCargo = false;
+        }
+        else if(operatorStick->GetRawAxis(3) > 0.5) //Intake wheels out (right trigger)
+        {
+            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+            cargoLeftMotor->Set(1);
+            cargoRightMotor->Set(1);
+            if(!outputtingCargo)
+            {
+                outputtingCargo = true;
+                outputtingCargoStartTime = Timer().GetFPGATimestamp();
+            }
+            else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
+            {
+                //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+                cargoIntakeMotor->Set(1);
+            }
+        }
+        else
+        {
+            outputtingCargo = false;
+            cargoLeftMotor->Set(0);
+            cargoRightMotor->Set(0);
+            cargoIntakeMotor->Set(0);
+        }
     }
     else
     {
@@ -198,13 +240,14 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-    myRobot->initPID();
+    TeleopInit();
 }
 
 
 void Robot::AutonomousPeriodic()
 {
     //Teleop?
+    TeleopPeriodic();
 }
 
 void Robot::TestPeriodic()

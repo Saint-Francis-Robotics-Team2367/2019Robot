@@ -40,6 +40,9 @@ class Robot : public frc::TimedRobot {
       bool rumbleDriver = false;
       bool rumbleOperator = false;
       int driveMotorCurrentLimit = 30;
+      bool outputtingCargo = false;
+      double outputtingCargoStartTime = 0;
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       int servoUpAngle = 180;
       int servoDownAngle = 0;
 
@@ -48,6 +51,7 @@ class Robot : public frc::TimedRobot {
       const int rMotorBackNum = 16;
       const int lMotorFrontNum = 13;
       const int lMotorBackNum = 14;
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int elevatorMotorNum = 99;
       const int cargoIntakeMotorNum = 99;
       const int cargoLeftMotorNum = 99;
@@ -55,11 +59,13 @@ class Robot : public frc::TimedRobot {
       const int cargoTopMotorNum = 99;
 
       //Solenoid IDs
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int cargoMechLeftSolenoidNum = 99;
       const int cargoMechRightSolenoidNum = 99;
       const int hatchMechSolenoidNum = 99;
 
       //Servo IDs
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int hatchMechServoNum = 99;
 
       //Drive Constants
@@ -69,6 +75,7 @@ class Robot : public frc::TimedRobot {
       const double fConstantDrive = 0;
 
       //Elevator Constants
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int cargoRocket1 = 0;
       const int cargoRocket2 = 0;
       const int cargoRocket3 = 0;
