@@ -18,21 +18,37 @@ void Robot::RobotInit()
     rMotorBack->Follow(*rMotorFront, false);
     lMotorFront->SetInverted(false);
     lMotorBack->Follow(*lMotorFront, false);
-
-    //Shuffle board 
-    SmartDashboard::PutNumber("Rumble Multiplier", rumbleMultiplier);
-    SmartDashboard::PutNumber("Rumble Deadzone", rumbleDeadzone);
-    //SmartDashboard::PutNumber("maxVel", 55.0);
-    SmartDashboard::PutNumber("auto Timeout", 4.0);
-    SmartDashboard::PutNumber("maxAccl", 10000);
-
-    //config acceleraometer
-    accelerometer.SetRange(frc::Accelerometer::kRange_8G);
+    
+    SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
+    SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
 }
 
 void Robot::RobotPeriodic()
 {
+    rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
+    rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
 
+    if(rumbleDriver)
+    {
+        driverStick->SetRumble(GenericHID::RumbleType::kLeftRumble, 1);
+        driverStick->SetRumble(GenericHID::RumbleType::kRightRumble, 1);
+    }
+    else
+    {
+        driverStick->SetRumble(GenericHID::RumbleType::kLeftRumble, 0);
+        driverStick->SetRumble(GenericHID::RumbleType::kRightRumble, 0);
+    }
+
+    if(rumbleOperator)
+    {
+        operatorStick->SetRumble(GenericHID::RumbleType::kLeftRumble, 1);
+        operatorStick->SetRumble(GenericHID::RumbleType::kRightRumble, 1);
+    }
+    else
+    {
+        operatorStick->SetRumble(GenericHID::RumbleType::kLeftRumble, 0);
+        operatorStick->SetRumble(GenericHID::RumbleType::kRightRumble, 0);
+    }
 }
 
 void Robot::AutonomousInit()
@@ -65,46 +81,15 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 * stick->GetRawAxis(4));
+    if(isInverted)
+    {
+        myRobot->ArcadeDrive(-1.0 * driverStick->GetRawAxis(1), driverStick->GetRawAxis(4));
+    }
+    else
+    {
+        myRobot->ArcadeDrive(driverStick->GetRawAxis(1), -1.0 * driverStick->GetRawAxis(4));
+    }
     
-    if(stick->GetRawAxis(3))
-    {
-        motorA->Set(stick->GetRawAxis(3));
-    }
-    else if(stick->GetRawAxis(2))
-    {
-        motorA->Set(-1.0 * stick->GetRawAxis(2));
-    }
-    else
-    {
-        motorA->Set(0);
-    }
-
-    if(stick->GetRawButton(4))
-    {
-        motorB->Set(1);
-    }
-    else if(stick->GetRawButton(2))
-    {
-        motorB->Set(-1);
-    }
-    else
-    {
-        motorB->Set(0);
-    }
-
-    if(stick->GetRawButton(3))
-    {
-        motorC->Set(1);
-    }
-    else if(stick->GetRawButton(1))
-    {
-        motorC->Set(-1);
-    }
-    else
-    {
-        motorC->Set(0);
-    }
 }
 
 void Robot::TestPeriodic()
