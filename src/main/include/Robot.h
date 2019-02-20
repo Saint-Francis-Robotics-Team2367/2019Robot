@@ -52,16 +52,16 @@ class Robot : public frc::TimedRobot {
       const int lMotorFrontNum = 13;
       const int lMotorBackNum = 14;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int elevatorMotorNum = 99;
-      const int cargoIntakeMotorNum = 99;
+      const int elevatorMotorNum = 9;
+      const int cargoIntakeMotorNum = 11;
       const int cargoLeftMotorNum = 99;
       const int cargoRightMotorNum = 99;
       const int cargoTopMotorNum = 99;
 
       //Solenoid IDs
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int cargoMechLeftSolenoidNum = 99;
-      const int cargoMechRightSolenoidNum = 99;
+      const int cargoMechLeftSolenoidNum = 0;
+      const int cargoMechRightSolenoidNum = 1;
       const int hatchMechSolenoidNum = 99;
 
       //Servo IDs

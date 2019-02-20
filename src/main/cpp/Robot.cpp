@@ -78,17 +78,21 @@ void Robot::RobotPeriodic()
 void Robot::TeleopInit()
 {
     myRobot->ArcadeDrive(0, 0);
+    if(singleController)
+    {
+        operatorStick = driverStick;
+    }
 }
 
 void Robot::TeleopPeriodic()
 {
     //Invert button check
-    if(driverStick->GetRawButton(7)) //Back button un-inverts controls
+    if(driverStick->GetRawButton(7) && !singleController) //Back button un-inverts controls
     {
         DriverStation::ReportError("Driver Mode: Uninverted");
         driverIsInverted = false;
     }
-    else if(driverStick->GetRawButton(8)) // Start button inverts controls
+    else if(driverStick->GetRawButton(8) && !singleController) // Start button inverts controls
     {
         DriverStation::ReportError("Driver Mode: Inverted");
         driverIsInverted = true;
@@ -115,14 +119,17 @@ void Robot::TeleopPeriodic()
     }
 
     //Operator Granular Elevator Control
-    if(operatorStick->GetRawAxis(1) > 0.1 || operatorStick->GetRawAxis(1) < -0.1)
+    if(!singleController)
     {
-        //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-        elevatorMotor->Set(operatorStick->GetRawAxis(1) * 0.3);
-    }
-    else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
-    {
-        elevatorMotor->Set(0);
+        if(operatorStick->GetRawAxis(1) > 0.1 || operatorStick->GetRawAxis(1) < -0.1)
+        {
+            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+            elevatorMotor->Set(operatorStick->GetRawAxis(1) * 0.3);
+        }
+        else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
+        {
+            elevatorMotor->Set(0);
+        }   
     }
     
     //Operator elevator levels
