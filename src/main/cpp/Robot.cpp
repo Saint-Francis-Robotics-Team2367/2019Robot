@@ -41,7 +41,7 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
-    SmartDashboard::PutBoolean("Operator in cargo mode?", operatorIsInverted);
+    SmartDashboard::PutBoolean("Operator in cargo mode?", operatorInCargoMode);
 }
 
 void Robot::RobotPeriodic()
@@ -50,7 +50,7 @@ void Robot::RobotPeriodic()
     singleController = SmartDashboard::GetBoolean("Single Controller?", singleController);
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
-    operatorIsInverted = SmartDashboard::GetBoolean("Operator in cargo mode?", operatorIsInverted);
+    operatorInCargoMode = SmartDashboard::GetBoolean("Operator in cargo mode?", operatorInCargoMode);
 
     if(rumbleDriver)
     {
@@ -93,11 +93,11 @@ void Robot::TeleopPeriodic()
     }
     if(operatorStick->GetRawButton(7)) //Back button un-inverts controls
     {
-        operatorIsInverted = false;
+        operatorInCargoMode = false;
     }
-    else if(driverStick->GetRawButton(8)) // Start button inverts controls
+    else if(operatorStick->GetRawButton(8)) // Start button inverts controls
     {
-        operatorIsInverted = true;
+        operatorInCargoMode = true;
     }
 
     //Drive
@@ -127,7 +127,7 @@ void Robot::TeleopPeriodic()
     }
     if(operatorStick->GetRawButton(3)) //level 1 (X button)
     {
-        if(operatorIsInverted)
+        if(operatorInCargoMode)
         {
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
         }
@@ -138,7 +138,7 @@ void Robot::TeleopPeriodic()
     }
     if(operatorStick->GetRawButton(2)) //level 2 (B button)
     {
-        if(operatorIsInverted)
+        if(operatorInCargoMode)
         {
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
         }
@@ -149,7 +149,7 @@ void Robot::TeleopPeriodic()
     }
     if(operatorStick->GetRawButton(4)) //level 3 (Y button)
     {
-        if(operatorIsInverted)
+        if(operatorInCargoMode)
         {
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
         }
@@ -160,7 +160,7 @@ void Robot::TeleopPeriodic()
     }
     if(operatorStick->GetRawButton(10)) //Cargo ship (push down on the secondary joystick)
     {
-        if(operatorIsInverted)
+        if(operatorInCargoMode)
         {
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
         }
