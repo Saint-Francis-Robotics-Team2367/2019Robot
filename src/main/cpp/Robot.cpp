@@ -12,13 +12,24 @@
 
 void Robot::RobotInit() 
 {
-    //set the encoders to quadrature
-    ctre::phoenix::motorcontrol::FeedbackDevice qE = QuadEncoder;
+    //Set followers and inverts for drive motors
     rMotorFront->SetInverted(true);
     rMotorBack->Follow(*rMotorFront, false);
     lMotorFront->SetInverted(false);
     lMotorBack->Follow(*lMotorFront, false);
+
+    //Set current limit for drive motors
+    rMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
+    lMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
+    rMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
+    lMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
     
+    //Config elevator motor
+    elevatorMotor->SelectProfileSlot(0, 0);
+    elevatorMotor->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0, 0);
+    elevatorMotor->SetName("Elevator Motor");
+    elevatorMotor->SetSelectedSensorPosition(0);
+
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
 }

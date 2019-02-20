@@ -38,6 +38,7 @@ class Robot : public frc::TimedRobot {
       bool isInverted = false;
       bool rumbleDriver = false;
       bool rumbleOperator = false;
+      int driveMotorCurrentLimit = 30;
 
       //Motor IDs
       const int rMotorFrontNum = 15;
@@ -72,10 +73,10 @@ class Robot : public frc::TimedRobot {
 
       //Manipulator Motors
       WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
-      WPI_TalonSRX * cargoIntakeMotorNum = new WPI_TalonSRX(cargoIntakeMotorNum);
-      WPI_TalonSRX * cargoLeftMotorNum = new WPI_TalonSRX(cargoLeftMotorNum);
-      WPI_TalonSRX * cargoRightMotorNum = new WPI_TalonSRX(cargoRightMotorNum);
-      WPI_TalonSRX * cargoTopMotorNum = new WPI_TalonSRX(cargoTopMotorNum);
+      WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
+      WPI_TalonSRX * cargoLeftMotor = new WPI_TalonSRX(cargoLeftMotorNum);
+      WPI_TalonSRX * cargoRightMotor = new WPI_TalonSRX(cargoRightMotorNum);
+      WPI_TalonSRX * cargoTopMotor = new WPI_TalonSRX(cargoTopMotorNum);
 
       //Solenoids
       Solenoid * cargoMechLeftSolenoid = new Solenoid(cargoMechLeftSolenoidNum);
