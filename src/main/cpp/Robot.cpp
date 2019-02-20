@@ -40,14 +40,17 @@ void Robot::RobotInit()
 
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
+    SmartDashboard::PutBoolean("Single Controller?", singleController);
+    SmartDashboard::PutBoolean("Operator in cargo mode?", operatorIsInverted);
 }
 
 void Robot::RobotPeriodic()
 {
     SmartDashboard::PutNumber("Elevator Position", elevatorMotor->GetSelectedSensorPosition(0));
-
+    singleController = SmartDashboard::GetBoolean("Single Controller?", singleController);
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
+    operatorIsInverted = SmartDashboard::GetBoolean("Operator in cargo mode?", operatorIsInverted);
 
     if(rumbleDriver)
     {
@@ -79,7 +82,26 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    if(isInverted)
+    //Invert button check
+    if(driverStick->GetRawButton(7)) //Back button un-inverts controls
+    {
+        driverIsInverted = false;
+    }
+    else if(driverStick->GetRawButton(8)) // Start button inverts controls
+    {
+        driverIsInverted = true;
+    }
+    if(operatorStick->GetRawButton(7)) //Back button un-inverts controls
+    {
+        operatorIsInverted = false;
+    }
+    else if(driverStick->GetRawButton(8)) // Start button inverts controls
+    {
+        operatorIsInverted = true;
+    }
+
+    //Drive
+    if(driverIsInverted)
     {
         myRobot->ArcadeDrive(-1.0 * driverStick->GetRawAxis(1), driverStick->GetRawAxis(4));
     }
@@ -87,7 +109,66 @@ void Robot::TeleopPeriodic()
     {
         myRobot->ArcadeDrive(driverStick->GetRawAxis(1), -1.0 * driverStick->GetRawAxis(4));
     }
+
+    //Operator Granular Elevator Control
+    if(operatorStick->GetRawAxis(1) > 0.1 || operatorStick->GetRawAxis(1) < -0.1)
+    {
+        elevatorMotor->Set(operatorStick->GetRawAxis(1) * 0.3);
+    }
+    else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
+    {
+        elevatorMotor->Set(0);
+    }
     
+    //Operator elevator levels
+    if(operatorStick->GetRawButton(1)) //ground level (A button)
+    {
+        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, 0);
+    }
+    if(operatorStick->GetRawButton(3)) //level 1 (X button)
+    {
+        if(operatorIsInverted)
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
+        }
+        else
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
+        }
+    }
+    if(operatorStick->GetRawButton(2)) //level 2 (B button)
+    {
+        if(operatorIsInverted)
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
+        }
+        else
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
+        }
+    }
+    if(operatorStick->GetRawButton(4)) //level 3 (Y button)
+    {
+        if(operatorIsInverted)
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
+        }
+        else
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
+        }
+    }
+    if(operatorStick->GetRawButton(10)) //Cargo ship (push down on the secondary joystick)
+    {
+        if(operatorIsInverted)
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
+        }
+        else
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
+        }
+    }
 }
 
 void Robot::AutonomousInit()
