@@ -10,9 +10,13 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <iostream>
 
+//union TransferBytes transferBytes;
+//int counter = 0;
+
 void Robot::RobotInit() 
 {
-    
+    //highByte = 0;
+    //lowByte = 0;
 }
 
 void Robot::RobotPeriodic() 
@@ -92,13 +96,38 @@ void Robot::TeleopPeriodic()
     char * otherTestChar = &testChar;
     //char * otherTestChar;
     arduino1->Read(otherTestChar,1);
-    int recvd = (int) *otherTestChar;
-    arduino1->SetTimeout(0.05);
 
+    float recvd = (float) *otherTestChar;
+    recvd = recvd / 2.0;
+    //int realRecvd = (int) (recvd);
+    /*
+    if(counter==0){
+        highByte = recvd;
+        counter=1;
+    } else if(counter==1){
+        lowByte = recvd;
+        counter = 2;
+    } else {
+        if(recvd==(highByte & lowByte)){
+            transferBytes.myBytes.high = highByte;
+            transferBytes.myBytes.low = lowByte;
+            fullByte = transferBytes.val;
+        }
+    }*/
+
+
+    
+    
+    
+
+    
+    arduino1->SetTimeout(0.5);
     //might have to setup a timeout to give it time to read
     arduino1->EnableTermination('\n');
-    string data = to_string(recvd);
-    DriverStation::ReportError(data);
+    std::cout<<recvd<<std::endl;
+    //string data = to_string(recvd);
+    //DriverStation::ReportError(data);
+    //I don't know why I still get the watchdog error :(
 
 }
 

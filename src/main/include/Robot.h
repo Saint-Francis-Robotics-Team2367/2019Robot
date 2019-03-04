@@ -37,4 +37,18 @@ class Robot : public frc::TimedRobot {
     //uint8_t * ourData;
     char * ourData;
     SerialPort * arduino1;
+    /*
+    int highByte;
+    int lowByte;
+    uint16_t fullByte;
+
+    union TransferBytes{
+        struct bytes{
+            uint8_t high;
+            uint8_t low;
+        } myBytes;
+        uint16_t val;
+    };
+    */
+
 };
