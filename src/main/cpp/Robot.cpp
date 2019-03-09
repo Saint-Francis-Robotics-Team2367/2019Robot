@@ -97,15 +97,15 @@ void Robot::TeleopPeriodic()
         DriverStation::ReportError("Driver Mode: Inverted");
         driverIsInverted = true;
     }
-    if(operatorStick->GetRawButton(7)) //Back button un-inverts controls
-    {
-        DriverStation::ReportError("Operator Mode: Hatch");
-        operatorInCargoMode = false;
-    }
-    else if(operatorStick->GetRawButton(8)) // Start button inverts controls
+    if(operatorStick->GetRawButton(7)) //Back button sets mode to cargo
     {
         DriverStation::ReportError("Operator Mode: Cargo");
         operatorInCargoMode = true;
+    }
+    else if(operatorStick->GetRawButton(8)) // Start button sets mode to hatch
+    {
+        DriverStation::ReportError("Operator Mode: Hatch");
+        operatorInCargoMode = false;
     }
 
     //Drive
@@ -195,13 +195,13 @@ void Robot::TeleopPeriodic()
     if(operatorInCargoMode)
     {
         hatchMechSolenoid->Set(false); //Idiot proofing hatch mech solenoid
-        if(operatorStick->GetRawButtonPressed(6)) //intake pneumatics out (right trigger button)
+        if(operatorStick->GetRawButtonPressed(6)) //intake pneumatics out (right bumper button)
         {
             DriverStation::ReportError("Intake Pneumatics Out");
             cargoMechLeftSolenoid->Set(true);
             cargoMechLeftSolenoid->Set(true);
         }
-        if(operatorStick->GetRawButtonPressed(5)) //intake pneumatics out (right trigger button)
+        if(operatorStick->GetRawButtonPressed(5)) //intake pneumatics in (left bumper button)
         {
             DriverStation::ReportError("Intake Pneumatics In");
             cargoMechLeftSolenoid->Set(false);
