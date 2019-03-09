@@ -36,7 +36,7 @@ class Robot : public frc::TimedRobot {
       //Control variables
       bool singleController = false;
       bool driverIsInverted = false;
-      bool operatorInCargoMode = false; //false = hatch panel mode
+      bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
       bool rumbleOperator = false;
       int driveMotorCurrentLimit = 30;
