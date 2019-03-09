@@ -16,6 +16,8 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
+#include <frc/Solenoid.h>
+#include <frc/Servo.h>
 
 using namespace frc;
 
@@ -30,36 +32,86 @@ class Robot : public frc::TimedRobot {
       void TestPeriodic() override;
       void DisabledInit() override;
       void ConfigPIDS();
-      const int joystickNum = 0;
+      
+      //Control variables
+      bool singleController = false;
+      bool driverIsInverted = false;
+      bool operatorInCargoMode = false; //false = hatch panel mode
+      bool rumbleDriver = false;
+      bool rumbleOperator = false;
+      int driveMotorCurrentLimit = 30;
+      bool outputtingCargo = false;
+      double outputtingCargoStartTime = 0;
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+      int servoUpAngle = 180;
+      int servoDownAngle = 0;
+
+      //Motor IDs
       const int rMotorFrontNum = 15;
       const int rMotorBackNum = 16;
       const int lMotorFrontNum = 13;
       const int lMotorBackNum = 14;
-      const double TICKS_PER_INCH = 217.3;
-      double pConstantDrive = 1;
-      double iConstantDrive = 0;
-      double dConstantDrive = 0;
-      double fConstantDrive = 0;
-      double maxDriveMotorCurrent = 30;
-      int checkTimeout = 0;
-      int timeOut = 100;
-      double rumbleMultiplier = 1.0/8.0;
-      double rumbleDeadzone = 0.5;
-      double scale = 1;
-      double turning = 0;
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+      const int elevatorMotorNum = 9;
+      const int cargoIntakeMotorNum = 11;
+      const int cargoLeftMotorNum = 99;
+      const int cargoRightMotorNum = 99;
+      const int cargoTopMotorNum = 99;
 
-   private:
-      WPI_TalonSRX * motorA = new WPI_TalonSRX(1);
-      WPI_TalonSRX * motorB = new WPI_TalonSRX(2);
-      WPI_TalonSRX * motorC = new WPI_TalonSRX(3
-      );
+      //Solenoid IDs
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+      const int cargoMechLeftSolenoidNum = 0;
+      const int cargoMechRightSolenoidNum = 1;
+      const int hatchMechSolenoidNum = 99;
+
+      //Servo IDs
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+      const int hatchMechServoNum = 99;
+
+      //Drive Constants
+      const double pConstantDrive = 1;
+      const double iConstantDrive = 0;
+      const double dConstantDrive = 0;
+      const double fConstantDrive = 0;
+
+      //Elevator Constants
+      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+      const int cargoRocket1 = 0;
+      const int cargoRocket2 = 0;
+      const int cargoRocket3 = 0;
+      const int cargoShip = 0;
+      const int hatchRocket1 = 0;
+      const int hatchRocket2 = 0;
+      const int hatchRocket3 = 0;
+      const double pConstantElevator = 1;
+      const double iConstantElevator = 0;
+      const double dConstantElevator = 0;
+
+      //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(lMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * rMotorBack = new rev::CANSparkMax(rMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * rMotorFront = new rev::CANSparkMax(rMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
+
+      //Manipulator Motors
+      WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
+      WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
+      WPI_TalonSRX * cargoLeftMotor = new WPI_TalonSRX(cargoLeftMotorNum);
+      WPI_TalonSRX * cargoRightMotor = new WPI_TalonSRX(cargoRightMotorNum);
+      WPI_TalonSRX * cargoTopMotor = new WPI_TalonSRX(cargoTopMotorNum);
+
+      //Solenoids
+      Solenoid * cargoMechLeftSolenoid = new Solenoid(cargoMechLeftSolenoidNum);
+      Solenoid * cargoMechRightSolenoid = new Solenoid(cargoMechRightSolenoidNum);
+      Solenoid * hatchMechSolenoid = new Solenoid(hatchMechSolenoidNum);
+
+      //Servo
+      Servo * hatchMechServo = new Servo(hatchMechServoNum);
+
+      //SfDrive Object
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
-      Joystick *stick = new Joystick(joystickNum);
-      BuiltInAccelerometer accelerometer;
-      rev::CANEncoder * encoderLeft = new rev::CANEncoder(*lMotorFront);
-      rev::CANEncoder * encoderRight = new rev::CANEncoder(*rMotorFront);
+      
+      //Joysticks
+      Joystick * driverStick = new Joystick(0);
+      Joystick * operatorStick = new Joystick(1);
 };
