@@ -130,7 +130,25 @@ void Robot::TeleopPeriodic()
     //sparks->ArcadeDrive(stick->GetRawAxis(1), stick->GetRawAxis(4));
     
     //basic arcade drive
-    myRobot->ArcadeDrive(scale * stick->GetRawAxis(1), -(stick->GetRawAxis(4) > 0 ? 1 : -1) * stick->GetRawAxis(4) * stick->GetRawAxis(4));
+    if(stick->GetRawButton(7)) //Back button un-inverts controls
+    {
+        DriverStation::ReportError("Driver Mode: Uninverted");
+        driverIsInverted = false;
+    }
+    else if(stick->GetRawButton(8)) // Start button inverts controls
+    {
+        DriverStation::ReportError("Driver Mode: Inverted");
+        driverIsInverted = true;
+    }
+
+    if(driverIsInverted)
+    {
+        myRobot->ArcadeDrive(-1.0 * stick->GetRawAxis(1), stick->GetRawAxis(4));
+    }
+    else
+    {
+        myRobot->ArcadeDrive(stick->GetRawAxis(1), -1.0 * stick->GetRawAxis(4));
+    }
 
     //single spark implemented with left and right triggers
     if (stick->GetRawAxis (2)>0) //left trigger

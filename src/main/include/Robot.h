@@ -53,6 +53,7 @@ class Robot : public frc::TimedRobot {
       int servo_angle = 0;
       int min_servo_angle = 0;
       int max_servo_angle = 180;
+      bool driverIsInverted = false;
 
    private:
       WPI_TalonSRX * lMotorFront = new WPI_TalonSRX(lMotorFrontNum);
