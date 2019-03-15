@@ -42,6 +42,10 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
     SmartDashboard::PutBoolean("Operator in cargo mode?", operatorInCargoMode);
+
+    //Test stuff
+    SmartDashboard::PutNumber("Servo up angle (TICKS NOT DEGREES)", servoUpAngle);
+    SmartDashboard::PutNumber("Servo down angle (TICKS NOT DEGREES)", servoDownAngle);
 }
 
 void Robot::RobotPeriodic()
@@ -51,6 +55,8 @@ void Robot::RobotPeriodic()
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
     operatorInCargoMode = SmartDashboard::GetBoolean("Operator in cargo mode?", operatorInCargoMode);
+    servoUpAngle = SmartDashboard::GetNumber("Servo up angle (TICKS NOT DEGREES)", servoUpAngle);
+    servoDownAngle = SmartDashboard::GetNumber("Servo down angle (TICKS NOT DEGREES)", servoDownAngle);
 
     if(rumbleDriver)
     {
@@ -254,11 +260,11 @@ void Robot::TeleopPeriodic()
         if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
         {
             hatchMechServo->SetAngle(servoUpAngle);
-            hatchMechSolenoid->Set(true);
+            //hatchMechSolenoid->Set(true);
         }
         else
         {
-            hatchMechSolenoid->Set(false);
+            //hatchMechSolenoid->Set(false);
         }
     }
 }

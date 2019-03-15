@@ -66,7 +66,7 @@ class Robot : public frc::TimedRobot {
 
       //Servo IDs
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int hatchMechServoNum = 99;
+      const int hatchMechServoNum = 0;
 
       //Drive Constants
       const double pConstantDrive = 1;
