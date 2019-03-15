@@ -33,6 +33,7 @@ class Robot : public frc::TimedRobot {
       void TestPeriodic() override;
       void DisabledInit() override;
       void ConfigPIDS();
+      void driveToTarget();
       const int joystickNum = 0;
       const int rMotorFrontNum = 2;
       const int rMotorBackNum = 10;
