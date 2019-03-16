@@ -93,15 +93,15 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
     //Invert button check
-    if(driverStick->GetRawButton(7) && !singleController) //Back button un-inverts controls
+    if(driverStick->GetRawButton(6) && !singleController) //Right trigger un-inverts controls
     {
-        DriverStation::ReportError("Driver Mode: Uninverted");
-        driverIsInverted = false;
+        //DriverStation::ReportError("Driver Mode: Uninverted");
+        //driverIsInverted = false;
     }
-    else if(driverStick->GetRawButton(8) && !singleController) // Start button inverts controls
+    else if(driverStick->GetRawButton(5) && !singleController) //Left trigger inverts controls
     {
-        DriverStation::ReportError("Driver Mode: Inverted");
-        driverIsInverted = true;
+        //DriverStation::ReportError("Driver Mode: Inverted");
+        //driverIsInverted = true;
     }
     if(operatorStick->GetRawButton(7)) //Back button sets mode to cargo
     {
@@ -117,7 +117,7 @@ void Robot::TeleopPeriodic()
     //Drive
     if(driverIsInverted)
     {
-        myRobot->ArcadeDrive(-1.0 * driverStick->GetRawAxis(1), driverStick->GetRawAxis(4));
+        myRobot->ArcadeDrive(-1.0 * driverStick->GetRawAxis(1), -1.0 * driverStick->GetRawAxis(4));
     }
     else
     {
