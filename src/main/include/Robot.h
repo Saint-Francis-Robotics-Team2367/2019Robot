@@ -18,6 +18,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Solenoid.h>
 #include <frc/Servo.h>
+#include <SmartSender.h>
 
 using namespace frc;
 
@@ -43,8 +44,8 @@ class Robot : public frc::TimedRobot {
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      int servoUpAngle = 180;
-      int servoDownAngle = 0;
+      double servoUpAngle = 180;
+      double servoDownAngle = 0;
 
       //Motor IDs
       const int rMotorFrontNum = 15;
@@ -111,6 +112,9 @@ class Robot : public frc::TimedRobot {
       //SfDrive Object
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       
+      //SmartSender Object
+      SmartSender * sender = new SmartSender();
+
       //Joysticks
       Joystick * driverStick = new Joystick(0);
       Joystick * operatorStick = new Joystick(1);
