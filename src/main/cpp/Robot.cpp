@@ -49,6 +49,7 @@ void Robot::RobotInit()
     //Test stuff
     sender->addNumber(&servoUpAngle, "Servo up angle (TICKS NOT DEGREES)");
     sender->addNumber(&servoDownAngle, "Servo down angle (TICKS NOT DEGREES)");
+    sender->addNumber(&setpoint, "Setpoint");
 }
 
 void Robot::RobotPeriodic()
@@ -274,14 +275,17 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-    TeleopInit();
+    
 }
 
 
 void Robot::AutonomousPeriodic()
 {
-    //Teleop?
-    TeleopPeriodic();
+    myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_X_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+    if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER))
+    {
+        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+    }
 }
 
 void Robot::TestPeriodic()
