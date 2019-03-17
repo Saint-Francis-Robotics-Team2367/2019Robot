@@ -34,6 +34,10 @@ void Robot::RobotInit()
     elevatorMotor->Config_kP(0, pConstantElevator, 0);
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
+    elevatorMotor->EnableCurrentLimit(true);
+    elevatorMotor->ConfigContinuousCurrentLimit(20);
+    elevatorMotor->ConfigPeakCurrentDuration(30);
+    elevatorMotor->ConfigPeakCurrentLimit(5);
 
     //Name the other talons
     cargoIntakeMotor->SetName("Cargo Intake");
@@ -49,6 +53,7 @@ void Robot::RobotInit()
     //Test stuff
     sender->addNumber(&servoUpAngle, "Servo up angle (TICKS NOT DEGREES)");
     sender->addNumber(&servoDownAngle, "Servo down angle (TICKS NOT DEGREES)");
+    sender->addNumber(&setpoint, "Setpoint");
 }
 
 void Robot::RobotPeriodic()
@@ -106,7 +111,7 @@ void Robot::TeleopPeriodic()
         //DriverStation::ReportError("Driver Mode: Inverted");
         //driverIsInverted = true;
     }
-    if(operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON) //Back button sets mode to cargo
+    if(operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON)) //Back button sets mode to cargo
     {
         DriverStation::ReportError("Operator Mode: Cargo");
         operatorInCargoMode = true;
@@ -274,14 +279,17 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-    TeleopInit();
+    
 }
 
 
 void Robot::AutonomousPeriodic()
 {
-    //Teleop?
-    TeleopPeriodic();
+    myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_X_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+    if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER))
+    {
+        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+    }
 }
 
 void Robot::TestPeriodic()
