@@ -42,6 +42,7 @@ class Robot : public frc::TimedRobot {
       int driveMotorCurrentLimit = 30;
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
+      double elevatorGranularControlMultiplier = 0.3;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       double servoUpAngle = 180;
       double servoDownAngle = 0;

@@ -100,22 +100,30 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    //Operator Granular Elevator Control
-    if(!singleController) //SIngle controller mode uses old mappings
+    if(!singleController)
     {
-        if(operatorStick->GetRawAxis(1) > 0.1 || operatorStick->GetRawAxis(1) < -0.1)
+        //Driver has drivetrain control
+        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+
+        //Driver Granular Elevator Control
+        if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
         {
-            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-            elevatorMotor->Set(operatorStick->GetRawAxis(1) * 0.3);
+            elevatorMotor->Set(-1.0 * driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) * elevatorGranularControlMultiplier);
+        }
+        else if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.1)
+        {
+            elevatorMotor->Set(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) * elevatorGranularControlMultiplier);
         }
         else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
         {
             elevatorMotor->Set(0);
         }   
     }
-    
-    if(singleController)
+    else //Single controller mode is old joystick mappings
     {
+        //Driver has drivetrain control
+        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS))
+
         //Operator elevator levels
         if(operatorStick->GetRawButtonPressed(1)) //ground level (A button)
         {
