@@ -5,6 +5,9 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+enum JoystickButtons {A_BUTTON = 1, B_BUTTON = 2, X_BUTTON = 3, Y_BUTTON = 4, LEFT_BUMPER = 5, RIGHT_BUMPER = 6, BACK_BUTTON = 7, START_BUTTON = 8, LEFT_JOYSTICK_BUTTON = 9, RIGHT_JOYSTICK_BUTTON = 10};
+enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X_AXIS = 4, R_Y_AXIS = 5};
+
 #include "Robot.h"
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -42,6 +45,10 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
     SmartDashboard::PutBoolean("Operator in cargo mode?", operatorInCargoMode);
+
+    //Test stuff
+    sender->addNumber(&servoUpAngle, "Servo up angle (TICKS NOT DEGREES)");
+    sender->addNumber(&servoDownAngle, "Servo down angle (TICKS NOT DEGREES)");
 }
 
 void Robot::RobotPeriodic()
@@ -51,6 +58,8 @@ void Robot::RobotPeriodic()
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
     operatorInCargoMode = SmartDashboard::GetBoolean("Operator in cargo mode?", operatorInCargoMode);
+    
+    sender->getNumbers();
 
     if(rumbleDriver)
     {
@@ -87,44 +96,44 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
     //Invert button check
-    if(driverStick->GetRawButton(7) && !singleController) //Back button un-inverts controls
+    if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER) && !singleController) //Right bumper un-inverts controls
     {
-        DriverStation::ReportError("Driver Mode: Uninverted");
-        driverIsInverted = false;
+        //DriverStation::ReportError("Driver Mode: Uninverted");
+        //driverIsInverted = false;
     }
-    else if(driverStick->GetRawButton(8) && !singleController) // Start button inverts controls
+    else if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER) && !singleController) //Left bumper inverts controls
     {
-        DriverStation::ReportError("Driver Mode: Inverted");
-        driverIsInverted = true;
+        //DriverStation::ReportError("Driver Mode: Inverted");
+        //driverIsInverted = true;
     }
-    if(operatorStick->GetRawButton(7)) //Back button un-inverts controls
-    {
-        DriverStation::ReportError("Operator Mode: Hatch");
-        operatorInCargoMode = false;
-    }
-    else if(operatorStick->GetRawButton(8)) // Start button inverts controls
+    if(operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON) //Back button sets mode to cargo
     {
         DriverStation::ReportError("Operator Mode: Cargo");
         operatorInCargoMode = true;
+    }
+    else if(operatorStick->GetRawButton(JoystickButtons::START_BUTTON)) // Start button sets mode to hatch
+    {
+        DriverStation::ReportError("Operator Mode: Hatch");
+        operatorInCargoMode = false;
     }
 
     //Drive
     if(driverIsInverted)
     {
-        myRobot->ArcadeDrive(-1.0 * driverStick->GetRawAxis(1), driverStick->GetRawAxis(4));
+        myRobot->ArcadeDrive(-1.0 * driverStick->GetRawAxis(JoystickAxes::L_X_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
     }
     else
     {
-        myRobot->ArcadeDrive(driverStick->GetRawAxis(1), -1.0 * driverStick->GetRawAxis(4));
+        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_X_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
     }
 
     //Operator Granular Elevator Control
     if(!singleController)
     {
-        if(operatorStick->GetRawAxis(1) > 0.1 || operatorStick->GetRawAxis(1) < -0.1)
+        if(operatorStick->GetRawAxis(JoystickAxes::L_Y_AXIS) > 0.1 || operatorStick->GetRawAxis(JoystickAxes::L_Y_AXIS) < -0.1)
         {
             //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-            elevatorMotor->Set(operatorStick->GetRawAxis(1) * 0.3);
+            elevatorMotor->Set(operatorStick->GetRawAxis(JoystickAxes::L_Y_AXIS) * 0.3);
         }
         else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
         {
@@ -133,12 +142,12 @@ void Robot::TeleopPeriodic()
     }
     
     //Operator elevator levels
-    if(operatorStick->GetRawButtonPressed(1)) //ground level (A button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //ground level (A button)
     {
         DriverStation::ReportError("Elevator Set to Ground Level");
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, 0);
     }
-    if(operatorStick->GetRawButtonPressed(3)) //level 1 (X button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //level 1 (X button)
     {
         if(operatorInCargoMode)
         {
@@ -151,7 +160,7 @@ void Robot::TeleopPeriodic()
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
         }
     }
-    if(operatorStick->GetRawButtonPressed(2)) //level 2 (B button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //level 2 (B button)
     {
         if(operatorInCargoMode)
         {
@@ -164,7 +173,7 @@ void Robot::TeleopPeriodic()
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
         }
     }
-    if(operatorStick->GetRawButtonPressed(4)) //level 3 (Y button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //level 3 (Y button)
     {
         if(operatorInCargoMode)
         {
@@ -177,7 +186,7 @@ void Robot::TeleopPeriodic()
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
         }
     }
-    if(operatorStick->GetRawButtonPressed(10)) //Cargo ship (push down on the secondary joystick)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::RIGHT_JOYSTICK_BUTTON)) //Cargo ship (push down on the secondary joystick)
     {
         if(operatorInCargoMode)
         {
@@ -195,20 +204,20 @@ void Robot::TeleopPeriodic()
     if(operatorInCargoMode)
     {
         hatchMechSolenoid->Set(false); //Idiot proofing hatch mech solenoid
-        if(operatorStick->GetRawButtonPressed(6)) //intake pneumatics out (right trigger button)
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::RIGHT_BUMPER)) //intake pneumatics out (right bumper button)
         {
             DriverStation::ReportError("Intake Pneumatics Out");
             cargoMechLeftSolenoid->Set(true);
             cargoMechLeftSolenoid->Set(true);
         }
-        if(operatorStick->GetRawButtonPressed(5)) //intake pneumatics out (right trigger button)
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::LEFT_BUMPER)) //intake pneumatics in (left bumper button)
         {
             DriverStation::ReportError("Intake Pneumatics In");
             cargoMechLeftSolenoid->Set(false);
             cargoMechLeftSolenoid->Set(false);
         }
 
-        if(operatorStick->GetRawAxis(2) > 0.5) //Intake wheels in (left trigger)
+        if(operatorStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.5) //Intake wheels in (left trigger)
         {
             //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
             cargoLeftMotor->Set(-1);
@@ -216,7 +225,7 @@ void Robot::TeleopPeriodic()
             cargoIntakeMotor->Set(-1);
             outputtingCargo = false;
         }
-        else if(operatorStick->GetRawAxis(3) > 0.5) //Intake wheels out (right trigger)
+        else if(operatorStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.5) //Intake wheels out (right trigger)
         {
             //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
             cargoLeftMotor->Set(1);
@@ -246,12 +255,12 @@ void Robot::TeleopPeriodic()
     {
         cargoMechLeftSolenoid->Set(false); //Idiot proofing cargo mech solenoid
         cargoMechRightSolenoid->Set(false); //Idiot proofing cargo mech solenoid
-        if(operatorStick->GetRawAxis(2) > 0.5) //Servo down (left trigger)
+        if(operatorStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.5) //Servo down (left trigger)
         {
             hatchMechServo->SetAngle(servoDownAngle);
         }
 
-        if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
+        if(operatorStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.5) //Servo up (right trigger)
         {
             hatchMechServo->SetAngle(servoUpAngle);
             hatchMechSolenoid->Set(true);
