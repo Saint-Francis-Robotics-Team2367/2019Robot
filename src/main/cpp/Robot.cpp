@@ -106,7 +106,7 @@ void Robot::TeleopPeriodic()
         //DriverStation::ReportError("Driver Mode: Inverted");
         //driverIsInverted = true;
     }
-    if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) //Back button sets mode to cargo
+    if(operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON) //Back button sets mode to cargo
     {
         DriverStation::ReportError("Operator Mode: Cargo");
         operatorInCargoMode = true;
