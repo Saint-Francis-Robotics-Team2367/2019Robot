@@ -34,6 +34,10 @@ void Robot::RobotInit()
     elevatorMotor->Config_kP(0, pConstantElevator, 0);
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
+    elevatorMotor->EnableCurrentLimit(true);
+    elevatorMotor->ConfigContinuousCurrentLimit(20);
+    elevatorMotor->ConfigPeakCurrentDuration(30);
+    elevatorMotor->ConfigPeakCurrentLimit(5);
 
     //Name the other talons
     cargoIntakeMotor->SetName("Cargo Intake");
@@ -107,7 +111,7 @@ void Robot::TeleopPeriodic()
         //DriverStation::ReportError("Driver Mode: Inverted");
         //driverIsInverted = true;
     }
-    if(operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON) //Back button sets mode to cargo
+    if(operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON)) //Back button sets mode to cargo
     {
         DriverStation::ReportError("Operator Mode: Cargo");
         operatorInCargoMode = true;
