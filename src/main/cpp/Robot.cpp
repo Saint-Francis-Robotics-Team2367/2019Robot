@@ -122,7 +122,7 @@ void Robot::TeleopPeriodic()
     else //Single controller mode is old joystick mappings
     {
         //Driver has drivetrain control
-        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS))
+        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
         //Operator elevator levels
         if(operatorStick->GetRawButtonPressed(1)) //ground level (A button)
