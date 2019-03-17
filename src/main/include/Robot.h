@@ -33,22 +33,15 @@ class Robot : public frc::TimedRobot {
 
 
  private:
-    //I2C * arduino1;
-    //uint8_t * ourData;
     char * ourData;
     SerialPort * arduino1;
-    /*
-    int highByte;
-    int lowByte;
-    uint16_t fullByte;
 
-    union TransferBytes{
-        struct bytes{
-            uint8_t high;
-            uint8_t low;
-        } myBytes;
-        uint16_t val;
-    };
-    */
+
+    bool firstSensor;
+    int firstSensorChecker;
+    int secondSensorChecker;
+
+    int firstSensorValue;
+    int secondSensorValue;
 
 };

@@ -34,11 +34,7 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() 
 {
-    /*I2C communication init
-    arduino1 = new I2C(I2C::Port::kOnboard, 4);
-    uint8_t test = 1;
-    ourData = &test;
-    */
+
     arduino1 = new SerialPort(9600, SerialPort::Port::kUSB1, 8, SerialPort::kParity_None, SerialPort::kStopBits_One);
     arduino1->SetReadBufferSize(8);
     //arduino1->Read(ourData,32);
@@ -46,78 +42,29 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic() 
 {
-    //arduino1->Transaction(NULL,0,myTestInteger,1);
-    //int myTemporaryTestInteger = *myTestInteger;
-    //std::cout<<myTemporaryTestInteger<<std::endl;
-    //uint8_t myTestInteger2 = 4;
-	//arduino1->Transaction(&myTestInteger2, 1, NULL, 0);
-    //arduino1->Transaction(NULL, 0, myTestInteger, 1);
-    test->Set(0.0);
-    //arduino1->Read(4, 32, ourData);
-    //int myTestInteger;
-    //myTestInteger <<= 8;
-    //myTestInteger |= *ourData;
-    //string myTestString = to_string(myTestInteger);
-    //int myTemporaryTestInteger = *myTestInteger;
-    //cout<<myTestString<<endl;
-
-    //uint8_t line_buf[LINE_MAX] = {4};
-    //char data[] = new char[MAXBYTES];//create a char array to hold the incoming data
-	//bool readData = arduino1->ReadOnly(MAXBYTES, line_buf);//use address 4 on i2c and store it in data
-    //DriverStation::ReportError(to_string(readData));
-    //if(readData){
-        //string myBirdie(reinterpret_cast< char const* >(line_buf)); //some uint8_t operation to string
-	    //DriverStation::ReportError(myBirdie);
-    //}
-    /*I2C Test Code
-    uint8_t testInteger5 = 4;
-    uint8_t receiveTestInteger = 0;
-    uint8_t * bro = &testInteger5;
-    uint8_t * again = &receiveTestInteger;
-    arduino1->Transaction(NULL, 0, again, 32);
-    string rekt = ""; 
-    rekt += (unsigned int) *again;
-    //string rekt = string((char*)browskies);
-    DriverStation::ReportError(rekt);
-    */
-    //string output(data);//create a string from the byte array
-    //uint8_t receiveCheckInteger = 2;
-    //if(receiveCheckInteger == receiveTestInteger) DriverStation::ReportError("BRUH");
-	//might not need these last two lines
-    //int pt = output.indexOf((char)255);
-	//return (String) output.subSequence(0, pt < 0 ? 0 : pt);//im not sure what these last two lines do
-    
-    //I have to use UART for Arduino to RoboRio
-    //I have to continue to use I2C communication for IR Sensor
-    
-    //DriverStation::ReportError(myTestString);
 
     char testChar = ' ';
     char * otherTestChar = &testChar;
-    //char * otherTestChar;
     arduino1->Read(otherTestChar,1);
 
     float recvd = (float) *otherTestChar;
     recvd = recvd / 2.0;
-    //int realRecvd = (int) (recvd);
-    /*
-    if(counter==0){
-        highByte = recvd;
-        counter=1;
-    } else if(counter==1){
-        lowByte = recvd;
-        counter = 2;
+
+
+    if(recvd == 0 && !firstSensor){
+        firstSensor = true;
+    }
+    else if(firstSensor){
+        if(recvd == 1 || recvd==0) DriverStation::ReportError("Sensor 1 is defected!");
+        std::cout<<recvd<<std::endl;
+        firstSensorValue = recvd;
+        firstSensor = false;
     } else {
-        if(recvd==(highByte & lowByte)){
-            transferBytes.myBytes.high = highByte;
-            transferBytes.myBytes.low = lowByte;
-            fullByte = transferBytes.val;
-        }
-    }*/
+        if(recvd == 1 || recvd==0) DriverStation::ReportError("Sensor 2 is defected!");
+        secondSensorValue = recvd;
+std::cout<<recvd<<std::endl;
+    }
 
-
-    
-    
     
 
     

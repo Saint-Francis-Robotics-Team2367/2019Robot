@@ -1,66 +1,91 @@
 #include <Wire.h>
 #include <VL53L1X.h>
 
-VL53L1X sensor;
-/*int counter;
+VL53L1X leftSensor;
+VL53L1X rightSensor;
 
-union TransferBytes{
-    struct bytes{
-      uint8_t high;
-      uint8_t low;
-    };
-    uint16_t val;
-};
+int counter;
+bool functioningLeft;
+bool functioningRight;
 
-TransferBytes transferBytes;
-*/
 void setup() {
-  // put your setup code here, to run once:
+  
   Serial.begin(9600);//changed the baud from 9600 to 115200 as seen in the example sensor code
   Wire.begin();
   Wire.setClock(400000);
-  //counter = 1;
-  sensor.setTimeout(500);
-  if (!sensor.init())
-  {
-    //Serial.println("It no worky");
-    //while(1);
-    while(1) Serial.write(4);
+
+  counter = 0;
+  functioningLeft = true;
+  functioningRight = true;
+
+  pinMode(2, OUTPUT);
+  pinMode(4, OUTPUT);
+  
+  digitalWrite(2, LOW);//turn off right sensor
+  digitalWrite(4, HIGH);//turn on left sensor
+  
+  leftSensor.setTimeout(500);
+  rightSensor.setTimeout(500);
+  
+  if(!leftSensor.init()){
+    functioningLeft = false;
+  } else {
+    leftSensor.setAddress(1);
+    leftSensor.setDistanceMode(VL53L1X::Medium);
+    leftSensor.setMeasurementTimingBudget(50000);
+  
+    // Start continuous readings at a rate of one measurement every 50 ms (the
+    // inter-measurement period). This period should be at least as long as the
+    // timing budget.
+    leftSensor.startContinuous(50); 
   }
 
-  sensor.setDistanceMode(VL53L1X::Long);
-  sensor.setMeasurementTimingBudget(50000);
-
-  // Start continuous readings at a rate of one measurement every 50 ms (the
-  // inter-measurement period). This period should be at least as long as the
-  // timing budget.
-  sensor.startContinuous(50);
+  digitalWrite(4,LOW);//turn off left sensor
+  digitalWrite(2,HIGH);//turn on right sensor
+  
+  rightSensor.setTimeout(500);
+  if (!rightSensor.init()){
+    functioningRight = false;
+  } else {
+    rightSensor.setAddress(2);
+    rightSensor.setDistanceMode(VL53L1X::Medium);
+    rightSensor.setMeasurementTimingBudget(50000);
+  
+    // Start continuous readings at a rate of one measurement every 50 ms (the
+    // inter-measurement period). This period should be at least as long as the
+    // timing budget.
+    rightSensor.startContinuous(50); 
+  }
+  
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  sensor.read();
-  float floatInches = (float)(sensor.ranging_data.range_mm * 0.0393701);
-  floatInches = floatInches * 2.0;
-  int intInches = (int)(floatInches);
-  //if(dataReady()) Serial.write(dataInches);
-  Serial.write(intInches);
-  //Serial.println(dataInches);
-  /*
-  transferBytes.val = sensor.ranging_data.range_mm;
-  
-  if(counter==1){
-    Serial.write(transferBytes.bytes.high);
-    counter=2;
-  } else if(counter==2) {
-    Serial.write(transferBytes.bytes.low);
-    counter=0;
-  } else {
-    uint8_t test1 = transferBytes.bytes.high;
-    uint8_t test2 = transferBytes.bytes.low;
-    Serial.write(test1 & test2);
+  if(counter==0){
+    Serial.write(0);
     counter=1;
-}
-*/
+  } else if(counter==1 && !leftSensor.timeoutOccurred()){
+    if(functioningLeft){
+      leftSensor.read();
+      float floatInches = (float)(leftSensor.ranging_data.range_mm * 0.0393701);
+      floatInches = floatInches * 2.0;
+      int intInches = (int)(floatInches);
+      Serial.write(intInches);
+    } else {
+      Serial.write(1);
+    }
+    counter=2;
+  } else if(!rightSensor.timeoutOccurred()){
+    if(functioningRight){
+      rightSensor.read();
+      float floatInches = (float)(rightSensor.ranging_data.range_mm * 0.0393701);
+      floatInches = floatInches * 2.0;
+      int intInches = (int)(floatInches);
+      Serial.write(intInches);
+    } else {
+      Serial.write(1);
+    }
+    counter = 0;
+  }
+  
   
 }
