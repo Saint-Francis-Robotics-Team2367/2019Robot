@@ -293,6 +293,7 @@ void Robot::AutonomousPeriodic()
         elevatorMotor->SetNeutralMode(NeutralMode::Brake);
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
     }
+<<<<<<< HEAD
    if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER))
     {
         setpoint -= 320;
@@ -305,6 +306,9 @@ void Robot::AutonomousPeriodic()
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
         elevatorMotor->SetNeutralMode(NeutralMode::Coast);
     }
+=======
+    DriverStation::ReportError(std::to_string(elevatorMotor->GetSelectedSensorPosition(0)));
+>>>>>>> 4266e44a40504665cf0f46350552a002e9417a04
 }
 
 void Robot::TestPeriodic()
