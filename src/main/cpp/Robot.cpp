@@ -119,6 +119,56 @@ void Robot::TeleopPeriodic()
             elevatorMotor->Set(0);
         }
 
+        //Driver Cargo Intake Controls
+        if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) //Intake wheels in (LEFT BUMPER)
+        {
+            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+            cargoLeftMotor->Set(-1);
+            cargoRightMotor->Set(-1);
+            cargoIntakeMotor->Set(-1);
+            cargoTopMotor->Set(-1);
+            outputtingCargo = false;
+        }
+        else if(driverStick->GetRawAxis(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
+        {
+            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+            cargoLeftMotor->Set(1);
+            cargoRightMotor->Set(1);
+            if(!outputtingCargo)
+            {
+                outputtingCargo = true;
+                outputtingCargoStartTime = Timer().GetFPGATimestamp();
+                DriverStation::ReportError("Intake Wheels Out");
+            }
+            else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
+            {
+                //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+                cargoTopMotor->Set(1);
+                DriverStation::ReportError("Intake Wheels Fire");
+            }
+        }
+        else
+        {
+            outputtingCargo = false;
+            cargoLeftMotor->Set(0);
+            cargoRightMotor->Set(0);
+            cargoTopMotor->Set(0);
+            cargoIntakeMotor->Set(0);
+        }
+
+        //Driver Cargo Pneumatic Controls
+        if(driverStick->GetRawButton(JoystickButtons::A_BUTTON)) //Retract cargo mech pneumatics (A BUTTON)
+        {
+            cargoMechLeftSolenoid->Set(false);
+            cargoMechRightSolenoid->Set(false);
+        }
+        if(driverStick->GetRawButton(JoystickButtons::X_BUTTON)) //Extend cargo mech pneumatics (X BUTTON)
+        {
+            cargoMechLeftSolenoid->Set(true);
+            cargoMechRightSolenoid->Set(true);
+        }
+
+
         //Operator Elevator Control
         if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
         {
@@ -155,8 +205,6 @@ void Robot::TeleopPeriodic()
             DriverStation::ReportError("Elevator Set to Hatch Level 3");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
         }
-
-
     }
     else //Single controller mode is old joystick mappings
     {
