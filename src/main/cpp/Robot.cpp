@@ -51,8 +51,6 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Operator in cargo mode?", operatorInCargoMode);
 
     //Test stuff
-    sender->addNumber(&servoUpAngle, "Servo up angle (TICKS NOT DEGREES)");
-    sender->addNumber(&servoDownAngle, "Servo down angle (TICKS NOT DEGREES)");
     sender->addNumber(&setpoint, "Setpoint");
 }
 
@@ -169,7 +167,36 @@ void Robot::TeleopPeriodic()
         }
 
         //Driver Hatch Mech Controls
+        if(driverStick->GetRawButton(JoystickButtons::B_BUTTON))
+        {
+            hatchMechState = (hatchMechState + 3)  % 4;
+            hatchMechStateSwitched = true;
+        }
+        if(driverStick->GetRawButton(JoystickButtons::Y_BUTTON))
+        {
+            hatchMechState = (hatchMechState + 1) % 4;
+            hatchMechStateSwitched = true;
+        }
+        if(hatchMechState)
+        {
+            hatchMechState = false;
+            if(hatchMechState == 0)
+            {
 
+            }
+            if(hatchMechState == 1)
+            {
+                
+            }
+            if(hatchMechState == 2)
+            {
+                
+            }
+            if(hatchMechState == 3)
+            {
+                
+            }
+        }
 
         //Operator Elevator Control
         if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
@@ -329,12 +356,12 @@ void Robot::TeleopPeriodic()
             cargoMechRightSolenoid->Set(false); //Idiot proofing cargo mech solenoid
             if(operatorStick->GetRawAxis(2) > 0.5) //Servo down (left trigger)
             {
-                hatchMechTopServo->SetAngle(servoDownAngle);
+                hatchMechTopServo->SetAngle(topServoDownAngle);
             }
 
             if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
             {
-                hatchMechTopServo->SetAngle(servoUpAngle);
+                hatchMechTopServo->SetAngle(topServoUpAngle);
                 hatchMechSolenoid->Set(true);
             }
             else
@@ -358,6 +385,7 @@ void Robot::AutonomousPeriodic()
     {
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
     }
+    DriverStation::ReportError(std::to_string(elevatorMotor->GetSelectedSensorPosition(0)));
 }
 
 void Robot::TestPeriodic()

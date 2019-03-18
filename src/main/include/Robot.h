@@ -43,9 +43,13 @@ class Robot : public frc::TimedRobot {
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
       double elevatorGranularControlMultiplier = 0.3;
+      int hatchMechState = 3;
+      bool hatchMechStateSwitched = true;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      double servoUpAngle = 180;
-      double servoDownAngle = 0;
+      double topServoUpAngle = 0.1;
+      double topServoDownAngle = 0;
+      double bottomServoUpAngle = 0.1;
+      double bottomServoDownAngle = 0;
 
       //Motor IDs
       const int rMotorFrontNum = 15;
