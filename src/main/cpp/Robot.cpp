@@ -290,6 +290,7 @@ void Robot::AutonomousPeriodic()
     {
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
     }
+    DriverStation::ReportError(std::to_string(elevatorMotor->GetSelectedSensorPosition(0)));
 }
 
 void Robot::TestPeriodic()
