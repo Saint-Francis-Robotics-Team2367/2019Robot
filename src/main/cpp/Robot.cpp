@@ -117,7 +117,56 @@ void Robot::TeleopPeriodic()
         else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
         {
             elevatorMotor->Set(0);
-        }   
+        }
+
+        //Operator Elevator Control
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON)) //ground level (START button)
+        {
+            DriverStation::ReportError("Elevator Set to Ground Level");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, 10);
+        }
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
+        {
+            DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
+        }
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
+        {
+            DriverStation::ReportError("Elevator Set to Ball Level 1");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
+        }
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
+        {
+            DriverStation::ReportError("Elevator Set to Ball Level 2");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
+        }
+        if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
+        {
+            DriverStation::ReportError("Elevator Set to Ball Level 3");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
+        }
+        if(operatorStick->GetPOV() == 180) //Hatch level cargo ship (DPAD DOWN)
+        {
+            DriverStation::ReportError("Elevator Set to Hatch Level CargoShip");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
+        }
+        if(operatorStick->GetPOV() == 270) //Hatch rocket level 1 (DPAD LEFT)
+        {
+            DriverStation::ReportError("Elevator Set to Hatch Level 1");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
+        }
+        if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
+        {
+            DriverStation::ReportError("Elevator Set to Hatch Level 2");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
+        }
+        if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
+        {
+            DriverStation::ReportError("Elevator Set to Hatch Level 3");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
+        }
+
+
     }
     else //Single controller mode is old joystick mappings
     {
