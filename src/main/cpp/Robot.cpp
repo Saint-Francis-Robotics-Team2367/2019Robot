@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* Open Source Software - may de modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
@@ -35,8 +35,8 @@ void Robot::RobotInit()
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
     elevatorMotor->EnableCurrentLimit(true);
-    elevatorMotor->ConfigContinuousCurrentLimit(20);
-    elevatorMotor->ConfigPeakCurrentDuration(30);
+    elevatorMotor->ConfigContinuousCurrentLimit(15);
+    elevatorMotor->ConfigPeakCurrentDuration(1);
     elevatorMotor->ConfigPeakCurrentLimit(5);
 
     //Name the other talons
@@ -288,7 +288,22 @@ void Robot::AutonomousPeriodic()
     myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_X_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
     if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER))
     {
+        setpoint += 190;
+        if(setpoint >-220) setpoint =-120;
+        elevatorMotor->SetNeutralMode(NeutralMode::Brake);
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+    }
+   if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER))
+    {
+        setpoint -= 320;
+        if(setpoint <-34500) setpoint =-34500;
+        elevatorMotor->SetNeutralMode(NeutralMode::Brake);
+        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+    }
+    if(driverStick->GetRawButton(JoystickButtons::START_BUTTON))
+    {
+        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
+        elevatorMotor->SetNeutralMode(NeutralMode::Coast);
     }
 }
 
