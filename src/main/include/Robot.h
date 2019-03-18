@@ -67,7 +67,8 @@ class Robot : public frc::TimedRobot {
 
       //Servo IDs
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int hatchMechServoNum = 0;
+      const int hatchMechTopServoNum = 0;
+      const int hatchMechBottomServoNum = 0;
 
       //Drive Constants
       const double pConstantDrive = 1;
@@ -110,7 +111,8 @@ class Robot : public frc::TimedRobot {
       Solenoid * hatchMechSolenoid = new Solenoid(hatchMechSolenoidNum);
 
       //Servo
-      Servo * hatchMechServo = new Servo(hatchMechServoNum);
+      Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
+      Servo * hatchMechBottomServo = new Servo(hatchMechBottomServoNum);
 
       //SfDrive Object
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);

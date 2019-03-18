@@ -168,6 +168,8 @@ void Robot::TeleopPeriodic()
             cargoMechRightSolenoid->Set(true);
         }
 
+        //Driver Hatch Mech Controls
+
 
         //Operator Elevator Control
         if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
@@ -327,12 +329,12 @@ void Robot::TeleopPeriodic()
             cargoMechRightSolenoid->Set(false); //Idiot proofing cargo mech solenoid
             if(operatorStick->GetRawAxis(2) > 0.5) //Servo down (left trigger)
             {
-                hatchMechServo->SetAngle(servoDownAngle);
+                hatchMechTopServo->SetAngle(servoDownAngle);
             }
 
             if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
             {
-                hatchMechServo->SetAngle(servoUpAngle);
+                hatchMechTopServo->SetAngle(servoUpAngle);
                 hatchMechSolenoid->Set(true);
             }
             else
