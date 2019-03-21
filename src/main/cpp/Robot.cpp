@@ -47,7 +47,6 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
-    SmartDashboard::PutBoolean("Operator in cargo mode?", operatorInCargoMode);
 }
 
 void Robot::RobotPeriodic()
@@ -55,8 +54,7 @@ void Robot::RobotPeriodic()
     SmartDashboard::PutNumber("Elevator Position", elevatorMotor->GetSelectedSensorPosition(0));
     singleController = SmartDashboard::GetBoolean("Single Controller?", singleController);
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
-    rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator);
-    operatorInCargoMode = SmartDashboard::GetBoolean("Operator in cargo mode?", operatorInCargoMode);
+    rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator); 
     
     sender->getNumbers();
 
@@ -93,7 +91,7 @@ void Robot::TeleopInit()
 }
 
 void Robot::TeleopPeriodic()
-{
+{    
     if(!singleController)
     {
         //Driver has drivetrain control
@@ -102,11 +100,11 @@ void Robot::TeleopPeriodic()
         //Driver Granular Elevator Control
         if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
         {
-            elevatorMotor->Set(-1.0 * driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) * elevatorGranularControlMultiplier);
+            elevatorMotor->Set(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) * elevatorGranularControlMultiplier);
         }
         else if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.1)
         {
-            elevatorMotor->Set(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) * elevatorGranularControlMultiplier);
+            elevatorMotor->Set(-1.0 * driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) * elevatorGranularControlMultiplier);
         }
         else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
         {
