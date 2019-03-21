@@ -182,19 +182,27 @@ void Robot::TeleopPeriodic()
             hatchMechState = false;
             if(hatchMechState == 0)
             {
-
+                hatchMechBottomServo->Set(bottomServoDownSetpoint);
+                hatchMechTopServo->Set(topServoUpSetpoint);
+                hatchMechSolenoid->Set(false);
             }
             if(hatchMechState == 1)
             {
-                
+                hatchMechBottomServo->Set(bottomServoUpSetpoint);
+                hatchMechTopServo->Set(topServoDownSetpoint);
+                hatchMechSolenoid->Set(false);
             }
             if(hatchMechState == 2)
             {
-                
+                hatchMechBottomServo->Set(bottomServoUpSetpoint);
+                hatchMechTopServo->Set(topServoDownSetpoint);
+                hatchMechSolenoid->Set(true);
             }
             if(hatchMechState == 3)
             {
-                
+                hatchMechBottomServo->Set(bottomServoDownSetpoint);
+                hatchMechTopServo->Set(topServoUpSetpoint);
+                hatchMechSolenoid->Set(true);
             }
         }
 
@@ -356,12 +364,12 @@ void Robot::TeleopPeriodic()
             cargoMechRightSolenoid->Set(false); //Idiot proofing cargo mech solenoid
             if(operatorStick->GetRawAxis(2) > 0.5) //Servo down (left trigger)
             {
-                hatchMechTopServo->SetAngle(topServoDownAngle);
+                //hatchMechTopServo->SetAngle(topServoDownAngle);
             }
 
             if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
             {
-                hatchMechTopServo->SetAngle(topServoUpAngle);
+                //hatchMechTopServo->SetAngle(topServoUpAngle);
                 hatchMechSolenoid->Set(true);
             }
             else
