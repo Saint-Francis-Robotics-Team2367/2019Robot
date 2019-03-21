@@ -120,7 +120,6 @@ void Robot::TeleopPeriodic()
         //Driver Cargo Intake Controls
         if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) //Intake wheels in (LEFT BUMPER)
         {
-            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
             cargoLeftMotor->Set(1);
             cargoRightMotor->Set(1);
             cargoIntakeMotor->Set(1);
@@ -129,7 +128,6 @@ void Robot::TeleopPeriodic()
         }
         else if(driverStick->GetRawAxis(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
         {
-            //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
             cargoLeftMotor->Set(-1);
             cargoRightMotor->Set(-1);
             if(!outputtingCargo)
@@ -140,7 +138,6 @@ void Robot::TeleopPeriodic()
             }
             else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
             {
-                //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
                 cargoTopMotor->Set(-1);
                 DriverStation::ReportError("Intake Wheels Fire");
             }
@@ -326,7 +323,6 @@ void Robot::TeleopPeriodic()
 
             if(operatorStick->GetRawAxis(2) > 0.5) //Intake wheels in (left trigger)
             {
-                //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
                 cargoLeftMotor->Set(1);
                 cargoRightMotor->Set(1);
                 cargoIntakeMotor->Set(1);
@@ -334,7 +330,6 @@ void Robot::TeleopPeriodic()
             }
             else if(operatorStick->GetRawAxis(3) > 0.5) //Intake wheels out (right trigger)
             {
-                //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
                 cargoLeftMotor->Set(-1);
                 cargoRightMotor->Set(-1);
                 if(!outputtingCargo)
@@ -345,7 +340,6 @@ void Robot::TeleopPeriodic()
                 }
                 else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
                 {
-                    //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
                     cargoIntakeMotor->Set(-1);
                     DriverStation::ReportError("Intake Wheels Fire");
                 }
