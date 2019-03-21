@@ -36,22 +36,26 @@ class Robot : public frc::TimedRobot {
       
       //Control variables
       bool singleController = false;
-      bool driverIsInverted = false;
       bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
       bool rumbleOperator = false;
       int driveMotorCurrentLimit = 30;
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
+      double elevatorGranularControlMultiplier = 0.3;
+      int hatchMechState = 0;
+      bool hatchMechStateSwitched = true;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      double servoUpAngle = 180;
-      double servoDownAngle = 0;
+      double topServoUpSetpoint = 0;
+      double topServoDownSetpoint = 0;
+      double bottomServoUpSetpoint = 0;
+      double bottomServoDownSetpoint = 0;
 
       //Motor IDs
       const int rMotorFrontNum = 15;
       const int rMotorBackNum = 16;
-      const int lMotorFrontNum = 13;
-      const int lMotorBackNum = 14;
+      const int lMotorFrontNum = 2;
+      const int lMotorBackNum = 3;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int elevatorMotorNum = 9;
       const int cargoIntakeMotorNum = 11;
@@ -67,7 +71,8 @@ class Robot : public frc::TimedRobot {
 
       //Servo IDs
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int hatchMechServoNum = 0;
+      const int hatchMechTopServoNum = 0;
+      const int hatchMechBottomServoNum = 0;
 
       //Drive Constants
       const double pConstantDrive = 1;
@@ -77,13 +82,13 @@ class Robot : public frc::TimedRobot {
 
       //Elevator Constants
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int cargoRocket1 = 0;
-      const int cargoRocket2 = 0;
-      const int cargoRocket3 = 0;
-      const int cargoShip = 0;
-      const int hatchRocket1 = 0;
-      const int hatchRocket2 = 0;
-      const int hatchRocket3 = 0;
+      const int cargoRocket1 = -10;
+      const int cargoRocket2 = -10;
+      const int cargoRocket3 = -10;
+      const int cargoShip = -10;
+      const int hatchRocket1 = -10;
+      const int hatchRocket2 = -10;
+      const int hatchRocket3 = -10;
       const double pConstantElevator = 1;
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
@@ -110,7 +115,8 @@ class Robot : public frc::TimedRobot {
       Solenoid * hatchMechSolenoid = new Solenoid(hatchMechSolenoidNum);
 
       //Servo
-      Servo * hatchMechServo = new Servo(hatchMechServoNum);
+      Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
+      Servo * hatchMechBottomServo = new Servo(hatchMechBottomServoNum);
 
       //SfDrive Object
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
