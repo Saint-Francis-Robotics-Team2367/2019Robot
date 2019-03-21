@@ -48,9 +48,6 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
     SmartDashboard::PutBoolean("Operator in cargo mode?", operatorInCargoMode);
-
-    //Test stuff
-    sender->addNumber(&setpoint, "Setpoint");
 }
 
 void Robot::RobotPeriodic()
