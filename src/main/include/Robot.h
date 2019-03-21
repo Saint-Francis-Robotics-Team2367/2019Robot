@@ -52,16 +52,15 @@ class Robot : public frc::TimedRobot {
       double bottomServoDownSetpoint = 0;
 
       //Motor IDs
-      const int rMotorFrontNum = 15;
+      const int rMotorFrontNum = 13;
       const int rMotorBackNum = 16;
       const int lMotorFrontNum = 2;
       const int lMotorBackNum = 3;
-      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int elevatorMotorNum = 9;
-      const int cargoIntakeMotorNum = 11;
-      const int cargoLeftMotorNum = 99;
-      const int cargoRightMotorNum = 99;
-      const int cargoTopMotorNum = 99;
+      const int cargoIntakeMotorNum = 15;
+      const int cargoLeftMotorNum = 10;
+      const int cargoRightMotorNum = 14;
+      const int cargoTopMotorNum = 12;
 
       //Solenoid IDs
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
