@@ -16,7 +16,7 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
-#include <frc/Solenoid.h>
+#include <frc/DoubleSolenoid.h>
 #include <frc/Servo.h>
 #include <SmartSender.h>
 
@@ -63,14 +63,12 @@ class Robot : public frc::TimedRobot {
       const int cargoTopMotorNum = 12;
 
       //Solenoid IDs
-      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int cargoMechLeftSolenoidNum = 0;
-      const int cargoMechRightSolenoidNum = 1;
-      const int hatchMechSolenoidNum = 99;
+      const int cargoMechLeftSolenoidNum = 4;
+      const int cargoMechRightSolenoidNum = 2;
+      const int hatchMechSolenoidNum = 0;
 
       //Servo IDs
-      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int hatchMechTopServoNum = 0;
+      const int hatchMechTopServoNum = 1;
       const int hatchMechBottomServoNum = 0;
 
       //Drive Constants
@@ -109,9 +107,9 @@ class Robot : public frc::TimedRobot {
       WPI_TalonSRX * cargoTopMotor = new WPI_TalonSRX(cargoTopMotorNum);
 
       //Solenoids
-      Solenoid * cargoMechLeftSolenoid = new Solenoid(cargoMechLeftSolenoidNum);
-      Solenoid * cargoMechRightSolenoid = new Solenoid(cargoMechRightSolenoidNum);
-      Solenoid * hatchMechSolenoid = new Solenoid(hatchMechSolenoidNum);
+      DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
+      DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
+      DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
 
       //Servo
       Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
