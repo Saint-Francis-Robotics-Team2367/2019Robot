@@ -82,13 +82,13 @@ class Robot : public frc::TimedRobot {
 
       //Elevator Constants
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int cargoRocket1 = 10;
-      const int cargoRocket2 = 10;
-      const int cargoRocket3 = 10;
-      const int cargoShip = 10;
-      const int hatchRocket1 = 10;
-      const int hatchRocket2 = 10;
-      const int hatchRocket3 = 10;
+      const int cargoRocket1 = -10;
+      const int cargoRocket2 = -10;
+      const int cargoRocket3 = -10;
+      const int cargoShip = -10;
+      const int hatchRocket1 = -10;
+      const int hatchRocket2 = -10;
+      const int hatchRocket3 = -10;
       const double pConstantElevator = 1;
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
