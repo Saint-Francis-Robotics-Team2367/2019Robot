@@ -11,7 +11,6 @@
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <ctre/Phoenix.h>
-#include "SFDrive_TalonSRX.h"
 #include "SFDrive_SparkMax.h"
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
@@ -39,7 +38,7 @@ class Robot : public frc::TimedRobot {
       bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
       bool rumbleOperator = false;
-      int driveMotorCurrentLimit = 30;
+      int driveMotorCurrentLimit = 40;
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
       double elevatorGranularControlMultiplier = 0.3;
@@ -56,7 +55,7 @@ class Robot : public frc::TimedRobot {
       const int rMotorBackNum = 16;
       const int lMotorFrontNum = 2;
       const int lMotorBackNum = 3;
-      const int elevatorMotorNum = 9;
+      const int elevatorMotorNum = 1;
       const int cargoIntakeMotorNum = 15;
       const int cargoLeftMotorNum = 10;
       const int cargoRightMotorNum = 14;
@@ -102,9 +101,9 @@ class Robot : public frc::TimedRobot {
       //Manipulator Motors
       WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
       WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
-      WPI_TalonSRX * cargoLeftMotor = new WPI_TalonSRX(cargoLeftMotorNum);
-      WPI_TalonSRX * cargoRightMotor = new WPI_TalonSRX(cargoRightMotorNum);
-      WPI_TalonSRX * cargoTopMotor = new WPI_TalonSRX(cargoTopMotorNum);
+      WPI_VictorSPX * cargoLeftMotor = new WPI_VictorSPX(cargoLeftMotorNum);
+      WPI_VictorSPX * cargoRightMotor = new WPI_VictorSPX(cargoRightMotorNum);
+      WPI_VictorSPX * cargoTopMotor = new WPI_VictorSPX(cargoTopMotorNum);
 
       //Solenoids
       DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);

@@ -29,7 +29,6 @@ void Robot::RobotInit()
     //Config elevator motor
     elevatorMotor->SelectProfileSlot(0, 0);
     elevatorMotor->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0, 0);
-    elevatorMotor->SetName("Elevator Motor");
     elevatorMotor->SetSelectedSensorPosition(0);
     elevatorMotor->Config_kP(0, pConstantElevator, 0);
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
@@ -116,22 +115,26 @@ void Robot::TeleopPeriodic()
         {
             elevatorMotor->Set(0);
         }
+        if(std::abs(elevatorMotor->GetSelectedSensorPosition()) > 35000)
+        {
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, -35000);
+        }
 
         //Driver Cargo Intake Controls
         if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) //Intake wheels in (LEFT BUMPER)
         {
             //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-            cargoLeftMotor->Set(-1);
-            cargoRightMotor->Set(-1);
-            cargoIntakeMotor->Set(-1);
-            cargoTopMotor->Set(-1);
+            cargoLeftMotor->Set(1);
+            cargoRightMotor->Set(1);
+            cargoIntakeMotor->Set(1);
+            cargoTopMotor->Set(1);
             outputtingCargo = false;
         }
         else if(driverStick->GetRawAxis(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
         {
             //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-            cargoLeftMotor->Set(1);
-            cargoRightMotor->Set(1);
+            cargoLeftMotor->Set(-1);
+            cargoRightMotor->Set(-1);
             if(!outputtingCargo)
             {
                 outputtingCargo = true;
@@ -141,7 +144,7 @@ void Robot::TeleopPeriodic()
             else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
             {
                 //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-                cargoTopMotor->Set(1);
+                cargoTopMotor->Set(-1);
                 DriverStation::ReportError("Intake Wheels Fire");
             }
         }
@@ -157,13 +160,13 @@ void Robot::TeleopPeriodic()
         //Driver Cargo Pneumatic Controls
         if(driverStick->GetRawButton(JoystickButtons::A_BUTTON)) //Retract cargo mech pneumatics (A BUTTON)
         {
-            cargoMechLeftSolenoid->Set(false);
-            cargoMechRightSolenoid->Set(false);
+            cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+            cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
         }
         if(driverStick->GetRawButton(JoystickButtons::X_BUTTON)) //Extend cargo mech pneumatics (X BUTTON)
         {
-            cargoMechLeftSolenoid->Set(true);
-            cargoMechRightSolenoid->Set(true);
+            cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+            cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
         }
 
         //Driver Hatch Mech Controls
@@ -184,25 +187,25 @@ void Robot::TeleopPeriodic()
             {
                 hatchMechBottomServo->Set(bottomServoDownSetpoint);
                 hatchMechTopServo->Set(topServoUpSetpoint);
-                hatchMechSolenoid->Set(false);
+                hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
             }
             if(hatchMechState == 1)
             {
                 hatchMechBottomServo->Set(bottomServoUpSetpoint);
                 hatchMechTopServo->Set(topServoDownSetpoint);
-                hatchMechSolenoid->Set(false);
+                hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
             }
             if(hatchMechState == 2)
             {
                 hatchMechBottomServo->Set(bottomServoUpSetpoint);
                 hatchMechTopServo->Set(topServoDownSetpoint);
-                hatchMechSolenoid->Set(true);
+                hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
             }
             if(hatchMechState == 3)
             {
                 hatchMechBottomServo->Set(bottomServoDownSetpoint);
                 hatchMechTopServo->Set(topServoUpSetpoint);
-                hatchMechSolenoid->Set(true);
+                hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
             }
         }
 
@@ -310,33 +313,33 @@ void Robot::TeleopPeriodic()
         //Trigger logic
         if(operatorInCargoMode)
         {
-            hatchMechSolenoid->Set(false); //Idiot proofing hatch mech solenoid
+            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); //Idiot proofing hatch mech solenoid
             if(operatorStick->GetRawButtonPressed(6)) //intake pneumatics out (right trigger button)
             {
                 DriverStation::ReportError("Intake Pneumatics Out");
-                cargoMechLeftSolenoid->Set(true);
-                cargoMechLeftSolenoid->Set(true);
+                cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+                cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
             }
             if(operatorStick->GetRawButtonPressed(5)) //intake pneumatics out (right trigger button)
             {
                 DriverStation::ReportError("Intake Pneumatics In");
-                cargoMechLeftSolenoid->Set(false);
-                cargoMechLeftSolenoid->Set(false);
+                cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+                cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
             }
 
             if(operatorStick->GetRawAxis(2) > 0.5) //Intake wheels in (left trigger)
             {
                 //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-                cargoLeftMotor->Set(-1);
-                cargoRightMotor->Set(-1);
-                cargoIntakeMotor->Set(-1);
+                cargoLeftMotor->Set(1);
+                cargoRightMotor->Set(1);
+                cargoIntakeMotor->Set(1);
                 outputtingCargo = false;
             }
             else if(operatorStick->GetRawAxis(3) > 0.5) //Intake wheels out (right trigger)
             {
                 //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-                cargoLeftMotor->Set(1);
-                cargoRightMotor->Set(1);
+                cargoLeftMotor->Set(-1);
+                cargoRightMotor->Set(-1);
                 if(!outputtingCargo)
                 {
                     outputtingCargo = true;
@@ -346,7 +349,7 @@ void Robot::TeleopPeriodic()
                 else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
                 {
                     //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-                    cargoIntakeMotor->Set(1);
+                    cargoIntakeMotor->Set(-1);
                     DriverStation::ReportError("Intake Wheels Fire");
                 }
             }
@@ -360,8 +363,8 @@ void Robot::TeleopPeriodic()
         }
         else
         {
-            cargoMechLeftSolenoid->Set(false); //Idiot proofing cargo mech solenoid
-            cargoMechRightSolenoid->Set(false); //Idiot proofing cargo mech solenoid
+            cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); //Idiot proofing cargo mech solenoid
+            cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); //Idiot proofing cargo mech solenoid
             if(operatorStick->GetRawAxis(2) > 0.5) //Servo down (left trigger)
             {
                 //hatchMechTopServo->SetAngle(topServoDownAngle);
@@ -370,11 +373,11 @@ void Robot::TeleopPeriodic()
             if(operatorStick->GetRawAxis(3) > 0.5) //Servo up (right trigger)
             {
                 //hatchMechTopServo->SetAngle(topServoUpAngle);
-                hatchMechSolenoid->Set(true);
+                hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
             }
             else
             {
-                hatchMechSolenoid->Set(false);
+                hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
             }
         }
     }
