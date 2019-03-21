@@ -89,7 +89,7 @@ void Robot::RobotPeriodic()
 
 void Robot::TeleopInit()
 {
-    myRobot->ArcadeDrive(0, 0);
+    //myRobot->ArcadeDrive(0, 0);
     if(singleController)
     {
         operatorStick = driverStick;
@@ -382,18 +382,13 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-    
+    TeleopInit();
 }
 
 
 void Robot::AutonomousPeriodic()
 {
-    myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_X_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
-    if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER))
-    {
-        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
-    }
-    DriverStation::ReportError(std::to_string(elevatorMotor->GetSelectedSensorPosition(0)));
+    TeleopPeriodic();
 }
 
 void Robot::TestPeriodic()
