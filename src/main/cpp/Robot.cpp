@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* Open Source Software - may de modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
@@ -35,8 +35,8 @@ void Robot::RobotInit()
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
     elevatorMotor->EnableCurrentLimit(true);
-    elevatorMotor->ConfigContinuousCurrentLimit(20);
-    elevatorMotor->ConfigPeakCurrentDuration(30);
+    elevatorMotor->ConfigContinuousCurrentLimit(15);
+    elevatorMotor->ConfigPeakCurrentDuration(1);
     elevatorMotor->ConfigPeakCurrentLimit(5);
 
     //Name the other talons
@@ -382,7 +382,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-    TeleopInit();
+
 }
 
 
