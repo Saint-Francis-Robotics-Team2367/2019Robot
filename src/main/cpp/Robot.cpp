@@ -49,6 +49,12 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
+
+    //Test stuff
+    sender->addNumber(&myRobot->m_lowSpeedControlMultiplier, "Low Speed Control Multiplier");
+    sender->addNumber(&myRobot->m_highSpeedControlMultiplier, "High Speed Control Multiplier");
+    sender->addNumber(&myRobot->m_deadband, "Deadzone");
+    sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
 }
 
 void Robot::RobotPeriodic()
