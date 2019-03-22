@@ -103,12 +103,11 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 { 
-    DriverStation::ReportError(std::to_string(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS)));   
-    /*
     if(!singleController)
     {
         //Driver has drivetrain control
-        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+       
+         myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
         //Driver Granular Elevator Control
         if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
@@ -167,6 +166,7 @@ void Robot::TeleopPeriodic()
             cargoLeftMotor->Set(-1);
             cargoRightMotor->Set(-1);
             cargoTopMotor->Set(-1);
+            cargoIntakeMotor->Set(-1);
         }
         else
         {
@@ -400,7 +400,6 @@ void Robot::TeleopPeriodic()
             }
         }
     }
-    */
 }
 
 void Robot::AutonomousInit()
