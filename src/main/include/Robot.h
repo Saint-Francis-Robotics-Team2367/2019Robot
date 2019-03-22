@@ -91,6 +91,9 @@ class Robot : public frc::TimedRobot {
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
 
+      int testTopAngle = 0;
+      int testBottomAngle = 0;
+
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(lMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);

@@ -93,11 +93,34 @@ void Robot::TeleopInit()
     cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+
+    hatchMechBottomServo->SetAngle(0); 
+    hatchMechTopServo->SetAngle(0);
+
 }
 
 void Robot::TeleopPeriodic()
 {    
-    if(!singleController)
+
+    if(driverStick->GetRawAxis(JoystickButtons::A_BUTTON)){
+        testTopAngle++;
+        if(testTopAngle>180){
+            testTopAngle = 180;
+        }
+        hatchMechTopServo->SetAngle(testTopAngle); 
+         SmartDashboard::PutNumber("Top Servo Angle", testTopAngle);
+
+    }
+    if(driverStick->GetRawAxis(JoystickButtons::B_BUTTON){
+        testBottomAngle--;
+        if(testBottomAngle < 0){
+            testBottomAngle =0;
+        }
+        hatchMechBottomServo->SetAngle(testBottomAngle);
+        SmartDashboard::PutNumber("Bottom Servo Angle", testBottomAngle);
+
+    }
+   /* if(!singleController)
     {
         //Driver has drivetrain control
         myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
@@ -391,7 +414,11 @@ void Robot::TeleopPeriodic()
                 hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
             }
         }
-    }
+    } */
+
+
+
+
 }
 
 void Robot::AutonomousInit()
