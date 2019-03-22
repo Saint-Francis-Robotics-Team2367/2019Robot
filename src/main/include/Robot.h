@@ -45,6 +45,7 @@ class Robot : public frc::TimedRobot {
       bool hatchMechStateSwitched = true;
       int setpoint = 0;
       bool elevatorFlag = false;
+      int hatchMechSetpoint = 0;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
@@ -80,10 +81,10 @@ class Robot : public frc::TimedRobot {
 
       //Elevator Constants
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int cargoRocket1 = -10;
+      const int cargoRocket1 = -10135;
       const int cargoRocket2 = -10;
       const int cargoRocket3 = -10;
-      const int cargoShip = -10;
+      const int cargoShip = -15366;
       const int hatchRocket1 = -10;
       const int hatchRocket2 = -10;
       const int hatchRocket3 = -10;

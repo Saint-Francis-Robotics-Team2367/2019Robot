@@ -55,6 +55,8 @@ void Robot::RobotInit()
     sender->addNumber(&myRobot->m_highSpeedControlMultiplier, "High Speed Control Multiplier");
     sender->addNumber(&myRobot->m_deadband, "Deadzone");
     sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
+
+    sender->putNumbers();
 }
 
 void Robot::RobotPeriodic()
@@ -145,7 +147,7 @@ void Robot::TeleopPeriodic()
         {
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
         }
-        if(driverStick->GetRawButton(JoystickButtons::START_BUTTON))
+        if(driverStick->GetRawButton(JoystickButtons::START_BUTTON) || operatorStick->GetRawButton(JoystickButtons::START_BUTTON))
         {
             setpoint = 0;
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
@@ -163,10 +165,10 @@ void Robot::TeleopPeriodic()
         }
         else if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
         {
-            cargoLeftMotor->Set(-1);
-            cargoRightMotor->Set(-1);
-            cargoTopMotor->Set(-1);
-            cargoIntakeMotor->Set(-1);
+            cargoLeftMotor->Set(-0.8);
+            cargoRightMotor->Set(-0.8);
+            cargoTopMotor->Set(-0.8);
+            cargoIntakeMotor->Set(-0.8);
         }
         else
         {
@@ -241,6 +243,7 @@ void Robot::TeleopPeriodic()
         {
             DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
             setpoint = cargoShip;
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
         }
         if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
         {
