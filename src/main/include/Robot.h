@@ -69,8 +69,8 @@ class Robot : public frc::TimedRobot {
       const int hatchMechSolenoidNum = 0;
 
       //Servo IDs
-      const int hatchMechTopServoNum = 1;
-      const int hatchMechBottomServoNum = 0;
+      const int hatchMechTopServoNum = 2;
+      const int hatchMechBottomServoNum = 4;
 
       //Drive Constants
       const double pConstantDrive = 1;

@@ -15,6 +15,8 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 void Robot::RobotInit() 
 {
     //Set followers and inverts for drive motors
+    elevatorMotor->SetSensorPhase(true);
+    elevatorMotor->SetInverted(true);
     rMotorFront->SetInverted(true);
     rMotorBack->Follow(*rMotorFront, false);
     lMotorFront->SetInverted(false);
@@ -34,9 +36,9 @@ void Robot::RobotInit()
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
     elevatorMotor->EnableCurrentLimit(true);
-    elevatorMotor->ConfigContinuousCurrentLimit(15);
-    elevatorMotor->ConfigPeakCurrentDuration(1);
-    elevatorMotor->ConfigPeakCurrentLimit(5);
+    elevatorMotor->ConfigContinuousCurrentLimit(30);
+    elevatorMotor->ConfigPeakCurrentDuration(500);
+    elevatorMotor->ConfigPeakCurrentLimit(40);
 
     //Name the other talons
     cargoIntakeMotor->SetName("Cargo Intake");
@@ -98,7 +100,7 @@ void Robot::TeleopPeriodic()
     if(!singleController)
     {
         //Driver has drivetrain control
-        //myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
         //Driver Granular Elevator Control
         if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
@@ -118,9 +120,9 @@ void Robot::TeleopPeriodic()
         if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.1)
         {
             setpoint -= 320 * driverStick->GetRawAxis(JoystickAxes::R_TRIGGER);
-            if(setpoint < -34500) //If elevator close to top stop, don't break the god damn elevator
+            if(setpoint < -40000) //If elevator close to top stop, don't break the god damn elevator
             {
-                setpoint = -34500;
+                setpoint = -40000;
             }
             if(elevatorFlag && setpoint < -400) //If elevator flag triggered and setpoint > -420, set elevator to brake mode and untrigger flag
             {
@@ -152,21 +154,11 @@ void Robot::TeleopPeriodic()
             cargoTopMotor->Set(1);
             outputtingCargo = false;
         }
-        else if(driverStick->GetRawAxis(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
+        else if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
         {
             cargoLeftMotor->Set(-1);
             cargoRightMotor->Set(-1);
-            if(!outputtingCargo)
-            {
-                outputtingCargo = true;
-                outputtingCargoStartTime = Timer().GetFPGATimestamp();
-                DriverStation::ReportError("Intake Wheels Out");
-            }
-            else if(Timer().GetFPGATimestamp() - outputtingCargoStartTime > 0.5) //if it's been half a second
-            {
-                cargoTopMotor->Set(-1);
-                DriverStation::ReportError("Intake Wheels Fire");
-            }
+            cargoTopMotor->Set(-1);
         }
         else
         {
@@ -233,7 +225,7 @@ void Robot::TeleopPeriodic()
         if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
         {
             DriverStation::ReportError("Elevator Set to Ground Level (or hatch level 1)");
-            elevatorMotor->Set(ControlMode::Position, 10);
+            //elevatorMotor->Set(ControlMode::Position, 10);
             elevatorFlag = true;
             elevatorMotor->SetNeutralMode(NeutralMode::Coast);
         }
