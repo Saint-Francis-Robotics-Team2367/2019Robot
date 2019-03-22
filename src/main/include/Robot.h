@@ -94,7 +94,7 @@ class Robot : public frc::TimedRobot {
       const double dConstantElevator = 0;
 
       //Test values
-      double setpoint = 0;
+      double setpoint = -8000;
 
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
