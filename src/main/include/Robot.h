@@ -41,9 +41,11 @@ class Robot : public frc::TimedRobot {
       int driveMotorCurrentLimit = 40;
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
-      double elevatorGranularControlMultiplier = 0.3;
+      double elevatorGranularControlMultiplier = 320;
       int hatchMechState = 0;
       bool hatchMechStateSwitched = true;
+      int setpoint = 0;
+      bool elevatorFlag = false;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;

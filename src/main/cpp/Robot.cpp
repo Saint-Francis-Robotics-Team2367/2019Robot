@@ -88,6 +88,9 @@ void Robot::TeleopInit()
     {
         operatorStick = driverStick;
     }
+    cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 }
 
 void Robot::TeleopPeriodic()
@@ -95,24 +98,49 @@ void Robot::TeleopPeriodic()
     if(!singleController)
     {
         //Driver has drivetrain control
-        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+        //myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
         //Driver Granular Elevator Control
         if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
         {
-            elevatorMotor->Set(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) * elevatorGranularControlMultiplier);
+            setpoint += 320 * driverStick->GetRawAxis(JoystickAxes::L_TRIGGER);
+            if(setpoint > 400 && !elevatorFlag) //If elevator at bottom stop, then coast mode, set sensor to zero and trigger flag
+            {
+                elevatorMotor->SetSelectedSensorPosition(0, 0, 0);
+                elevatorMotor->SetNeutralMode(NeutralMode::Coast);
+                elevatorFlag = true;
+            }
+            else if(!elevatorFlag)
+            {
+                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+            }
         }
-        else if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.1)
+        if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.1)
         {
-            elevatorMotor->Set(-1.0 * driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) * elevatorGranularControlMultiplier);
+            setpoint -= 320 * driverStick->GetRawAxis(JoystickAxes::R_TRIGGER);
+            if(setpoint < -34500) //If elevator close to top stop, don't break the god damn elevator
+            {
+                setpoint = -34500;
+            }
+            if(elevatorFlag && setpoint < -400) //If elevator flag triggered and setpoint > -420, set elevator to brake mode and untrigger flag
+            {
+                elevatorFlag = false;
+                elevatorMotor->SetNeutralMode(NeutralMode::Brake);
+            }
+            if(!elevatorFlag)
+            {
+                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+            }
         }
-        else if(elevatorMotor->GetControlMode() == ctre::phoenix::motorcontrol::ControlMode::PercentOutput) //Don't influence elevator motor if it's in position control mode
+        if(!elevatorFlag)
         {
-            elevatorMotor->Set(0);
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
         }
-        if(std::abs(elevatorMotor->GetSelectedSensorPosition()) > 35000)
+        if(driverStick->GetRawButton(JoystickButtons::START_BUTTON))
         {
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, -35000);
+            setpoint = 0;
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
+            elevatorMotor->SetNeutralMode(NeutralMode::Coast);
         }
 
         //Driver Cargo Intake Controls
@@ -205,37 +233,39 @@ void Robot::TeleopPeriodic()
         if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
         {
             DriverStation::ReportError("Elevator Set to Ground Level (or hatch level 1)");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, 10);
+            elevatorMotor->Set(ControlMode::Position, 10);
+            elevatorFlag = true;
+            elevatorMotor->SetNeutralMode(NeutralMode::Coast);
         }
         if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
         {
             DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
+            setpoint = cargoShip;
         }
         if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
         {
             DriverStation::ReportError("Elevator Set to Ball Level 1");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
+            setpoint = cargoRocket1;
         }
         if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
         {
             DriverStation::ReportError("Elevator Set to Ball Level 2");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
+            setpoint = cargoRocket2;
         }
         if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
         {
             DriverStation::ReportError("Elevator Set to Ball Level 3");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
+            setpoint = hatchRocket1;
         }
         if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
         {
             DriverStation::ReportError("Elevator Set to Hatch Level 2");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
+            setpoint = hatchRocket2;
         }
         if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
         {
             DriverStation::ReportError("Elevator Set to Hatch Level 3");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
+            setpoint = hatchRocket3;
         }
     }
     else //Single controller mode is old joystick mappings
@@ -247,19 +277,19 @@ void Robot::TeleopPeriodic()
         if(operatorStick->GetRawButtonPressed(1)) //ground level (A button)
         {
             DriverStation::ReportError("Elevator Set to Ground Level");
-            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, 0);
+            elevatorMotor->Set(ControlMode::Position, 0);
         }
         if(operatorStick->GetRawButtonPressed(3)) //level 1 (X button)
         {
             if(operatorInCargoMode)
             {
                 DriverStation::ReportError("Elevator Set to Cargo Rocket 1");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket1);
+                elevatorMotor->Set(ControlMode::Position, cargoRocket1);
             }
             else
             {
                 DriverStation::ReportError("Elevator Set to Hatch Rocket 1");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1);
+                elevatorMotor->Set(ControlMode::Position, hatchRocket1);
             }
         }
         if(operatorStick->GetRawButtonPressed(2)) //level 2 (B button)
@@ -267,12 +297,12 @@ void Robot::TeleopPeriodic()
             if(operatorInCargoMode)
             {
                 DriverStation::ReportError("Elevator Set to Cargo Rocket 2");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket2);
+                elevatorMotor->Set(ControlMode::Position, cargoRocket2);
             }
             else
             {
                 DriverStation::ReportError("Elevator Set to Hatch Rocket 2");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket2);
+                elevatorMotor->Set(ControlMode::Position, hatchRocket2);
             }
         }
         if(operatorStick->GetRawButtonPressed(4)) //level 3 (Y button)
@@ -280,12 +310,12 @@ void Robot::TeleopPeriodic()
             if(operatorInCargoMode)
             {
                 DriverStation::ReportError("Elevator Set to Cargo Rocket 3");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoRocket3);
+                elevatorMotor->Set(ControlMode::Position, cargoRocket3);
             }
             else
             {
                 DriverStation::ReportError("Elevator Set to Hatch Rocket 3");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket3);
+                elevatorMotor->Set(ControlMode::Position, hatchRocket3);
             }
         }
         if(operatorStick->GetRawButtonPressed(10)) //Cargo ship (push down on the secondary joystick)
@@ -293,12 +323,12 @@ void Robot::TeleopPeriodic()
             if(operatorInCargoMode)
             {
                 DriverStation::ReportError("Elevator Set to Cargo Ship");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, cargoShip);
+                elevatorMotor->Set(ControlMode::Position, cargoShip);
             }
             else
             {
                 DriverStation::ReportError("Elevator Set to Hatch Ship");
-                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
+                elevatorMotor->Set(ControlMode::Position, hatchRocket1); //hatchRocket1 = level for putting hatches on the cargo ship
             }
         }
 
