@@ -11,14 +11,40 @@
 
 using namespace frc;
 
+void SFDrive::ModifiedAcadeDrive(double xSpeed, double zRotation)
+{
+   if(abs(xSpeed) < m_deadband)
+   {
+      xSpeed = 0;
+   }
+   else if(abs(xSpeed) < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
+   {
+      xSpeed = std::copysign(m_lowSpeedControlMultiplier * (abs(xSpeed)  - m_deadband), xSpeed);
+   }
+   else
+   {
+      xSpeed = std::copysign(m_highSpeedControlMultiplier * abs(xSpeed) + 1 - m_highSpeedControlMultiplier, xSpeed);
+   }
+
+   if(abs(zRotation) < m_deadband)
+   {
+      zRotation = 0;
+   }
+   else if(abs(zRotation) < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
+   {
+      zRotation = std::copysign(m_lowSpeedControlMultiplier * (abs(xSpeed)  - m_deadband), xSpeed);
+   }
+   else
+   {
+      zRotation = std::copysign(m_highSpeedControlMultiplier * abs(xSpeed) + 1 - m_highSpeedControlMultiplier, xSpeed);
+   }
+
+   ArcadeDrive(xSpeed, zRotation);
+}
+
 void SFDrive::ArcadeDrive(double xSpeed, double zRotation){
    double leftMotorOutput;
    double rightMotorOutput;
-
-   if (fabs(xSpeed) <= m_deadband)
-      xSpeed = 0;
-   if (fabs(zRotation) <= m_deadband)
-      zRotation = 0;
 
    double maxInput = std::copysign(std::max(std::abs(xSpeed), std::abs(zRotation)), xSpeed);
 
