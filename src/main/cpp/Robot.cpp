@@ -102,7 +102,9 @@ void Robot::TeleopInit()
 }
 
 void Robot::TeleopPeriodic()
-{    
+{ 
+    DriverStation::ReportError(std::to_string(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS)));   
+    /*
     if(!singleController)
     {
         //Driver has drivetrain control
@@ -398,6 +400,7 @@ void Robot::TeleopPeriodic()
             }
         }
     }
+    */
 }
 
 void Robot::AutonomousInit()
