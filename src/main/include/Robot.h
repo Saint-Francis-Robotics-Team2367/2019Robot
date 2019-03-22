@@ -34,7 +34,6 @@ class Robot : public frc::TimedRobot {
       void ConfigPIDS();
       
       //Control variables
-      bool singleController = false;
       bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
       bool rumbleOperator = false;
@@ -82,19 +81,17 @@ class Robot : public frc::TimedRobot {
       //Elevator Constants
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int cargoRocket1 = -10135;
-      const int cargoRocket2 = -10;
-      const int cargoRocket3 = -10;
+      const int cargoRocket2 = -24271;
+      const int cargoRocket3 = -24271; //WRONG!
       const int cargoShip = -15366;
-      const int hatchRocket1 = -10;
-      const int hatchRocket2 = -10;
-      const int hatchRocket3 = -10;
+      const int hatchRocket2 = -14565;
+      const int hatchRocket3 = -30711;
       const double pConstantElevator = 1;
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
       const int elevatorPeakMotorCurrentLimit = 40;
       const int elevatorContinuousMotorCurrentLimit = 30;
       const int elevatorPeakMotorCurrentLimitDuration = 500;//in milliseconds
-
 
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
