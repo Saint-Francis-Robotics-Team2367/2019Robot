@@ -13,31 +13,33 @@ using namespace frc;
 
 void SFDrive::ModifiedAcadeDrive(double xSpeed, double zRotation)
 {
-   if(xSpeed < m_deadband)
+
+   if(abs(xSpeed) < m_deadband)
    {
       xSpeed = 0;
    }
-   else if(xSpeed < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
+   else if(abs(xSpeed) < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
    {
-      xSpeed = m_lowSpeedControlMultiplier * (xSpeed  - m_deadband);
+      xSpeed = std::copysign(m_lowSpeedControlMultiplier * (abs(xSpeed)  - m_deadband), xSpeed);
    }
    else
    {
-      xSpeed = m_highSpeedControlMultiplier * xSpeed + 1 - m_lowSpeedControlMultiplier;
+      xSpeed = std::copysign(m_highSpeedControlMultiplier * abs(xSpeed) + 1 - m_highSpeedControlMultiplier, xSpeed);
    }
 
-   if(zRotation < m_deadband)
+   if(abs(zRotation) < m_deadband)
    {
       zRotation = 0;
    }
-   else if(zRotation < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
+   else if(abs(zRotation) < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
    {
-      zRotation = m_lowSpeedControlMultiplier * (zRotation  - m_deadband);
+      zRotation = std::copysign(m_lowSpeedControlMultiplier * (abs(xSpeed)  - m_deadband), xSpeed);
    }
    else
    {
-      zRotation = m_highSpeedControlMultiplier * zRotation + 1 - m_lowSpeedControlMultiplier;
+      zRotation = std::copysign(m_highSpeedControlMultiplier * abs(xSpeed) + 1 - m_highSpeedControlMultiplier, xSpeed);
    }
+
    ArcadeDrive(xSpeed, zRotation);
 }
 
