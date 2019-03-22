@@ -36,9 +36,9 @@ void Robot::RobotInit()
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
     elevatorMotor->EnableCurrentLimit(true);
-    elevatorMotor->ConfigContinuousCurrentLimit(30);
-    elevatorMotor->ConfigPeakCurrentDuration(500);
-    elevatorMotor->ConfigPeakCurrentLimit(40);
+    elevatorMotor->ConfigContinuousCurrentLimit(elevatorContinuousMotorCurrentLimit);
+    elevatorMotor->ConfigPeakCurrentDuration(elevatorPeakMotorCurrentLimitDuration);
+    elevatorMotor->ConfigPeakCurrentLimit(elevatorPeakMotorCurrentLimit);
 
     //Name the other talons
     cargoIntakeMotor->SetName("Cargo Intake");
