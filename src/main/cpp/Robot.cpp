@@ -52,6 +52,10 @@ void Robot::RobotInit()
 
     //Test stuff
     sender->addNumber(&setpoint, "Setpoint");
+    sender->addNumber(&myRobot->m_lowSpeedControlMultiplier, "Low Speed Control Multiplier");
+    sender->addNumber(&myRobot->m_highSpeedControlMultiplier, "High Speed Control Multiplier");
+    sender->addNumber(&myRobot->m_deadband, "Deadzone");
+    sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
 }
 
 void Robot::RobotPeriodic()
@@ -101,7 +105,7 @@ void Robot::TeleopPeriodic()
     if(!singleController)
     {
         //Driver has drivetrain control
-        myRobot->ArcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+        myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
         //Driver Granular Elevator Control
         if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)

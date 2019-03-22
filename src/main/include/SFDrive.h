@@ -10,8 +10,13 @@
 #include <thread>
 
 class SFDrive {
-  protected:
+  public:
    double m_deadband = 0.08;
+   double m_lowSpeedControlMultiplier = 0.3;
+   double m_highSpeedControlMultiplier = 0.5;
+   double m_thresholdPercentage = 0.6;
+
+  protected:
    const float m_wheelCircumference = 6 * 3.14;
    float m_ticksPerRev;
    const float m_canTimeout = 0;
@@ -30,6 +35,7 @@ class SFDrive {
    bool threadFinished = true;
 
  public:
+  void ModifiedAcadeDrive(double xSpeed, double zRotation);
   void ArcadeDrive(double xSpeed, double zRotation);
   bool PIDDrive(float inches, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);
   bool PIDTurn(float degreesClockwise, float radius, float maxVel, float timeout = 4, bool ZeroVelocityAtEnd = true);

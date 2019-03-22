@@ -11,6 +11,36 @@
 
 using namespace frc;
 
+void SFDrive::ModifiedAcadeDrive(double xSpeed, double zRotation)
+{
+   if(xSpeed < m_deadband)
+   {
+      xSpeed = 0;
+   }
+   else if(xSpeed < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
+   {
+      xSpeed = m_lowSpeedControlMultiplier * (xSpeed  - m_deadband);
+   }
+   else
+   {
+      xSpeed = m_highSpeedControlMultiplier * xSpeed + 1 - m_lowSpeedControlMultiplier;
+   }
+
+   if(zRotation < m_deadband)
+   {
+      zRotation = 0;
+   }
+   else if(zRotation < (1 - m_deadband) * m_thresholdPercentage + m_deadband)
+   {
+      zRotation = m_lowSpeedControlMultiplier * (zRotation  - m_deadband);
+   }
+   else
+   {
+      zRotation = m_highSpeedControlMultiplier * zRotation + 1 - m_lowSpeedControlMultiplier;
+   }
+   ArcadeDrive(xSpeed, zRotation);
+}
+
 void SFDrive::ArcadeDrive(double xSpeed, double zRotation){
    double leftMotorOutput;
    double rightMotorOutput;
