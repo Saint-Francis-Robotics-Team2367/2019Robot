@@ -36,9 +36,9 @@ void Robot::RobotInit()
     elevatorMotor->Config_kI(0, iConstantElevator, 0);
     elevatorMotor->Config_kD(0, dConstantElevator, 0);
     elevatorMotor->EnableCurrentLimit(true);
-    elevatorMotor->ConfigContinuousCurrentLimit(elevatorContinuousMotorCurrentLimit);
-    elevatorMotor->ConfigPeakCurrentDuration(elevatorPeakMotorCurrentLimitDuration);
-    elevatorMotor->ConfigPeakCurrentLimit(elevatorPeakMotorCurrentLimit);
+    elevatorMotor->ConfigContinuousCurrentLimit(30);
+    elevatorMotor->ConfigPeakCurrentDuration(500);
+    elevatorMotor->ConfigPeakCurrentLimit(40);
 
     //Name the other talons
     cargoIntakeMotor->SetName("Cargo Intake");
@@ -49,6 +49,12 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
     SmartDashboard::PutBoolean("Single Controller?", singleController);
+
+    //Test stuff
+    sender->addNumber(&myRobot->m_lowSpeedControlMultiplier, "Low Speed Control Multiplier");
+    sender->addNumber(&myRobot->m_highSpeedControlMultiplier, "High Speed Control Multiplier");
+    sender->addNumber(&myRobot->m_deadband, "Deadzone");
+    sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
 }
 
 void Robot::RobotPeriodic()
@@ -108,8 +114,9 @@ void Robot::TeleopPeriodic()
         if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
         {
             setpoint += 320 * driverStick->GetRawAxis(JoystickAxes::L_TRIGGER);
-            if(setpoint > -400 && !elevatorFlag) //If elevator at bottom stop, then coast mode, set sensor to zero and trigger flag
+            if(setpoint > 400 && !elevatorFlag) //If elevator at bottom stop, then coast mode, set sensor to zero and trigger flag
             {
+                elevatorMotor->SetSelectedSensorPosition(0, 0, 0);
                 elevatorMotor->SetNeutralMode(NeutralMode::Coast);
                 elevatorFlag = true;
             }
@@ -197,12 +204,16 @@ void Robot::TeleopPeriodic()
             setpoint -= 320 * driverStick->GetRawAxis(JoystickAxes::R_TRIGGER);
             if(setpoint < -40000) //If elevator close to top stop, don't break the god damn elevator
             {
-                setpoint = -40000;//THIS VALUE NEEDS TO BE CHANGED
+                setpoint = -40000;
             }
             if(elevatorFlag && setpoint < -400) //If elevator flag triggered and setpoint > -420, set elevator to brake mode and untrigger flag
             {
                 elevatorFlag = false;
                 elevatorMotor->SetNeutralMode(NeutralMode::Brake);
+            }
+            if(!elevatorFlag)
+            {
+                elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
             }
         }
         if(!elevatorFlag)
