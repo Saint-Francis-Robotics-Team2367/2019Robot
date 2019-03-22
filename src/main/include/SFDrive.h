@@ -11,10 +11,10 @@
 
 class SFDrive {
   public:
-   double m_deadband = 0.08;
-   double m_lowSpeedControlMultiplier = 0.3;
-   double m_highSpeedControlMultiplier = 0.5;
-   double m_thresholdPercentage = 0.6;
+   double m_deadband = 0.12;
+   double m_lowSpeedControlMultiplier = 0.57;
+   double m_highSpeedControlMultiplier = 1.46;
+   double m_thresholdPercentage = 0.5;
   
   protected:
    const float m_wheelCircumference = 6 * 3.14;
