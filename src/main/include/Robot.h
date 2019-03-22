@@ -38,13 +38,14 @@ class Robot : public frc::TimedRobot {
       bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
       bool rumbleOperator = false;
+      int driveMotorCurrentLimit = 40;
       bool outputtingCargo = false;
       double outputtingCargoStartTime = 0;
       double elevatorGranularControlMultiplier = 320;
       int hatchMechState = 0;
       bool hatchMechStateSwitched = true;
       int setpoint = 0;
-      bool elevatorFlag = false;//whether elevator is in coast mode or not
+      bool elevatorFlag = false;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
@@ -76,7 +77,6 @@ class Robot : public frc::TimedRobot {
       const double iConstantDrive = 0;
       const double dConstantDrive = 0;
       const double fConstantDrive = 0;
-      const int driveMotorCurrentLimit = 40;
 
       //Elevator Constants
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
@@ -90,9 +90,6 @@ class Robot : public frc::TimedRobot {
       const double pConstantElevator = 1;
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
-      const int elevatorPeakMotorCurrentLimit = 40;
-      const int elevatorContinuousMotorCurrentLimit = 30;
-      const int elevatorPeakMotorCurrentLimitDuration = 500;//in milliseconds
 
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
