@@ -84,7 +84,6 @@ class Robot : public frc::TimedRobot {
       const int cargoRocket2 = -24271;
       const int cargoRocket3 = -10;
       const int cargoShip = -10;
-      const int hatchRocket1 = -10;
       const int hatchRocket2 = -14565;
       const int hatchRocket3 = -30711;
       const double pConstantElevator = 1;
