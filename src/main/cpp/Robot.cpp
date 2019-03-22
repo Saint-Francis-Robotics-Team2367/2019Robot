@@ -94,13 +94,16 @@ void Robot::TeleopInit()
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 
+    testTopAngle =0;
+    testBottomAngle =0;
+
     hatchMechBottomServo->SetAngle(testTopAngle); 
     hatchMechTopServo->SetAngle(testBottomAngle);
 }
 
 void Robot::TeleopPeriodic()
 {    
-    if(driverStick->GetRawAxis(JoystickButtons::A_BUTTON)){
+    if(driverStick->GetRawButton(JoystickButtons::A_BUTTON)){
         testTopAngle++;
         if(testTopAngle>180){
             testTopAngle = 180;
@@ -108,11 +111,29 @@ void Robot::TeleopPeriodic()
         hatchMechTopServo->SetAngle(testTopAngle); 
          SmartDashboard::PutNumber("Top Servo Angle", testTopAngle);
         
+    }
+    if(driverStick->GetRawButton(JoystickButtons::B_BUTTON)){
+        testTopAngle--;
+        if(testTopAngle<0){
+            testTopAngle = 0;
+        }
+        hatchMechTopServo->SetAngle(testTopAngle); 
+         SmartDashboard::PutNumber("Top Servo Angle", testTopAngle);
+        
     } 
-    if(driverStick->GetRawAxis(JoystickButtons::B_BUTTON)){
+    if(driverStick->GetRawButton(JoystickButtons::Y_BUTTON)){
         testBottomAngle--;
         if(testBottomAngle < 0){
             testBottomAngle =0;
+        }
+        hatchMechBottomServo->SetAngle(testBottomAngle);
+        SmartDashboard::PutNumber("Bottom Servo Angle", testBottomAngle);
+    }
+
+    if(driverStick->GetRawButton(JoystickButtons::X_BUTTON)){
+        testBottomAngle++;
+        if(testBottomAngle > 180){
+            testBottomAngle =180;
         }
         hatchMechBottomServo->SetAngle(testBottomAngle);
         SmartDashboard::PutNumber("Bottom Servo Angle", testBottomAngle);
