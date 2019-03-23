@@ -49,7 +49,7 @@ class Robot : public frc::TimedRobot {
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
       double bottomServoUpSetpoint = 0;
-      double bottomServoDownSetpoint = 0;
+      double bottomServoDownSetpoint = 67;
 
       //Motor IDs
       const int rMotorFrontNum = 13;
@@ -79,10 +79,9 @@ class Robot : public frc::TimedRobot {
       const int driveMotorCurrentLimit = 40;
 
       //Elevator Constants
-      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
-      const int cargoRocket3 = -24271; //WRONG!
+      const int cargoRocket3 = -37080; 
       const int cargoShip = -15366;
       const int hatchRocket2 = -14565;
       const int hatchRocket3 = -30711;

@@ -103,7 +103,7 @@ void Robot::TeleopPeriodic()
         myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
     //Driver Granular Elevator Control
-    if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.1)
+    if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.05)
     {
         setpoint += 320 * driverStick->GetRawAxis(JoystickAxes::L_TRIGGER);
         if(setpoint > 400 && !elevatorFlag) //If elevator at bottom stop, then coast mode, set sensor to zero and trigger flag
@@ -117,7 +117,7 @@ void Robot::TeleopPeriodic()
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
         }
     }
-    if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.1)
+    if(driverStick->GetRawAxis(JoystickAxes::R_TRIGGER) > 0.05)
     {
         setpoint -= 320 * driverStick->GetRawAxis(JoystickAxes::R_TRIGGER);
         if(setpoint < -40000) //If elevator close to top stop, don't break the god damn elevator
@@ -140,6 +140,7 @@ void Robot::TeleopPeriodic()
     }
     if(driverStick->GetRawButton(JoystickButtons::START_BUTTON) || operatorStick->GetRawButton(JoystickButtons::START_BUTTON))
     {
+        elevatorFlag = true;
         setpoint = 0;
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
         elevatorMotor->SetNeutralMode(NeutralMode::Coast);
@@ -183,51 +184,61 @@ void Robot::TeleopPeriodic()
     }
 
     //Driver Hatch Mech Controls
-    if(driverStick->GetRawButton(JoystickButtons::B_BUTTON))
+    if(driverStick->GetRawButtonPressed(JoystickButtons::B_BUTTON))
     {
         hatchMechState = (hatchMechState + 3)  % 4;
         hatchMechStateSwitched = true;
     }
-    if(driverStick->GetRawButton(JoystickButtons::Y_BUTTON))
+    if(driverStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON))
     {
         hatchMechState = (hatchMechState + 1) % 4;
         hatchMechStateSwitched = true;
     }
-    if(hatchMechState)
+    if(driverStick->GetRawButton(JoystickButtons::BACK_BUTTON) || operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON))
     {
-        hatchMechState = false;
-        if(hatchMechState == 0)
-        {
-            hatchMechBottomServo->Set(bottomServoDownSetpoint);
-            hatchMechTopServo->Set(topServoUpSetpoint);
-            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-        }
-        if(hatchMechState == 1)
-        {
-            hatchMechBottomServo->Set(bottomServoUpSetpoint);
-            hatchMechTopServo->Set(topServoDownSetpoint);
-            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-        }
-        if(hatchMechState == 2)
-        {
-            hatchMechBottomServo->Set(bottomServoUpSetpoint);
-            hatchMechTopServo->Set(topServoDownSetpoint);
-            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
-        }
-        if(hatchMechState == 3)
-        {
-            hatchMechBottomServo->Set(bottomServoDownSetpoint);
-            hatchMechTopServo->Set(topServoUpSetpoint);
-            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
-        }
+        hatchMechState = 0;
+    }
+    if(hatchMechState == 0)
+    {
+        //hatchMechBottomServo->Set(bottomServoDownSetpoint);
+        //hatchMechTopServo->Set(topServoUpSetpoint);
+        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    }
+    if(hatchMechState == 1)
+    {
+        //hatchMechBottomServo->Set(bottomServoUpSetpoint);
+        //hatchMechTopServo->Set(topServoDownSetpoint);
+        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    }
+    if(hatchMechState == 2)
+    {
+        //hatchMechBottomServo->Set(bottomServoUpSetpoint);
+        //hatchMechTopServo->Set(topServoDownSetpoint);
+        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+    }
+    if(hatchMechState == 3)
+    {
+        //hatchMechBottomServo->Set(bottomServoDownSetpoint);
+        //hatchMechTopServo->Set(topServoUpSetpoint);
+        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
 
     //Operator Elevator Control
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
+    if(operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
     {
         DriverStation::ReportError("Elevator Set to Ground Level (or hatch level 1)");
         //elevatorMotor->Set(ControlMode::Position, 10);
+        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
         elevatorFlag = true;
+        setpoint = -10;
         elevatorMotor->SetNeutralMode(NeutralMode::Coast);
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
@@ -235,31 +246,37 @@ void Robot::TeleopPeriodic()
         DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
         setpoint = cargoShip;
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+        elevatorFlag = true;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 1");
         setpoint = cargoRocket1;
+        elevatorFlag = true;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 2");
         setpoint = cargoRocket2;
+        elevatorFlag = true;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 3");
         setpoint = cargoRocket3;
+        elevatorFlag = true;
     }
     if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 2");
         setpoint = hatchRocket2;
+        elevatorFlag = true;
     }
     if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 3");
         setpoint = hatchRocket3;
+        elevatorFlag = true;
     }
 }
 
