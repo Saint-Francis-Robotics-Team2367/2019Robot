@@ -95,6 +95,8 @@ void Robot::TeleopInit()
     cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 }
 
 void Robot::TeleopPeriodic()
@@ -188,15 +190,18 @@ void Robot::TeleopPeriodic()
     {
         hatchMechState = (hatchMechState + 3)  % 4;
         hatchMechStateSwitched = true;
+        DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
     }
     if(driverStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON))
     {
         hatchMechState = (hatchMechState + 1) % 4;
         hatchMechStateSwitched = true;
+        DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
     }
     if(driverStick->GetRawButton(JoystickButtons::BACK_BUTTON) || operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON))
     {
         hatchMechState = 0;
+        DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
     }
     if(hatchMechState == 0)
     {
@@ -206,15 +211,15 @@ void Robot::TeleopPeriodic()
         hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
-    if(hatchMechState == 1)
+    else if(hatchMechState == 1)
     {
         //hatchMechBottomServo->Set(bottomServoUpSetpoint);
         //hatchMechTopServo->Set(topServoDownSetpoint);
         //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
-        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
-    if(hatchMechState == 2)
+    else if(hatchMechState == 2)
     {
         //hatchMechBottomServo->Set(bottomServoUpSetpoint);
         //hatchMechTopServo->Set(topServoDownSetpoint);
@@ -222,25 +227,15 @@ void Robot::TeleopPeriodic()
         hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
-    if(hatchMechState == 3)
+    else if(hatchMechState == 3)
     {
         //hatchMechBottomServo->Set(bottomServoDownSetpoint);
         //hatchMechTopServo->Set(topServoUpSetpoint);
         //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
-        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
-        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
 
-    //Operator Elevator Control
-    if(operatorStick->GetPOV() == 180 || operatorStick->GetPOV() == 270) //ground level (START button, DPAD DOWN, DPAD LEFT)
-    {
-        DriverStation::ReportError("Elevator Set to Ground Level (or hatch level 1)");
-        //elevatorMotor->Set(ControlMode::Position, 10);
-        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
-        elevatorFlag = true;
-        setpoint = -10;
-        elevatorMotor->SetNeutralMode(NeutralMode::Coast);
-    }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
@@ -264,6 +259,12 @@ void Robot::TeleopPeriodic()
     {
         DriverStation::ReportError("Elevator Set to Ball Level 3");
         setpoint = cargoRocket3;
+        elevatorFlag = true;
+    }
+    if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 (DPAD-LEFT)
+    {
+        DriverStation::ReportError("Elevator Set to Level 1");
+        setpoint = -400;
         elevatorFlag = true;
     }
     if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
