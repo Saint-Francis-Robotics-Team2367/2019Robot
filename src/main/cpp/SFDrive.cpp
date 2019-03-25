@@ -355,3 +355,8 @@ void SFDrive::joinAutoThread()
    }
    thread->join();
 }
+
+bool SFDrive::isThreadFinished()
+{
+   return threadFinished;
+}

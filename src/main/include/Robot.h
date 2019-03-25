@@ -45,7 +45,9 @@ class Robot : public frc::TimedRobot {
       int setpoint = 0;
       bool elevatorFlag = false;
       int hatchMechSetpoint = 0;
-      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
+      bool autonOverride = false; //KILL THE AI REVOLUTION
+      int autonState = 0;
+      int maxVel = 100; //CHANGE THIS TO SOME BETTER VALUE
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
       double bottomServoUpSetpoint = 0;

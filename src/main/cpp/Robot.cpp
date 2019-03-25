@@ -100,7 +100,7 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 { 
     //Driver has drivetrain control
-        myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+    myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
     //Driver Granular Elevator Control
     if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.05)
@@ -275,7 +275,31 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-    TeleopPeriodic();
+    //Driver Override (currently the only thing it does is kill autonomous with no option to resume)
+    if(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS) > 0.12 || driverStick->GetRawAxis(JoystickAxes::R_X_AXIS) > 0.12)
+    {
+        DriverStation::ReportError("Driver override!");
+        autonOverride = true;
+    }
+    if(autonOverride)
+    {
+        myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+    }
+    else
+    {
+        //Auton code
+        if(autonState == 0)
+        {
+            myRobot->PIDDriveThread();
+            autonState++;
+        }
+        else if(autonState == 1 && myRobot->isThreadFinished())
+        {
+            myRobot->PIDDriveThread(//inches, maxvel, 0, true);
+            autonState++;
+        }
+        //Repeat this for all the stpes of auton, and figure out some way to actuate the hatch mech between stages so you can place a hatch
+    }
 }
 
 void Robot::TestPeriodic()

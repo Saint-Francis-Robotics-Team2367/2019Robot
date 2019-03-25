@@ -47,6 +47,7 @@ class SFDrive {
   bool PIDTurnThread(float degreesClockwise, float radius, float maxVel, float timeout, bool ZeroVelocityAtEnd);
   void joinAutoThread();
   void stopAutoThread();
+  bool isThreadFinished();
 
  protected:
   virtual void setLeftMotor(double value) = 0;
