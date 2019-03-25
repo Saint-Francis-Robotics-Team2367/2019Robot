@@ -91,7 +91,6 @@ void Robot::RobotPeriodic()
 
 void Robot::TeleopInit()
 {
-    //myRobot->ArcadeDrive(0, 0);
     cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
@@ -205,33 +204,21 @@ void Robot::TeleopPeriodic()
     }
     if(hatchMechState == 0)
     {
-        //hatchMechBottomServo->Set(bottomServoDownSetpoint);
-        //hatchMechTopServo->Set(topServoUpSetpoint);
-        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
         hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
     else if(hatchMechState == 1)
     {
-        //hatchMechBottomServo->Set(bottomServoUpSetpoint);
-        //hatchMechTopServo->Set(topServoDownSetpoint);
-        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
         hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
     else if(hatchMechState == 2)
     {
-        //hatchMechBottomServo->Set(bottomServoUpSetpoint);
-        //hatchMechTopServo->Set(topServoDownSetpoint);
-        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
         hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
     else if(hatchMechState == 3)
     {
-        //hatchMechBottomServo->Set(bottomServoDownSetpoint);
-        //hatchMechTopServo->Set(topServoUpSetpoint);
-        //hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
         hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
