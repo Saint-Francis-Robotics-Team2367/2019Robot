@@ -276,10 +276,11 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
     //Driver Override (currently the only thing it does is kill autonomous with no option to resume)
-    if(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS) > 0.12 || driverStick->GetRawAxis(JoystickAxes::R_X_AXIS) > 0.12)
+    if(!autonOverride && (driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS) > 0.12 || driverStick->GetRawAxis(JoystickAxes::R_X_AXIS) > 0.12))
     {
         DriverStation::ReportError("Driver override!");
         autonOverride = true;
+        myRobot->stopAutoThread();
     }
     if(autonOverride)
     {
@@ -290,7 +291,7 @@ void Robot::AutonomousPeriodic()
         //Auton code CURRENTLY A TEMPLATE THAT NEEDS TO BE EXPANDED WITH ACTUAL FIELD MEASURED DISTANCES AND TURNS
         if(autonState == 0)
         {
-            myRobot->PIDDriveThread(20, maxVel, 0, true);;
+            myRobot->PIDDriveThread(20, maxVel, 0, true);
             autonState++;
         }
         else if(autonState == 1 && myRobot->isThreadFinished())
