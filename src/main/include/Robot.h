@@ -34,7 +34,6 @@ class Robot : public frc::TimedRobot {
       void ConfigPIDS();
       
       //Control variables
-      bool singleController = false;
       bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
       bool rumbleOperator = false;
@@ -45,11 +44,12 @@ class Robot : public frc::TimedRobot {
       bool hatchMechStateSwitched = true;
       int setpoint = 0;
       bool elevatorFlag = false;
+      int hatchMechSetpoint = 0;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
       double bottomServoUpSetpoint = 0;
-      double bottomServoDownSetpoint = 0;
+      double bottomServoDownSetpoint = 67;
 
       //Motor IDs
       const int rMotorFrontNum = 13;
@@ -79,21 +79,18 @@ class Robot : public frc::TimedRobot {
       const int driveMotorCurrentLimit = 40;
 
       //Elevator Constants
-      //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
-      const int cargoRocket1 = -10;
-      const int cargoRocket2 = -10;
-      const int cargoRocket3 = -10;
-      const int cargoShip = -10;
-      const int hatchRocket1 = -10;
-      const int hatchRocket2 = -10;
-      const int hatchRocket3 = -10;
+      const int cargoRocket1 = -10135;
+      const int cargoRocket2 = -24271;
+      const int cargoRocket3 = -37080; 
+      const int cargoShip = -15366;
+      const int hatchRocket2 = -14565;
+      const int hatchRocket3 = -30711;
       const double pConstantElevator = 1;
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
       const int elevatorPeakMotorCurrentLimit = 40;
       const int elevatorContinuousMotorCurrentLimit = 30;
       const int elevatorPeakMotorCurrentLimitDuration = 500;//in milliseconds
-
 
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
