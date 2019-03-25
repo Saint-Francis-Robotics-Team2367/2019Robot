@@ -269,7 +269,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-
+    
 }
 
 
@@ -283,19 +283,19 @@ void Robot::AutonomousPeriodic()
     }
     if(autonOverride)
     {
-        myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+        TeleopPeriodic();
     }
     else
     {
-        //Auton code
+        //Auton code CURRENTLY A TEMPLATE THAT NEEDS TO BE EXPANDED WITH ACTUAL FIELD MEASURED DISTANCES AND TURNS
         if(autonState == 0)
         {
-            myRobot->PIDDriveThread();
+            myRobot->PIDDriveThread(20, maxVel, 0, true);;
             autonState++;
         }
         else if(autonState == 1 && myRobot->isThreadFinished())
         {
-            myRobot->PIDDriveThread(//inches, maxvel, 0, true);
+            myRobot->PIDDriveThread(20, maxVel, 0, true);
             autonState++;
         }
         //Repeat this for all the stpes of auton, and figure out some way to actuate the hatch mech between stages so you can place a hatch
