@@ -229,37 +229,37 @@ void Robot::TeleopPeriodic()
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
         elevatorFlag = true;
     }
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
+    else if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 1");
         setpoint = cargoRocket1;
         elevatorFlag = true;
     }
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
+    else if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 2");
         setpoint = cargoRocket2;
         elevatorFlag = true;
     }
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
+    else if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 3");
         setpoint = cargoRocket3;
         elevatorFlag = true;
     }
-    if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 (DPAD-LEFT)
+    else if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 (DPAD-LEFT)
     {
         DriverStation::ReportError("Elevator Set to Level 1");
         setpoint = -400;
         elevatorFlag = true;
     }
-    if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
+    else if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 2");
         setpoint = hatchRocket2;
         elevatorFlag = true;
     }
-    if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
+    else if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 3");
         setpoint = hatchRocket3;
