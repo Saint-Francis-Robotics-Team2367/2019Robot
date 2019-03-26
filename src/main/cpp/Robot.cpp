@@ -12,9 +12,7 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-// static class variable
-bool Robot::isHatchThreadFinished = false;
-
+// static class variables
 void Robot::RobotInit() 
 {
     //Set followers and inverts for drive motors
@@ -273,10 +271,17 @@ void Robot::TeleopPeriodic()
 void Robot::AutonomousInit() {
     
 }
-void placeHatchThreaded() {
-    // N O  M U T E X
+void Robot::placeHatchThreaded() {
+    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint); // secure hatch
+    
+    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward); // move hatch forward
 
-    Robot::isHatchThreadFinished = true;
+    hatchMechBottomServo->SetAngle(bottomServoDownSetpoint); // relase hatch
+
+    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); // retract mechanism
+
+    // N O  M U T E X
+    isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
     if(autonOverride) {
@@ -293,7 +298,7 @@ void Robot::AutonomousPeriodic() {
 
     switch(autonState) { // this is less bad than a sequence of if's
         case(0) :
-            myRobot->PIDDriveThread(20, maxVel, 0, true);
+            myRobot->PIDDriveThread(distanceToCargoShip, maxVel, 0, true);
             DriverStation::ReportError("Started Auton Stage 0"); // fix distance
             autonState++;
             break; // FALL THROUGH LOGIC 
@@ -304,7 +309,7 @@ void Robot::AutonomousPeriodic() {
 
             DriverStation::ReportError("First Stage finished. Placing Hatch...");
             // hatch mech threading 
-            std::thread hatchThread(placeHatchThreaded);
+            std::thread hatchThread(&Robot::placeHatchThreaded, this);
             autonState++;
         }
             break;
@@ -314,8 +319,9 @@ void Robot::AutonomousPeriodic() {
             if(!Robot::isHatchThreadFinished) break;
 
             DriverStation::ReportError("Hatch Placed. Reversing...");
-            myRobot->PIDDriveThread(20, maxVel, 0, true); // fix distance
+            myRobot->PIDDriveThread(distanceToReverse, maxVel, 0, true); // fix distance
             autonState++;
+            break;
         
         case(3) :
             if(!myRobot->isThreadFinished()) break;
@@ -330,7 +336,7 @@ void Robot::AutonomousPeriodic() {
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Moving to corner...");
-            myRobot->PIDDriveThread(20, maxVel, 0, true); // fix distance
+            myRobot->PIDDriveThread(distanceToTurningPoint, maxVel, 0, true); // fix distance
             autonState++;
             break;
             
@@ -339,7 +345,7 @@ void Robot::AutonomousPeriodic() {
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Turning...");
-            myRobot->PIDTurnThread(90, 0, maxVel, 0, true); // 
+            myRobot->PIDTurnThread(distanceToFeederStation, 0, maxVel, 0, true); // 
             autonState++;
             break;
 

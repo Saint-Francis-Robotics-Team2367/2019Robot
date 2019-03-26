@@ -32,7 +32,7 @@ class Robot : public frc::TimedRobot {
       void TestPeriodic() override;
       void DisabledInit() override;
       void ConfigPIDS();
-      
+      void placeHatchThreaded();
       //Control variables
       bool operatorInCargoMode = true; //false = hatch panel mode
       bool rumbleDriver = false;
@@ -79,7 +79,12 @@ class Robot : public frc::TimedRobot {
       const double dConstantDrive = 0;
       const double fConstantDrive = 0;
       const int driveMotorCurrentLimit = 40;
-
+      // Auton Constants
+      const double distanceToCargoShip = 0;
+      const double distanceToReverse = 0;
+      const double distanceToTurningPoint = 0;
+      const double distanceToFeederStation = 0;
+      
       //Elevator Constants
       const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
@@ -126,5 +131,5 @@ class Robot : public frc::TimedRobot {
       Joystick * driverStick = new Joystick(0);
       Joystick * operatorStick = new Joystick(1);
     // Threading
-     static bool isHatchThreadFinished;
+      bool isHatchThreadFinished = false;
 };
