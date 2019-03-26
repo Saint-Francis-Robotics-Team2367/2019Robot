@@ -5,12 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-enum JoystickButtons {A_BUTTON = 1, B_BUTTON = 2, X_BUTTON = 3, Y_BUTTON = 4, LEFT_BUMPER = 5, RIGHT_BUMPER = 6, BACK_BUTTON = 7, START_BUTTON = 8, LEFT_JOYSTICK_BUTTON = 9, RIGHT_JOYSTICK_BUTTON = 10};
+enum JoystickButtons {A_BUTTON = 1, B_BUTTON = 2, X_BUTTON = 3, Y_BUTTON = 4, LEFT_BUMPER = 5, RIGHT_BUMPER = 6, BACK_BUTTON = 7, START_BUTTON = 8, LEFT_JOYSTICK_BUTTON = 9, RIGHT_JOYSTICK_BUTTON = 10, AUTON_EXIT_BUTTON = 3};
 enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X_AXIS = 4, R_Y_AXIS = 5};
 
 #include "Robot.h"
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
+
+// static class variable
+bool Robot::isHatchThreadFinished = false;
 
 void Robot::RobotInit() 
 {
@@ -267,40 +270,77 @@ void Robot::TeleopPeriodic()
     }
 }
 
-void Robot::AutonomousInit()
-{
+void Robot::AutonomousInit() {
     
 }
-
-
-void Robot::AutonomousPeriodic()
-{
-    //Driver Override (currently the only thing it does is kill autonomous with no option to resume)
-    if(!autonOverride && (driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS) > 0.12 || driverStick->GetRawAxis(JoystickAxes::R_X_AXIS) > 0.12))
-    {
-        DriverStation::ReportError("Driver override!");
-        autonOverride = true;
+void placeHatchThreaded() {
+    // N O  M U T E X
+    
+    Robot::isHatchThreadFinished = true;
+}
+void Robot::AutonomousPeriodic() {
+    // --|| ALL OF THIS WILL BE IN TELEOP INIT ||--
+    if(driverStick->GetRawButton(JoystickButtons::AUTON_EXIT_BUTTON)) { // Driver Full Override
+        DriverStation::ReportError("Auton has been aborted. Now starting teleoperated...");
         myRobot->stopAutoThread();
+        // break;
     }
-    if(autonOverride)
-    {
-        TeleopPeriodic();
-    }
-    else
-    {
-        //Auton code CURRENTLY A TEMPLATE THAT NEEDS TO BE EXPANDED WITH ACTUAL FIELD MEASURED DISTANCES AND TURNS
-        if(autonState == 0)
-        {
+
+    switch(autonState) { // this is less bad than a sequence of if's
+        case(0) :
             myRobot->PIDDriveThread(20, maxVel, 0, true);
+            DriverStation::ReportError("Started Auton Stage 0"); // fix distance
+            autonState++;
+            break; // FALL THROUGH LOGIC 
+ 
+        case(1) :
+        { // Isolates the scope of the thread declaration
+            if(!myRobot->isThreadFinished()) break;
+
+            DriverStation::ReportError("First Stage finished. Placing Hatch...");
+            // hatch mech threading 
+            std::thread hatchThread(placeHatchThreaded);
             autonState++;
         }
-        else if(autonState == 1 && myRobot->isThreadFinished())
-        {
-            myRobot->PIDDriveThread(20, maxVel, 0, true);
+            break;
+        
+        case(2) : 
+            // hatch mech threading conditional
+            if(!Robot::isHatchThreadFinished) break;
+
+            DriverStation::ReportError("Hatch Placed. Reversing...");
+            myRobot->PIDDriveThread(20, maxVel, 0, true); // fix distance
             autonState++;
-        }
-        //Repeat this for all the stpes of auton, and figure out some way to actuate the hatch mech between stages so you can place a hatch
-    }
+        
+        case(3) :
+            if(!myRobot->isThreadFinished()) break;
+
+            DriverStation::ReportError("Turning...");
+            myRobot->PIDTurnThread(90, 0, maxVel, 0, true);
+            autonState++;
+            break;
+
+        case(4) :
+            // move forward
+            myRobot->PIDDriveThread(20, maxVel, 0, true); // fix distance
+            
+            if(!myRobot->isThreadFinished()) break;
+            autonState++;
+            break;
+            
+        case(5) :
+            // turn 
+            if(!myRobot->isThreadFinished()) break;
+            autonState++;
+            break;
+
+        case(6) : 
+            // final move
+            if(!myRobot->isThreadFinished()) break;
+            autonState++;
+            break;
+    }    
+
 }
 
 void Robot::TestPeriodic()

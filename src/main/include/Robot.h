@@ -125,4 +125,6 @@ class Robot : public frc::TimedRobot {
       //Joysticks
       Joystick * driverStick = new Joystick(0);
       Joystick * operatorStick = new Joystick(1);
+    // Threading
+     static bool isHatchThreadFinished;
 };
