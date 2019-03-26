@@ -1,17 +1,24 @@
 
-#include <unistd.h> 
 #include <stdio.h> 
+#include <stdlib.h>
+#include <unistd.h> 
+#include <string.h> 
+#include <sys/types.h> 
 #include <sys/socket.h> 
-#include <stdlib.h> 
+#include <arpa/inet.h> 
 #include <netinet/in.h> 
+  
 
-#define PORT 5353 
+#define PORT 5353
+#define MAX_BUFF 100000   
 
 class UDPClient{
-    struct sockaddr_in address; 
-    int sock = 0, valread; 
-    struct sockaddr_in serv_addr; 
-    const char *hello = "Hello from client"; 
-    char buffer[MAX_BUFF] = {0}; 
+    int sockfd; 
+    char buffer[MAX_BUFF]; 
+    char *hello = "Hello from client"; 
+    struct sockaddr_in   servaddr; //is this corredct MRP help me
+    
+    UDPClient();
+    void setup_socket();
 
-}
+};
