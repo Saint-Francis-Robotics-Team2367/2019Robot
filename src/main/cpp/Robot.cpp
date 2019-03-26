@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-enum JoystickButtons {A_BUTTON = 1, B_BUTTON = 2, X_BUTTON = 3, Y_BUTTON = 4, LEFT_BUMPER = 5, RIGHT_BUMPER = 6, BACK_BUTTON = 7, START_BUTTON = 8, LEFT_JOYSTICK_BUTTON = 9, RIGHT_JOYSTICK_BUTTON = 10, AUTON_EXIT_BUTTON = 3};
+enum JoystickButtons {A_BUTTON = 1, B_BUTTON = 2, X_BUTTON = 3, Y_BUTTON = 4, LEFT_BUMPER = 5, RIGHT_BUMPER = 6, BACK_BUTTON = 7, START_BUTTON = 8, LEFT_JOYSTICK_BUTTON = 9, RIGHT_JOYSTICK_BUTTON = 10};
 enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X_AXIS = 4, R_Y_AXIS = 5};
 
 #include "Robot.h"
@@ -275,15 +275,20 @@ void Robot::AutonomousInit() {
 }
 void placeHatchThreaded() {
     // N O  M U T E X
-    
+
     Robot::isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
-    // --|| ALL OF THIS WILL BE IN TELEOP INIT ||--
-    if(driverStick->GetRawButton(JoystickButtons::AUTON_EXIT_BUTTON)) { // Driver Full Override
+    if(autonOverride) {
+        TeleopPeriodic();
+        return;
+    }
+
+    if(std::abs(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS)) > 0.12 || std::abs(driverStick->GetRawAxis(JoystickAxes::R_X_AXIS)) > 0.12) { // Driver Full Override
+        autonOverride = true;
         DriverStation::ReportError("Auton has been aborted. Now starting teleoperated...");
         myRobot->stopAutoThread();
-        // break;
+        return; // so that the switch does not execute
     }
 
     switch(autonState) { // this is less bad than a sequence of if's
@@ -322,21 +327,28 @@ void Robot::AutonomousPeriodic() {
 
         case(4) :
             // move forward
-            myRobot->PIDDriveThread(20, maxVel, 0, true); // fix distance
-            
             if(!myRobot->isThreadFinished()) break;
+
+            DriverStation::ReportError("Moving to corner...");
+            myRobot->PIDDriveThread(20, maxVel, 0, true); // fix distance
             autonState++;
             break;
             
         case(5) :
             // turn 
             if(!myRobot->isThreadFinished()) break;
+
+            DriverStation::ReportError("Turning...");
+            myRobot->PIDTurnThread(90, 0, maxVel, 0, true); // 
             autonState++;
             break;
 
         case(6) : 
             // final move
             if(!myRobot->isThreadFinished()) break;
+
+            DriverStation::ReportError("Performing Final Move...");
+            myRobot->PIDDriveThread(20, maxVel, 0, true);
             autonState++;
             break;
     }    
