@@ -12,6 +12,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <ctre/Phoenix.h>
 #include "SFDrive_SparkMax.h"
+#include "UDPClient.h"
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>

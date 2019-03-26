@@ -15,7 +15,6 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 void Robot::RobotInit() 
 {
 
-    
     //Set followers and inverts for drive motors
     elevatorMotor->SetSensorPhase(true);
     elevatorMotor->SetInverted(true);
@@ -58,6 +57,8 @@ void Robot::RobotInit()
     sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
 
     sender->putNumbers();
+
+    UDPClient myUDPClient();
 }
 
 void Robot::RobotPeriodic()

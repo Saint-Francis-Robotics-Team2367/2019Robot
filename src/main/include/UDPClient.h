@@ -6,10 +6,8 @@
 #include <sys/types.h> 
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
-#include <netinet/in.h> 
-  
-
-#define PORT 5353
+#include <netinet/in.h>
+#define PORT 9999
 #define MAX_BUFF 100000   
 
 class UDPClient{
