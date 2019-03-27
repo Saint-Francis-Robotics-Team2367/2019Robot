@@ -312,7 +312,7 @@ void Robot::AutonomousPeriodic() {
 
     switch(autonState) { // this is less bad than a sequence of if's
         case(0) :
-            myRobot->PIDTurnThread(360 - startingAngle, 0, maxVel, 0, true);
+            myRobot->PIDTurnThread(-startingAngle, 0, maxVel, 0, true);
 
             DriverStation::ReportError("Alignment set."); // fix distance
 
