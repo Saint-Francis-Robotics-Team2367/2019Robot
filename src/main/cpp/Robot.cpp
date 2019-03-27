@@ -25,11 +25,11 @@ void Robot::RobotInit()
     lMotorBack->Follow(*lMotorFront, false);
 
     //Set current limit for drive motors
-    /*rMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
+    rMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
     lMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
     rMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
     lMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
-    
+    /*
     //Config elevator motor
     elevatorMotor->SelectProfileSlot(0, 0);
     elevatorMotor->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0, 0);
@@ -351,13 +351,13 @@ void Robot::AutonomousPeriodic() {
             break;
         case(4) : 
             if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
-                DriverStation::ReportError("Hatch placed.");
+                DriverStation::ReportError("Placing Hatch.");
                 std::thread hatchThread(&Robot::placeHatchThreaded, this);
                 autonState++;
                 break;
             }
 
-            xCorrect = operatorStick->GetRawAxis(JoystickAxes::L_X_AXIS); // Inputs for correction
+            xCorrect = operatorStick->GetRawAxis(JoystickAxes::R_X_AXIS); // Inputs for correction
             
             xCorrect *= correctionSensitivity; // this should be adjusted to driver preference
 
