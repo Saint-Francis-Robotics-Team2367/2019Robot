@@ -35,44 +35,45 @@ class Robot : public frc::TimedRobot {
       void ConfigPIDS();
       void placeHatchThreaded();
       //Control variables
-      bool operatorInCargoMode = true; //false = hatch panel mode
-      bool rumbleDriver = false;
-      bool rumbleOperator = false;
-      bool outputtingCargo = false;
-      double outputtingCargoStartTime = 0;
-      double elevatorGranularControlMultiplier = 320;
-      int hatchMechState = 0;
-      bool hatchMechStateSwitched = true;
-      int setpoint = 0;
-      bool elevatorFlag = false;
-      int hatchMechSetpoint = 0;
+      //bool operatorInCargoMode = true; //false = hatch panel mode
+      //bool rumbleDriver = false;
+      //bool rumbleOperator = false;
+      //bool outputtingCargo = false;
+      //double outputtingCargoStartTime = 0;
+      //double elevatorGranularControlMultiplier = 320;
+      //int hatchMechState = 0;
+      //bool hatchMechStateSwitched = true;
+      //int setpoint = 0;
+      //bool elevatorFlag = false;
+      //int hatchMechSetpoint = 0;
       bool autonOverride = false; //KILL THE AI REVOLUTION
       int autonState = 0;
       int maxVel = 60;
-      double topServoUpSetpoint = 0;
+      /*double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
       double bottomServoUpSetpoint = 0;
       double bottomServoDownSetpoint = 67;
-
+        */
       //Motor IDs
       const int rMotorFrontNum = 13;
       const int rMotorBackNum = 16;
       const int lMotorFrontNum = 2;
       const int lMotorBackNum = 3;
-      const int elevatorMotorNum = 1;
-      const int cargoIntakeMotorNum = 15;
-      const int cargoLeftMotorNum = 10;
-      const int cargoRightMotorNum = 14;
-      const int cargoTopMotorNum = 12;
+     // const int elevatorMotorNum = 1;
+      //const int cargoIntakeMotorNum = 15;
+      //const int cargoLeftMotorNum = 10;
+      //const int cargoRightMotorNum = 14;
+      //const int cargoTopMotorNum = 12;
 
-      //Solenoid IDs
-      const int cargoMechLeftSolenoidNum = 4;
-      const int cargoMechRightSolenoidNum = 2;
-      const int hatchMechSolenoidNum = 0;
+      //Solenoid IDs 
+      
+      //const int cargoMechLeftSolenoidNum = 4;
+      //const int cargoMechRightSolenoidNum = 2;
+      const int hatchMechSolenoidNum = 0; 
 
       //Servo IDs
-      const int hatchMechTopServoNum = 2;
-      const int hatchMechBottomServoNum = 4;
+      //const int hatchMechTopServoNum = 2;
+      //const int hatchMechBottomServoNum = 4;
 
       //Drive Constants
       const double pConstantDrive = 1;
@@ -94,7 +95,7 @@ class Robot : public frc::TimedRobot {
       double rSetpointCorrect = 0;
       double lSetpointCorrect = 0;
       //Elevator Constants
-      const int cargoRocket1 = -10135;
+      /*const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
       const int cargoRocket3 = -37080; 
       const int cargoShip = -15366;
@@ -106,6 +107,7 @@ class Robot : public frc::TimedRobot {
       const int elevatorPeakMotorCurrentLimit = 40;
       const int elevatorContinuousMotorCurrentLimit = 30;
       const int elevatorPeakMotorCurrentLimitDuration = 500;//in milliseconds
+      */
 
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
@@ -114,26 +116,26 @@ class Robot : public frc::TimedRobot {
       rev::CANSparkMax * rMotorFront = new rev::CANSparkMax(rMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
 
       //Manipulator Motors
-      WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
+      /*WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
       WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
       WPI_VictorSPX * cargoLeftMotor = new WPI_VictorSPX(cargoLeftMotorNum);
       WPI_VictorSPX * cargoRightMotor = new WPI_VictorSPX(cargoRightMotorNum);
-      WPI_VictorSPX * cargoTopMotor = new WPI_VictorSPX(cargoTopMotorNum);
+      WPI_VictorSPX * cargoTopMotor = new WPI_VictorSPX(cargoTopMotorNum); */
 
       //Solenoids
-      DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
+     /* DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
       DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
-      DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
+      DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(hatchMechSolenoidNum, hatchMechSolenoidNum + 1); */
 
       //Servo
-      Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
-      Servo * hatchMechBottomServo = new Servo(hatchMechBottomServoNum);
+      /*Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
+      Servo * hatchMechBottomServo = new Servo(hatchMechBottomServoNum); */
 
       //SfDrive Object
       SFDrive_SparkMax * myRobot = new SFDrive_SparkMax(lMotorFront, rMotorFront, pConstantDrive, iConstantDrive, dConstantDrive, fConstantDrive);
       
       //SmartSender Object
-      SmartSender * sender = new SmartSender();
+      // SmartSender * sender = new SmartSender();
 
       //Joysticks
       Joystick * driverStick = new Joystick(0);

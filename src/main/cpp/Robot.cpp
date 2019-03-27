@@ -17,15 +17,15 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 void Robot::RobotInit() 
 {
     //Set followers and inverts for drive motors
-    elevatorMotor->SetSensorPhase(true);
-    elevatorMotor->SetInverted(true);
+    //elevatorMotor->SetSensorPhase(true);
+    //elevatorMotor->SetInverted(true);
     rMotorFront->SetInverted(true);
     rMotorBack->Follow(*rMotorFront, false);
     lMotorFront->SetInverted(false);
     lMotorBack->Follow(*lMotorFront, false);
 
     //Set current limit for drive motors
-    rMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
+    /*rMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
     lMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
     rMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
     lMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
@@ -57,12 +57,12 @@ void Robot::RobotInit()
     sender->addNumber(&myRobot->m_deadband, "Deadzone");
     sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
 
-    sender->putNumbers();
+    sender->putNumbers(); */
 }
 
 void Robot::RobotPeriodic()
 {
-    rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
+    /*rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator); 
     
     sender->getNumbers();
@@ -87,16 +87,16 @@ void Robot::RobotPeriodic()
     {
         operatorStick->SetRumble(GenericHID::RumbleType::kLeftRumble, 0);
         operatorStick->SetRumble(GenericHID::RumbleType::kRightRumble, 0);
-    }
+    } */
 }
 
 void Robot::TeleopInit()
-{
+{ /*
     cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
-    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); */
 }
 
 void Robot::TeleopPeriodic()
@@ -105,7 +105,7 @@ void Robot::TeleopPeriodic()
     myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
     //Driver Granular Elevator Control
-    if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.05)
+   /* if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.05)
     {
         setpoint += 320 * driverStick->GetRawAxis(JoystickAxes::L_TRIGGER);
         if(setpoint > 400 && !elevatorFlag) //If elevator at bottom stop, then coast mode, set sensor to zero and trigger flag
@@ -266,14 +266,14 @@ void Robot::TeleopPeriodic()
         DriverStation::ReportError("Elevator Set to Hatch Level 3");
         setpoint = hatchRocket3;
         elevatorFlag = true;
-    }
+    } */
 }
 
 void Robot::AutonomousInit() {
     
 }
 void Robot::placeHatchThreaded() {
-    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint); // secure hatch (functions are non blocking)
+    /*hatchMechBottomServo->SetAngle(bottomServoUpSetpoint); // secure hatch (functions are non blocking)
     std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward); // move hatch forward
@@ -284,12 +284,12 @@ void Robot::placeHatchThreaded() {
     
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); // retract mechanism
     std::this_thread::sleep_for(std::chrono::seconds(1));
-
+    */
     // N O  M U T E X
     isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
-    if(autonOverride) { // auton has been overridden
+    if(autonOverride || autonState > 5) { // auton has been overridden
         TeleopPeriodic();
         return;
     }
