@@ -289,7 +289,7 @@ void Robot::placeHatchThreaded() {
     isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
-    if(autonOverride) {
+    if(autonOverride) { // auton has been overridden
         TeleopPeriodic();
         return;
     }
@@ -300,6 +300,7 @@ void Robot::AutonomousPeriodic() {
         myRobot->stopAutoThread();
         return; // so that the switch does not execute
     }
+
     /* TODO::
     Add PIDTurn to the beginning to align with hatch *DONE
     Move forward using PIDDrive DONE
@@ -308,38 +309,36 @@ void Robot::AutonomousPeriodic() {
     Once bumper has been pressed, execute place hatch sequence *DONE
     Reverse and perform last maneuvers *DONE
     */
+
     switch(autonState) { // this is less bad than a sequence of if's
         case(0) :
-            myRobot->PIDTurnThread(-startingAngle, 0, maxVel, 0, true);
+            myRobot->PIDTurnThread(360 - startingAngle, 0, maxVel, 0, true);
 
             DriverStation::ReportError("Alignment set."); // fix distance
-            autonState++;
 
+            autonState++;
             break; // FALL THROUGH LOGIC 
  
         case(1) :
-        { // Isolates the scope of the thread declaration
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Turned. Moving...");
             myRobot->PIDDriveThread(distanceToCorrection, maxVel, 0, true);
 
             autonState++;
-        }
             break;
         
         case(2) : 
-            // hatch mech threading conditional
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Correcting angle...");
             myRobot->PIDTurnThread(startingAngle, 0, maxVel, 0, true); // fix distance
+        
             autonState++;
             break;
         
         case(3) :
             if(!myRobot->isThreadFinished()) break;
-            autonState++;
             DriverStation::ReportError("Started correction stage. Move joystick to correct alignment...");
 
             myRobot->setLeftMotorPosition(0); // reset encoders
@@ -348,6 +347,7 @@ void Robot::AutonomousPeriodic() {
             timer->Reset(); // reset & start timer (used for speed handling)
             timer->Start();
 
+            autonState++;
             break;
         case(4) : 
             if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
@@ -384,7 +384,7 @@ void Robot::AutonomousPeriodic() {
             break;
 
         case(5) :
-            // move back
+            // hatch threading finished conditional
             if(!Robot::isHatchThreadFinished) break;
 
             DriverStation::ReportError("Reversing...");

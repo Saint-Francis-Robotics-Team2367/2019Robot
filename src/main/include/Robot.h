@@ -48,7 +48,7 @@ class Robot : public frc::TimedRobot {
       int hatchMechSetpoint = 0;
       bool autonOverride = false; //KILL THE AI REVOLUTION
       int autonState = 0;
-      int maxVel = 100; //CHANGE THIS TO SOME BETTER VALUE
+      int maxVel = 60;
       double topServoUpSetpoint = 0;
       double topServoDownSetpoint = 0;
       double bottomServoUpSetpoint = 0;
@@ -83,10 +83,10 @@ class Robot : public frc::TimedRobot {
       // Auton Constants
       const double distanceToCorrection = 68.235;
       const double hatchPanelCentralOffset = 10.88;
-      const double startingAngle = std::atan(hatchPanelCentralOffset/distanceToCorrection); // arctan of the offset distance of the hatch panel and the distance to correction start
+      const double startingAngle = std::atan(hatchPanelCentralOffset/distanceToCorrection)*(180/M_PI); // arctan of the offset distance of the hatch panel and the distance to correction start - converted to radians
       const double startingDistance = std::sqrt(std::pow(hatchPanelCentralOffset, 2) + std::pow(distanceToCorrection, 2)); // the hypotenuse of that triangle
-      const double correctionSensitivity = 1000;
-      const double correctionPeriodVelocity = 1000; // ticks per second
+      const double correctionSensitivity = 1000; // ticks per joystick unit
+      const double correctionPeriodVelocity = 6519; // ticks per second (30in/s for safety * 217.3 ticks/in)
       const double reverseDistance = -20; // inches
       // Auton non-consts
       frc::Timer* timer;
