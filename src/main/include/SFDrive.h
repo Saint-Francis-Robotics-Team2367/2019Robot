@@ -48,8 +48,8 @@ class SFDrive {
   void joinAutoThread();
   void stopAutoThread();
   bool isThreadFinished();
-
- protected:
+  
+  protected:
   virtual void setLeftMotor(double value) = 0;
   virtual void setRightMotor(double value) = 0;
   virtual void setLeftMotorPosition(int ticks) = 0;

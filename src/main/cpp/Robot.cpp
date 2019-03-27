@@ -11,6 +11,7 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 #include "Robot.h"
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <chrono>
 
 // static class variables
 void Robot::RobotInit() 
@@ -272,13 +273,17 @@ void Robot::AutonomousInit() {
     
 }
 void Robot::placeHatchThreaded() {
-    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint); // secure hatch
-    
+    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint); // secure hatch (functions are non blocking)
+    std::this_thread::sleep_for(std::chrono::milliseconds(800));
+
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward); // move hatch forward
-
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    
     hatchMechBottomServo->SetAngle(bottomServoDownSetpoint); // relase hatch
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(800));
+    
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); // retract mechanism
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
     // N O  M U T E X
     isHatchThreadFinished = true;
@@ -289,74 +294,121 @@ void Robot::AutonomousPeriodic() {
         return;
     }
 
-    if(std::abs(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS)) > 0.12 || std::abs(driverStick->GetRawAxis(JoystickAxes::R_X_AXIS)) > 0.12) { // Driver Full Override
+    if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) { // operator left bumper for override to teleop
         autonOverride = true;
         DriverStation::ReportError("Auton has been aborted. Now starting teleoperated...");
         myRobot->stopAutoThread();
         return; // so that the switch does not execute
     }
-
+    /* TODO::
+    Add PIDTurn to the beginning to align with hatch *DONE
+    Move forward using PIDDrive DONE
+    Reverse the turning to be parallel to the cargo ship *DONE
+    Start move forward sequence with CORRECTION *DONE
+    Once bumper has been pressed, execute place hatch sequence *DONE
+    Reverse and perform last maneuvers *DONE
+    */
     switch(autonState) { // this is less bad than a sequence of if's
         case(0) :
-            myRobot->PIDDriveThread(distanceToCargoShip, maxVel, 0, true);
-            DriverStation::ReportError("Started Auton Stage 0"); // fix distance
+            myRobot->PIDTurnThread(-startingAngle, 0, maxVel, 0, true);
+
+            DriverStation::ReportError("Alignment set."); // fix distance
             autonState++;
+
             break; // FALL THROUGH LOGIC 
  
         case(1) :
         { // Isolates the scope of the thread declaration
             if(!myRobot->isThreadFinished()) break;
 
-            DriverStation::ReportError("First Stage finished. Placing Hatch...");
-            // hatch mech threading 
-            std::thread hatchThread(&Robot::placeHatchThreaded, this);
+            DriverStation::ReportError("Turned. Moving...");
+            myRobot->PIDDriveThread(distanceToCorrection, maxVel, 0, true);
+
             autonState++;
         }
             break;
         
         case(2) : 
             // hatch mech threading conditional
-            if(!Robot::isHatchThreadFinished) break;
+            if(!myRobot->isThreadFinished()) break;
 
-            DriverStation::ReportError("Hatch Placed. Reversing...");
-            myRobot->PIDDriveThread(distanceToReverse, maxVel, 0, true); // fix distance
+            DriverStation::ReportError("Correcting angle...");
+            myRobot->PIDTurnThread(startingAngle, 0, maxVel, 0, true); // fix distance
             autonState++;
             break;
         
         case(3) :
             if(!myRobot->isThreadFinished()) break;
-
-            DriverStation::ReportError("Turning...");
-            myRobot->PIDTurnThread(90, 0, maxVel, 0, true);
             autonState++;
+            DriverStation::ReportError("Started correction stage. Move joystick to correct alignment...");
+
+            myRobot->setLeftMotorPosition(0); // reset encoders
+            myRobot->setRightMotorPosition(0);
+
+            timer->Reset(); // reset & start timer (used for speed handling)
+            timer->Start();
+
+            break;
+        case(4) : 
+            if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
+                DriverStation::ReportError("Hatch placed.");
+                std::thread hatchThread(&Robot::placeHatchThreaded, this);
+                autonState++;
+                break;
+            }
+
+            xCorrect = operatorStick->GetRawAxis(JoystickAxes::L_X_AXIS); // Inputs for correction
+            
+            xCorrect *= correctionSensitivity; // this should be adjusted to driver preference
+
+            if(xCorrect < 0) {
+                rSetpointCorrect += std::abs(xCorrect); // if the joystick is to the left, add to the right
+            } else if(xCorrect > 0) {
+                lSetpointCorrect += std::abs(xCorrect); // if the joystick is to the right, add to the left
+            }
+
+            /* ---------
+            We do NOT want to use motion profiling here because we want the 
+            speed to be as predictable as possible for the operator making the corrections.
+
+            If the speed changed over time, the operator would have to make less correction during the slow parts,
+            and more during the fast parts, making it hard to be accurate
+
+            We use a timer to calculate the setpoint based on the correctionPeriodVelocity and add to it the 
+            setpoint correction as determined by the joystick position and the correctionSensitivity
+            --------- */
+
+            myRobot->setRightMotorSetpoint(timer->Get()*correctionPeriodVelocity + rSetpointCorrect);
+            myRobot->setLeftMotorSetpoint(timer->Get()*correctionPeriodVelocity + lSetpointCorrect);
+            
             break;
 
-        case(4) :
-            // move forward
-            if(!myRobot->isThreadFinished()) break;
+        case(5) :
+            // move back
+            if(!Robot::isHatchThreadFinished) break;
 
-            DriverStation::ReportError("Moving to corner...");
-            myRobot->PIDDriveThread(distanceToTurningPoint, maxVel, 0, true); // fix distance
+            DriverStation::ReportError("Reversing...");
+            myRobot->PIDDriveThread(reverseDistance, maxVel, 0, true); // fix distance
             autonState++;
             break;
             
-        case(5) :
+      /*  case(6) :
             // turn 
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Turning...");
-            myRobot->PIDTurnThread(distanceToFeederStation, 0, maxVel, 0, true); // 
+           // myRobot->PIDTurnThread(distanceToFeederStation, 0, maxVel, 0, true); // 
             autonState++;
             break;
 
-        case(6) : 
+        case(7) : 
             // final move
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Performing Final Move...");
             myRobot->PIDDriveThread(20, maxVel, 0, true);
             autonState++;
-            break;
+            break; */
     }    
 
 }

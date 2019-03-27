@@ -18,6 +18,7 @@
 #include <frc/DoubleSolenoid.h>
 #include <frc/Servo.h>
 #include <SmartSender.h>
+#include <frc/Timer.h>
 
 using namespace frc;
 
@@ -80,11 +81,18 @@ class Robot : public frc::TimedRobot {
       const double fConstantDrive = 0;
       const int driveMotorCurrentLimit = 40;
       // Auton Constants
-      const double distanceToCargoShip = 0;
-      const double distanceToReverse = 0;
-      const double distanceToTurningPoint = 0;
-      const double distanceToFeederStation = 0;
-      
+      const double distanceToCorrection = 68.235;
+      const double hatchPanelCentralOffset = 10.88;
+      const double startingAngle = std::atan(hatchPanelCentralOffset/distanceToCorrection); // arctan of the offset distance of the hatch panel and the distance to correction start
+      const double startingDistance = std::sqrt(std::pow(hatchPanelCentralOffset, 2) + std::pow(distanceToCorrection, 2)); // the hypotenuse of that triangle
+      const double correctionSensitivity = 1000;
+      const double correctionPeriodVelocity = 1000; // ticks per second
+      const double reverseDistance = -20; // inches
+      // Auton non-consts
+      frc::Timer* timer;
+      double xCorrect;
+      double rSetpointCorrect = 0;
+      double lSetpointCorrect = 0;
       //Elevator Constants
       const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
