@@ -94,8 +94,8 @@ void Robot::TeleopInit()
 { /*
     cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+    std::thread::this_thread::sleepfor(chrono::duration::seconds(1));
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); */
 }
 

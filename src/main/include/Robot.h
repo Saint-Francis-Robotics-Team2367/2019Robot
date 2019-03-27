@@ -69,7 +69,7 @@ class Robot : public frc::TimedRobot {
       
       //const int cargoMechLeftSolenoidNum = 4;
       //const int cargoMechRightSolenoidNum = 2;
-      const int hatchMechSolenoidNum = 0; 
+      const int hatchMechSolenoidNum = 0;
 
       //Servo IDs
       //const int hatchMechTopServoNum = 2;
