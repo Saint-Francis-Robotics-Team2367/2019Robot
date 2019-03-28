@@ -352,7 +352,7 @@ void Robot::AutonomousPeriodic() {
         case(4) : 
             if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
                 DriverStation::ReportError("Placing Hatch.");
-                std::thread hatchThread(&Robot::placeHatchThreaded, this);
+                hatchThread = std::thread(&Robot::placeHatchThreaded, this);
                 autonState++;
                 break;
             }
