@@ -102,7 +102,7 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 { 
     //Driver has drivetrain control
-    myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), -1.0 * driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+    myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
     //Driver Granular Elevator Control
    /* if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.05)

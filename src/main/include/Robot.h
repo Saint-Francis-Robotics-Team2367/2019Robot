@@ -56,8 +56,8 @@ class Robot : public frc::TimedRobot {
         */
       //Motor IDs
       const int rMotorFrontNum = 13;
-      const int rMotorBackNum = 16;
-      const int lMotorFrontNum = 2;
+      const int rMotorBackNum = 12;
+      const int lMotorFrontNum = 16;
       const int lMotorBackNum = 3;
      // const int elevatorMotorNum = 1;
       //const int cargoIntakeMotorNum = 15;
