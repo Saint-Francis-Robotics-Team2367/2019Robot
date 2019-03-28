@@ -289,15 +289,18 @@ void Robot::placeHatchThreaded() {
     isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
-    if(autonOverride || autonState > 5) { // auton has been overridden
+    if(autonOverride) { // auton has been overridden
         TeleopPeriodic();
         return;
     }
 
-    if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) { // operator left bumper for override to teleop
+    if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER) || autonState > 5) { // operator left bumper for override to teleop
         autonOverride = true;
-        DriverStation::ReportError("Auton has been aborted. Now starting teleoperated...");
+        DriverStation::ReportError("Auton has been aborted/finished. Now starting teleoperated...");
         myRobot->stopAutoThread();
+        hatchThread->join();
+        delete hatchThread;
+        
         return; // so that the switch does not execute
     }
 
@@ -352,7 +355,7 @@ void Robot::AutonomousPeriodic() {
         case(4) : 
             if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
                 DriverStation::ReportError("Placing Hatch.");
-                hatchThread = std::thread(&Robot::placeHatchThreaded, this);
+                hatchThread = new std::thread(&Robot::placeHatchThreaded, this);
                 autonState++;
                 break;
             }

@@ -94,7 +94,7 @@ class Robot : public frc::TimedRobot {
       double xCorrect;
       double rSetpointCorrect = 0;
       double lSetpointCorrect = 0;
-      std::thread hatchThread;
+      std::thread *hatchThread;
       //Elevator Constants
       /*const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
