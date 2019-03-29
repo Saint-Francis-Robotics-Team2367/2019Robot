@@ -92,9 +92,10 @@ void Robot::TeleopInit()
 {
     cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    lifterFrontSolenoid->Set(false);
+    lifterBackSolenoid->Set(false);
 }
 
 void Robot::TeleopPeriodic()
@@ -218,7 +219,7 @@ void Robot::TeleopPeriodic()
     }
     else if(hatchMechState == 3)
     {
-        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
 
@@ -264,6 +265,26 @@ void Robot::TeleopPeriodic()
         DriverStation::ReportError("Elevator Set to Hatch Level 3");
         setpoint = hatchRocket3;
         elevatorFlag = true;
+    }
+    if(driverStick->GetPOV() == 0) //Lifter front pneumatics down (DPAD UP)
+    {
+        lifterFrontDown = true;
+        lifterFrontSolenoid->Set(true);
+    }
+    if(driverStick->GetPOV() == 180) //Lifter back pneumatics down (DPAD DOWN)
+    {
+        lifterBackDown = true;
+        lifterBackSolenoid->Set(true);
+    }
+    if(driverStick->GetPOV() == 270) //Lifter front pneumatics up (DPAD LEFT)
+    {
+        lifterFrontDown = false;
+        lifterFrontSolenoid->Set(false);
+    }
+    if(driverStick->GetPOV() == 90) //Lifter back pneumatics up (DPAD RIGHT)
+    {
+        lifterBackDown = false;
+        lifterBackSolenoid->Set(false);
     }
 }
 

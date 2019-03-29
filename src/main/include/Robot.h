@@ -16,6 +16,7 @@
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
 #include <frc/DoubleSolenoid.h>
+#include <frc/Solenoid.h>
 #include <frc/Servo.h>
 #include <SmartSender.h>
 
@@ -50,6 +51,8 @@ class Robot : public frc::TimedRobot {
       double topServoDownSetpoint = 0;
       double bottomServoUpSetpoint = 0;
       double bottomServoDownSetpoint = 67;
+      bool lifterFrontDown = false;
+      bool lifterBackDown = false;
 
       //Motor IDs
       const int rMotorFrontNum = 13;
@@ -66,6 +69,8 @@ class Robot : public frc::TimedRobot {
       const int cargoMechLeftSolenoidNum = 4;
       const int cargoMechRightSolenoidNum = 2;
       const int hatchMechSolenoidNum = 0;
+      const int lifterFrontSolenoidNum = 6;//NEEDS TO TEST
+      const int lifterBackSolenoidNum = 7;//NEEDS TO TEST
 
       //Servo IDs
       const int hatchMechTopServoNum = 2;
@@ -109,6 +114,8 @@ class Robot : public frc::TimedRobot {
       DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
       DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
       DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
+      Solenoid * lifterFrontSolenoid = new Solenoid(lifterFrontSolenoidNum);//WRONG NEEDS TO BE UPDATED
+      Solenoid * lifterBackSolenoid = new Solenoid(lifterBackSolenoidNum);//WRONG NEEDS TO BE UPDATED
 
       //Servo
       Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
