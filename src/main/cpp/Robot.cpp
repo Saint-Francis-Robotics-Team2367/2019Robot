@@ -158,10 +158,21 @@ void Robot::TeleopPeriodic()
     }
     else if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
     {
-        cargoLeftMotor->Set(-0.8);
-        cargoRightMotor->Set(-0.8);
-        cargoTopMotor->Set(-0.8);
-        cargoIntakeMotor->Set(-0.8);
+        if(elevatorCargoLevel)
+        {
+            cargoLeftMotor->Set(-0.4);
+            cargoRightMotor->Set(-0.4);
+            cargoTopMotor->Set(-0.4);
+            cargoIntakeMotor->Set(-0.4);
+        }
+        else
+        {
+            cargoLeftMotor->Set(-0.8);
+            cargoRightMotor->Set(-0.8);
+            cargoTopMotor->Set(-0.8);
+            cargoIntakeMotor->Set(-0.8);
+        }
+        
     }
     else
     {
@@ -229,42 +240,49 @@ void Robot::TeleopPeriodic()
         setpoint = cargoShip;
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
         elevatorFlag = true;
+        elevatorCargoLevel = true;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 1");
         setpoint = cargoRocket1;
         elevatorFlag = true;
+        elevatorCargoLevel = false;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 2");
         setpoint = cargoRocket2;
         elevatorFlag = true;
+        elevatorCargoLevel = false;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 3");
         setpoint = cargoRocket3;
         elevatorFlag = true;
+        elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 (DPAD-LEFT)
     {
         DriverStation::ReportError("Elevator Set to Level 1");
         setpoint = -400;
         elevatorFlag = true;
+        elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 2");
         setpoint = hatchRocket2;
         elevatorFlag = true;
+        elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 3");
         setpoint = hatchRocket3;
         elevatorFlag = true;
+        elevatorCargoLevel = false;
     }
     if(driverStick->GetPOV() == 0) //Lifter front pneumatics down (DPAD UP)
     {

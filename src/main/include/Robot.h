@@ -45,6 +45,7 @@ class Robot : public frc::TimedRobot {
       bool hatchMechStateSwitched = true;
       int setpoint = 0;
       bool elevatorFlag = false;
+      bool elevatorCargoLevel = false;
       int hatchMechSetpoint = 0;
       //THESE ASSUMPTIONS ARE PROBABLY INCORRECT
       double topServoUpSetpoint = 0;
