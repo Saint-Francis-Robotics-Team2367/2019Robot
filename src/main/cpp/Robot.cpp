@@ -94,8 +94,8 @@ void Robot::TeleopInit()
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    lifterFrontSolenoid->Set(false);
-    lifterBackSolenoid->Set(false);
+    lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 }
 
 void Robot::TeleopPeriodic()
@@ -141,10 +141,24 @@ void Robot::TeleopPeriodic()
     }
     if(driverStick->GetRawButton(JoystickButtons::START_BUTTON) || operatorStick->GetRawButton(JoystickButtons::START_BUTTON))
     {
-        elevatorFlag = true;
-        setpoint = 0;
-        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
-        elevatorMotor->SetNeutralMode(NeutralMode::Coast);
+        if(elevatorMotor->GetSelectedSensorPosition() < cargoRocket1)
+        {
+            setpoint =  (int)(cargoRocket1/2);
+            DriverStation::ReportError(std::to_string(setpoint));
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
+            elevatorFlag = false;
+            elevatorCargoLevel = false;
+        }
+        else
+        {
+            elevatorFlag = true;
+            elevatorCargoLevel = false;
+            setpoint = 0;
+            //DriverStation::ReportError("In Coast Mode");
+            elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
+            elevatorMotor->SetNeutralMode(NeutralMode::Coast);
+        }
+        
     }
 
     //Driver Cargo Intake Controls
@@ -196,15 +210,17 @@ void Robot::TeleopPeriodic()
     }
 
     //Driver Hatch Mech Controls
-    if(driverStick->GetRawButtonPressed(JoystickButtons::B_BUTTON))
+    if(driverStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Iterates down through the stages
     {
-        hatchMechState = (hatchMechState + 3)  % 4;
+        if(hatchMechState == 0) hatchMechState = totalHatchStages;
+        else hatchMechState =- 1;
         hatchMechStateSwitched = true;
         DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
     }
-    if(driverStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON))
+    if(driverStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Iterates up through the stages
     {
-        hatchMechState = (hatchMechState + 1) % 4;
+        if(hatchMechState == totalHatchStages) hatchMechState = 0;
+        else hatchMechState =+ 1;
         hatchMechStateSwitched = true;
         DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
     }
@@ -215,94 +231,110 @@ void Robot::TeleopPeriodic()
     }
     if(hatchMechState == 0)
     {
+        DriverStation::ReportError("I am in the reset stage right now");
         hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
     else if(hatchMechState == 1)
     {
-        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
-        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        DriverStation::ReportError("I am in stage 1 right now");
+        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
     else if(hatchMechState == 2)
     {
+        DriverStation::ReportError("I am in stage 2 right now");
         hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
-    else if(hatchMechState == 3)
+    else if(hatchMechState == totalHatchStages)
     {
+        DriverStation::ReportError("I am in stage 3 right now");
         hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
+    /*else if(hatchMechState == totalHatchStages)
+    {
+        DriverStation::ReportError("I am in stage 3 right now");
+        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+        setpoint = hatchIntake;
+        elevatorFlag = false;
+    }*/
+
+    //Driver Lifter Controls
+    if(driverStick->GetPOV() == 0) //Lifter front pneumatics down (DPAD UP)
+    {
+        DriverStation::ReportError("Lifter Forward Pneumatics Down");
+        lifterFrontDown = true;
+        lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+    }
+    /*if(driverStick->GetPOV() == 180) //Lifter back pneumatics down (DPAD DOWN)
+    {
+        DriverStation::ReportError("Lifter Back Pneumatics Down");
+        lifterBackDown = true;
+        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+    }*/
+    if(driverStick->GetPOV() == 270) //Lifter front pneumatics up (DPAD LEFT)
+    {
+        DriverStation::ReportError("Lifter Forward Pneumatics Up");
+        lifterFrontDown = false;
+        lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    }
+    /*if(driverStick->GetPOV() == 90) //Lifter back pneumatics up (DPAD RIGHT)
+    {
+        DriverStation::ReportError("Lifter Back Pneumatics Up");
+        lifterBackDown = false;
+        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    }*/
 
     if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
         setpoint = cargoShip;
-        elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = true;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 1");
         setpoint = cargoRocket1;
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = false;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 2");
         setpoint = cargoRocket2;
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = false;
     }
     if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 3");
         setpoint = cargoRocket3;
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 (DPAD-LEFT)
     {
         DriverStation::ReportError("Elevator Set to Level 1");
         setpoint = -400;
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 2");
         setpoint = hatchRocket2;
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 0) //Hatch rocket level 3 (DPAD UP)
     {
         DriverStation::ReportError("Elevator Set to Hatch Level 3");
         setpoint = hatchRocket3;
-        elevatorFlag = true;
+        elevatorFlag = false;
         elevatorCargoLevel = false;
-    }
-    if(driverStick->GetPOV() == 0) //Lifter front pneumatics down (DPAD UP)
-    {
-        lifterFrontDown = true;
-        lifterFrontSolenoid->Set(true);
-    }
-    if(driverStick->GetPOV() == 180) //Lifter back pneumatics down (DPAD DOWN)
-    {
-        lifterBackDown = true;
-        lifterBackSolenoid->Set(true);
-    }
-    if(driverStick->GetPOV() == 270) //Lifter front pneumatics up (DPAD LEFT)
-    {
-        lifterFrontDown = false;
-        lifterFrontSolenoid->Set(false);
-    }
-    if(driverStick->GetPOV() == 90) //Lifter back pneumatics up (DPAD RIGHT)
-    {
-        lifterBackDown = false;
-        lifterBackSolenoid->Set(false);
     }
 }
 
