@@ -274,7 +274,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit() {
     motionTimer->Reset();
-    //motionTimer->Start();
+    motionTimer->Start();
 
     lMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
     rMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
