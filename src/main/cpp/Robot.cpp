@@ -299,8 +299,8 @@ void Robot::AutonomousPeriodic() {
         TeleopPeriodic();
         return;
     }
-    myRobot->setLeftMotorSetpoint(timer->Get()*travelSpeed);
-    myRobot->setRightMotorSetpoint(timer->Get()*travelSpeed);
+    myRobot->setLeftMotorSetpoint(motionTimer->Get()*travelSpeed);
+    myRobot->setRightMotorSetpoint(motionTimer->Get()*travelSpeed);
     
     //if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) { // operator left bumper for override to teleop
     //    autonOverride = true;
