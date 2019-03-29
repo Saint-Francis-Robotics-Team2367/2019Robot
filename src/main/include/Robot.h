@@ -19,7 +19,7 @@
 #include <frc/Servo.h>
 #include <SmartSender.h>
 #include <frc/Timer.h>
-
+//#include <MotionProfile.h>
 using namespace frc;
 
 class Robot : public frc::TimedRobot {
@@ -69,7 +69,7 @@ class Robot : public frc::TimedRobot {
       
       //const int cargoMechLeftSolenoidNum = 4;
       //const int cargoMechRightSolenoidNum = 2;
-      const int hatchMechSolenoidNum = 0;
+      // const int hatchMechSolenoidNum = 0;
 
       //Servo IDs
       //const int hatchMechTopServoNum = 2;
@@ -82,19 +82,18 @@ class Robot : public frc::TimedRobot {
       const double fConstantDrive = 0;
       const int driveMotorCurrentLimit = 40;
       // Auton Constants
-      const double distanceToCorrection = 68.235;
+      /*const double distanceToCorrection = 68.235;
       const double hatchPanelCentralOffset = 10.88;
       const double startingAngle = std::atan(hatchPanelCentralOffset/distanceToCorrection)*(180/M_PI); // arctan of the offset distance of the hatch panel and the distance to correction start - converted to radians
       const double startingDistance = std::sqrt(std::pow(hatchPanelCentralOffset, 2) + std::pow(distanceToCorrection, 2)); // the hypotenuse of that triangle
-      const double correctionSensitivity = 1000; // ticks per joystick unit
+      const double correctionSensitivity = 40; // ticks per joystick unit
       const double correctionPeriodVelocity = 6519; // ticks per second (30in/s for safety * 217.3 ticks/in)
-      const double reverseDistance = -20; // inches
+      const double reverseDistance = -20; // inches */
       // Auton non-consts
-      frc::Timer* timer;
-      double xCorrect;
-      double rSetpointCorrect = 0;
-      double lSetpointCorrect = 0;
-      std::thread *hatchThread;
+      //double xCorrect;
+      //double rSetpointCorrect = 0;
+      //double lSetpointCorrect = 0;
+      //std::thread *hatchThread;
       //Elevator Constants
       /*const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
@@ -115,7 +114,9 @@ class Robot : public frc::TimedRobot {
       rev::CANSparkMax * lMotorBack = new rev::CANSparkMax(lMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * rMotorBack = new rev::CANSparkMax(rMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * rMotorFront = new rev::CANSparkMax(rMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
-
+      const int tickPerRev = 42;
+      const int travelSpeed = 42; // ticks per second
+      const double gearboxRatio = 10.71;
       //Manipulator Motors
       /*WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
       WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
@@ -142,5 +143,5 @@ class Robot : public frc::TimedRobot {
       Joystick * driverStick = new Joystick(0);
       Joystick * operatorStick = new Joystick(1);
     // Threading
-      bool isHatchThreadFinished = false;
+    frc::Timer* motionTimer;
 };

@@ -12,6 +12,7 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <chrono>
+#include <frc/Timer.h>
 
 // static class variables
 void Robot::RobotInit() 
@@ -23,6 +24,7 @@ void Robot::RobotInit()
     rMotorBack->Follow(*rMotorFront, false);
     lMotorFront->SetInverted(false);
     lMotorBack->Follow(*lMotorFront, false);
+    motionTimer = new frc::Timer();
 
     //Set current limit for drive motors
     rMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
@@ -97,12 +99,13 @@ void Robot::TeleopInit()
     hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
     std::thread::this_thread::sleepfor(chrono::duration::seconds(1));
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse); */
+
 }
 
 void Robot::TeleopPeriodic()
 { 
     //Driver has drivetrain control
-    myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
+    //myRobot->ModifiedAcadeDrive(driverStick->GetRawAxis(JoystickAxes::L_Y_AXIS), driverStick->GetRawAxis(JoystickAxes::R_X_AXIS));
 
     //Driver Granular Elevator Control
    /* if(driverStick->GetRawAxis(JoystickAxes::L_TRIGGER) > 0.05)
@@ -270,7 +273,9 @@ void Robot::TeleopPeriodic()
 }
 
 void Robot::AutonomousInit() {
-    
+    motionTimer->Reset();
+    motionTimer->Start();
+
 }
 void Robot::placeHatchThreaded() {
     /*hatchMechBottomServo->SetAngle(bottomServoUpSetpoint); // secure hatch (functions are non blocking)
@@ -286,23 +291,26 @@ void Robot::placeHatchThreaded() {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     */
     // N O  M U T E X
-    isHatchThreadFinished = true;
+    //isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
-    if(autonOverride) { // auton has been overridden
+
+    if(motionTimer->Get() > 2) { // auton has been overridden
         TeleopPeriodic();
         return;
     }
+    myRobot->setLeftMotorSetpoint(timer->Get()*travelSpeed);
+    myRobot->setRightMotorSetpoint(timer->Get()*travelSpeed);
+    
+    //if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) { // operator left bumper for override to teleop
+    //    autonOverride = true;
+    //    DriverStation::ReportError("Auton has been aborted/finished. Now starting teleoperated...");
+    //    myRobot->stopAutoThread();
+        //hatchThread->join();
+        //delete hatchThread;
 
-    if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER) || autonState > 5) { // operator left bumper for override to teleop
-        autonOverride = true;
-        DriverStation::ReportError("Auton has been aborted/finished. Now starting teleoperated...");
-        myRobot->stopAutoThread();
-        hatchThread->join();
-        delete hatchThread;
-        
-        return; // so that the switch does not execute
-    }
+    //    return; // so that the switch does not execute
+    //}
 
     /* TODO::
     Add PIDTurn to the beginning to align with hatch *DONE
@@ -312,11 +320,11 @@ void Robot::AutonomousPeriodic() {
     Once bumper has been pressed, execute place hatch sequence *DONE
     Reverse and perform last maneuvers *DONE
     */
-
+    /*
     switch(autonState) { // this is less bad than a sequence of if's
         case(0) :
-            myRobot->PIDTurnThread(-startingAngle, 0, maxVel, 0, true);
-
+            myRobot->setRightMotorSetpoint(40);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             DriverStation::ReportError("Alignment set."); // fix distance
 
             autonState++;
@@ -326,17 +334,20 @@ void Robot::AutonomousPeriodic() {
             if(!myRobot->isThreadFinished()) break;
 
             DriverStation::ReportError("Turned. Moving...");
-            myRobot->PIDDriveThread(distanceToCorrection, maxVel, 0, true);
+            myRobot->setLeftMotorSetpoint(100);
+            myRobot->setRightMotorSetpoint(100);
 
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             autonState++;
             break;
         
         case(2) : 
             if(!myRobot->isThreadFinished()) break;
-
+            myRobot->setLeftMotorPosition(40);
             DriverStation::ReportError("Correcting angle...");
-            myRobot->PIDTurnThread(startingAngle, 0, maxVel, 0, true); // fix distance
+            //myRobot->PIDTurn(startingAngle, 0, maxVel, 0, true); // fix distance
         
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             autonState++;
             break;
         
@@ -347,20 +358,17 @@ void Robot::AutonomousPeriodic() {
             myRobot->setLeftMotorPosition(0); // reset encoders
             myRobot->setRightMotorPosition(0);
 
-            timer->Reset(); // reset & start timer (used for speed handling)
-            timer->Start();
-
             autonState++;
             break;
         case(4) : 
-            if(operatorStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
+            if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) { // hatch placement check
                 DriverStation::ReportError("Placing Hatch.");
                 hatchThread = new std::thread(&Robot::placeHatchThreaded, this);
                 autonState++;
                 break;
             }
 
-            xCorrect = operatorStick->GetRawAxis(JoystickAxes::R_X_AXIS); // Inputs for correction
+            xCorrect = driverStick->GetRawAxis(JoystickAxes::R_X_AXIS); // Inputs for correction
             
             xCorrect *= correctionSensitivity; // this should be adjusted to driver preference
 
@@ -379,12 +387,12 @@ void Robot::AutonomousPeriodic() {
 
             We use a timer to calculate the setpoint based on the correctionPeriodVelocity and add to it the 
             setpoint correction as determined by the joystick position and the correctionSensitivity
-            --------- */
+            --------- 
 
-            myRobot->setRightMotorSetpoint(timer->Get()*correctionPeriodVelocity + rSetpointCorrect);
-            myRobot->setLeftMotorSetpoint(timer->Get()*correctionPeriodVelocity + lSetpointCorrect);
+            myRobot->setRightMotorSetpoint(rSetpointCorrect);
+            myRobot->setLeftMotorSetpoint(lSetpointCorrect);
             
-            break;
+            break; 
 
         case(5) :
             // hatch threading finished conditional
@@ -411,8 +419,9 @@ void Robot::AutonomousPeriodic() {
             DriverStation::ReportError("Performing Final Move...");
             myRobot->PIDDriveThread(20, maxVel, 0, true);
             autonState++;
-            break; */
-    }    
+            break; */ 
+    //}   
+
 
 }
 
