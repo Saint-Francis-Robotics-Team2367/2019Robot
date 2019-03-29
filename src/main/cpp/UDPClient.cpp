@@ -6,31 +6,29 @@ UDPClient:: UDPClient(){
 }
 
 void UDPClient:: setup_socket(){
-    if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        perror("socket creation failed"); 
+    if ( (bCastSock = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
+        perror("UDP socket creation failed"); 
+        exit(EXIT_FAILURE); 
+    } 
+
+    if ( setsockopt(bCastSock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &srcaddrSize, sizeof(srcaddrSize)) ) { 
+        perror("UDP socket creation failed"); 
         exit(EXIT_FAILURE); 
     } 
   
-    memset(&servaddr, 0, sizeof(servaddr)); 
+    memset(&localUDP,0, sizeof(serv_addr)); 
       
     // Filling server information 
-    servaddr.sin_family = AF_INET; 
-    servaddr.sin_port = htons(PORT); 
-    servaddr.sin_addr.s_addr = INADDR_ANY; 
+    localUDP.sin_family = AF_INET; 
+    localUDP.sin_port = htons(bCastPort); 
+    localUDP.sin_addr.s_addr = INADDR_ANY; 
 
-    socklen_t n, len; 
-      
-    sendto(sockfd, (const char *)hello, strlen(hello), 
-        MSG_CONFIRM, (const struct sockaddr *) &servaddr,  
-            sizeof(servaddr)); 
-    printf("Hello message sent.\n"); 
-          
-    n = recvfrom(sockfd, (char *)buffer, MAX_BUFF,  
-                MSG_WAITALL, (struct sockaddr *) &servaddr, 
-                &len); 
-    buffer[n] = '\0'; 
-    printf("Server : %s\n", buffer); 
-  
-    close(sockfd); 
+    bind(bCastSock, (struct sockaddr *)&localUDP, sizeof(localUDP));
+
+    do{
+        memset(&bCastRecv, '0', sizeof(bCastRecv));
+        recvfrom(BCastSock, buffer, MAX_BUFF, 0, (struct sockaddr*) &bCastRecv, &addrlen);
+    }  while(strcmp(data), buffer);
+     
 
 }

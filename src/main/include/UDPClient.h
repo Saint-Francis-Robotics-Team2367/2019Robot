@@ -11,10 +11,16 @@
 #define MAX_BUFF 100000   
 
 class UDPClient{
-    int sockfd; 
-    char buffer[MAX_BUFF]; 
-    char *hello = "Hello from client"; 
-    struct sockaddr_in   servaddr; //is this corredct MRP help me
+    int bCastSock =0;
+    int srcaddrSize;
+    struct sockadrr_in localUDP;
+    struct sockadrr_in bCastRecv;
+    socklen_t addrlen = sizeof( sockadrr_in);
+    char * buffHolder;
+    char * hostIpString;
+    const int bCastPort = 5801;
+    string data;
+    
     
     UDPClient();
     void setup_socket();
