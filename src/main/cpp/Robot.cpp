@@ -274,7 +274,10 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit() {
     motionTimer->Reset();
-    motionTimer->Start();
+    //motionTimer->Start();
+
+    lMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
+    rMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
 
 }
 void Robot::placeHatchThreaded() {
@@ -295,12 +298,18 @@ void Robot::placeHatchThreaded() {
 }
 void Robot::AutonomousPeriodic() {
 
-    if(motionTimer->Get() > 2) { // auton has been overridden
+    if(autonOverride) {
         TeleopPeriodic();
         return;
     }
-    myRobot->setLeftMotorSetpoint(motionTimer->Get()*travelSpeed);
-    myRobot->setRightMotorSetpoint(motionTimer->Get()*travelSpeed);
+    if(motionTimer->Get() > 2) { // auton has been overridden
+        lMotorFront->StopMotor();
+        rMotorFront->StopMotor();
+        autonOverride = true;
+        return;
+    }
+    //myRobot->setLeftMotorSetpoint(motionTimer->Get()*travelSpeed);
+    //myRobot->setRightMotorSetpoint(motionTimer->Get()*travelSpeed);
     
     //if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) { // operator left bumper for override to teleop
     //    autonOverride = true;

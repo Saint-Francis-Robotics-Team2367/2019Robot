@@ -117,6 +117,8 @@ class Robot : public frc::TimedRobot {
       const int tickPerRev = 42;
       const int travelSpeed = 42; // ticks per second
       const double gearboxRatio = 10.71;
+      const int RPMS = 2;
+      
       //Manipulator Motors
       /*WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
       WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
