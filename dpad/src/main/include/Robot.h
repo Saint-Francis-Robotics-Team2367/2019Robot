@@ -8,13 +8,14 @@
 #pragma once
 
 #include <string>
-#include <frc/TimedRobot.h>
-#include <Ultra.h>
-#include <frc/smartdashboard/SendableChooser.h>
 
-class Robot : public frc::TimedRobot {
+#include <frc/IterativeRobot.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/Joystick.h>
+#include <frc/DriverStation.h>
+
+class Robot : public frc::IterativeRobot {
  public:
-  Ultra ultra = Ultra(0, 1, 2, 3);
   void RobotInit() override;
   void RobotPeriodic() override;
   void AutonomousInit() override;
@@ -24,5 +25,9 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
  private:
- 
+  frc::SendableChooser<std::string> m_chooser;
+  const std::string kAutoNameDefault = "Default";
+  const std::string kAutoNameCustom = "My Auto";
+  std::string m_autoSelected;
+  frc::Joystick * stick = new frc::Joystick(0);
 };
