@@ -15,6 +15,7 @@
 #include <frc/Joystick.h>
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/DriverStation.h>
+#include <frc/Solenoid.h>
 #include <frc/DoubleSolenoid.h>
 #include <frc/Solenoid.h>
 #include <frc/Servo.h>
@@ -52,7 +53,7 @@ class Robot : public frc::TimedRobot {
       bool lifterFrontDown = false;
       bool lifterBackDown = false;
       int hatchMechStage = 0;
-      const int totalHatchStages = 3;
+      const int totalHatchStages = 4;
 
       //Motor IDs
       const int rMotorFrontNum = 13;
@@ -115,8 +116,8 @@ class Robot : public frc::TimedRobot {
       DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
       DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
       DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
-      DoubleSolenoid * lifterFrontSolenoid = new DoubleSolenoid(lifterFrontSolenoidNum,lifterFrontSolenoidNum);//WRONG NEEDS TO BE UPDATED
-      //DoubleSolenoid * lifterBackSolenoid = new DoubleSolenoid(lifterBackSolenoidNum,lifterBackSolenoidNum);//WRONG NEEDS TO BE UPDATED
+      Solenoid * lifterFrontSolenoid = new Solenoid(lifterFrontSolenoidNum);//WRONG NEEDS TO BE UPDATED
+      Solenoid * lifterBackSolenoid = new Solenoid(lifterBackSolenoidNum);//WRONG NEEDS TO BE UPDATED
 
       //Servo
       Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
