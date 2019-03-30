@@ -1,34 +1,45 @@
 #include "UDPClient.h"
 
 UDPClient:: UDPClient(){
-    setup_socket(); 
+    if ((bCastSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) 
+    { 
+        perror("UDP socket failed"); 
+        exit(EXIT_FAILURE); 
+    } 
+    if (setsockopt(bCastSock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &srcaddrSize, sizeof(srcaddrSize))) 
+    { 
+        perror("setsockopt"); 
+        exit(EXIT_FAILURE); 
+    } 
+    memset(&localUdp, '0', sizeof(serv_addr)); 
+    localUdp.sin_family = AF_INET; 
+    localUdp.sin_addr.s_addr = INADDR_ANY;
+    localUdp.sin_port = htons( bCastPort ); 
+
+    bind(bCastSock, (struct sockaddr *)&localUdp,sizeof(localUdp)); 
 
 }
 
-void UDPClient:: setup_socket(){
-    if ( (bCastSock = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        perror("UDP socket creation failed"); 
-        exit(EXIT_FAILURE); 
-    } 
+void UDPClient::read(){
 
-    if ( setsockopt(bCastSock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &srcaddrSize, sizeof(srcaddrSize)) ) { 
-        perror("UDP socket creation failed"); 
-        exit(EXIT_FAILURE); 
-    } 
-  
-    memset(&localUDP,0, sizeof(serv_addr)); 
-      
-    // Filling server information 
-    localUDP.sin_family = AF_INET; 
-    localUDP.sin_port = htons(bCastPort); 
-    localUDP.sin_addr.s_addr = INADDR_ANY; 
-
-    bind(bCastSock, (struct sockaddr *)&localUDP, sizeof(localUDP));
-
-    do{
+   do{
+        cout << "Waiting for broadcast..." <<endl;
         memset(&bCastRecv, '0', sizeof(bCastRecv));
-        recvfrom(BCastSock, buffer, MAX_BUFF, 0, (struct sockaddr*) &bCastRecv, &addrlen);
-    }  while(strcmp(data), buffer);
+        currPacket = recvfrom(bCastSock, buffer, MAX_BUFF, 0, (struct sockaddr *) &bCastRecv, &addrlen);
+    }while(currPacket != -1);
      
+}
 
+int UDPClient::angle(){
+    int ang, d;
+    istringstream iss(buffer);
+    iss >> ang >> d;
+    return ang;
+}
+
+int UDPClient::distance(){
+    int ang, d;
+    istringstream iss(buffer);
+    iss >> ang >> d;
+    return d;
 }
