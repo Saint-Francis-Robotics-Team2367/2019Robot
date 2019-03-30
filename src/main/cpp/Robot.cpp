@@ -241,12 +241,12 @@ void Robot::TeleopPeriodic()
         hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
-    else if(hatchMechState == 2)
+    /*else if(hatchMechState == 2)
     {
         DriverStation::ReportError("I am in stage 2 right now");
         hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
         
-    }
+    }*/
     else if(hatchMechState == 3)
     {
         DriverStation::ReportError("I am in stage 3 right now");
