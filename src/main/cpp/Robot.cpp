@@ -297,6 +297,7 @@ void Robot::placeHatchThreaded() {
     //isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
+<<<<<<< Updated upstream
 
     if(autonOverride) {
         TeleopPeriodic();
@@ -432,6 +433,15 @@ void Robot::AutonomousPeriodic() {
     //}   
 
 
+=======
+ //HC-SR04
+    double diffBtwSensors = 12; // how far the sensors are from each other
+    double rangeL = ultraL->GetRangeInches(); // left sensor distance to object
+    double rangeR = ultraR->GetRangeInches(); // right sensor distance to object
+    double diffBtwRange = abs(rangeL - rangeR); 
+    double angle = atan(diffBtwSensors/diffBtwRange) * 180 / PI;
+    DriverStation::ReportError("Angle: " + std::to_string(angle));
+>>>>>>> Stashed changes
 }
 
 void Robot::TestPeriodic()
