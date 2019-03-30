@@ -25,12 +25,9 @@ void Robot::RobotPeriodic() {}
 
 void Robot::AutonomousInit() {}
 
-void Robot::AutonomousPeriodic() {
-    ultra.getLeftDist();
-    ultra.getRightDist();
-    
+void Robot::AutonomousPeriodic() 
+{
     DriverStation::ReportError("Angle: " + std::to_string(ultra.getAngle()));
-
 }
 
 void Robot::TeleopInit() {}
