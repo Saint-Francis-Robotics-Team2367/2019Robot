@@ -19,7 +19,9 @@
 #include <frc/Servo.h>
 #include <SmartSender.h>
 #include <frc/Timer.h>
-//#include <MotionProfile.h>
+#include <MotionProfile.h>
+#include <Ultra.h>
+
 using namespace frc;
 
 class Robot : public frc::TimedRobot {
@@ -115,10 +117,8 @@ class Robot : public frc::TimedRobot {
       rev::CANSparkMax * rMotorBack = new rev::CANSparkMax(rMotorBackNum, rev::CANSparkMax::MotorType::kBrushless);
       rev::CANSparkMax * rMotorFront = new rev::CANSparkMax(rMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
       const int tickPerRev = 42;
-      const int travelSpeed = 42; // ticks per second
       const double gearboxRatio = 10.71;
-      const int RPMS = 2;
-      
+      const double inchesPerRev = 3.1415*6;
       //Manipulator Motors
       /*WPI_TalonSRX * elevatorMotor = new WPI_TalonSRX(elevatorMotorNum);
       WPI_TalonSRX * cargoIntakeMotor = new WPI_TalonSRX(cargoIntakeMotorNum);
@@ -146,4 +146,15 @@ class Robot : public frc::TimedRobot {
       Joystick * operatorStick = new Joystick(1);
     // Threading
     frc::Timer* motionTimer;
+    Ultra *ultra = new Ultra(0, 1, 2, 3);
+    double leftDist;
+    double rightDist;
+    double angle;
+    bool moveFlag = false;
+    motionProfiler *profile;
+    const double profileAccel = 60; // inches per second
+    const double profileSpeed = 60; // inches per second
+    const double robotWidth = 25; // inches
+    double arcLength;
+
 };

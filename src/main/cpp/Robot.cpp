@@ -13,6 +13,7 @@ enum JoystickAxes {L_X_AXIS = 0, L_Y_AXIS = 1, L_TRIGGER = 2, R_TRIGGER = 3, R_X
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <chrono>
 #include <frc/Timer.h>
+#include <Ultra.h>
 
 // static class variables
 void Robot::RobotInit() 
@@ -274,10 +275,9 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit() {
     motionTimer->Reset();
-    motionTimer->Start();
-
-    lMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
-    rMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
+    
+    //lMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
+    //rMotorFront->GetPIDController().SetReference(RPMS, rev::ControlType::kVelocity, 0, 0);
 
 }
 void Robot::placeHatchThreaded() {
@@ -297,18 +297,47 @@ void Robot::placeHatchThreaded() {
     //isHatchThreadFinished = true;
 }
 void Robot::AutonomousPeriodic() {
-<<<<<<< Updated upstream
+    if(moveFlag) {
+        if(profile->getValue(motionTimer) == 0) {
+            moveFlag = false;
+            return;
+        }
+        lMotorFront->GetPIDController().SetReference((profile->getValue(motionTimer) / inchesPerRev) * 60, rev::ControlType::kVelocity, 0, 0);
+        rMotorFront->GetPIDController().SetReference((profile->getValue(motionTimer) / inchesPerRev) * 60, rev::ControlType::kVelocity, 0, 0);
+        
+    }
+    if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) {
+        //auton here
+        leftDist = ultra->getLeftDist();
+        rightDist = ultra->getRightDist();
+        angle = 90 - ultra->getAngle();
 
-    if(autonOverride) {
-        TeleopPeriodic();
+        if(leftDist == 0 || rightDist == 0) {
+            DriverStation::ReportError("One or more of the sensors cannot read a valid value. Exiting...");
+            return;
+        }
+        arcLength = 3.1415*robotWidth*(angle/360);
+
+        if(leftDist > rightDist) {
+            lMotorFront->GetPIDController().SetReference(arcLength / inchesPerRev, rev::ControlType::kPosition, 0, 0);
+        } else if(rightDist > leftDist) {
+            rMotorFront->GetPIDController().SetReference(arcLength / inchesPerRev, rev::ControlType::kPosition, 0, 0);
+        }
+
+        ultra->getLeftDist();
+        ultra->getRightDist();
+
+        if(std::abs(ultra->getAngle()) - 90 >= 5) {
+            DriverStation::ReportError("Is the robot correctly aligned with the cargo ship? The sensors received: " + std::to_string(ultra->getAngle()) + " which is not within the 10 degree tolerance");
+            return;
+        }
+        motionTimer->Start();
+        profile = new motionProfiler(profileAccel, profileSpeed, ultra->getLeftDist());
+        moveFlag = true;
         return;
     }
-    if(motionTimer->Get() > 2) { // auton has been overridden
-        lMotorFront->StopMotor();
-        rMotorFront->StopMotor();
-        autonOverride = true;
-        return;
-    }
+    TeleopPeriodic();
+    
     //myRobot->setLeftMotorSetpoint(motionTimer->Get()*travelSpeed);
     //myRobot->setRightMotorSetpoint(motionTimer->Get()*travelSpeed);
     
@@ -433,15 +462,6 @@ void Robot::AutonomousPeriodic() {
     //}   
 
 
-=======
- //HC-SR04
-    double diffBtwSensors = 12; // how far the sensors are from each other
-    double rangeL = ultraL->GetRangeInches(); // left sensor distance to object
-    double rangeR = ultraR->GetRangeInches(); // right sensor distance to object
-    double diffBtwRange = abs(rangeL - rangeR); 
-    double angle = atan(diffBtwSensors/diffBtwRange) * 180 / PI;
-    DriverStation::ReportError("Angle: " + std::to_string(angle));
->>>>>>> Stashed changes
 }
 
 void Robot::TestPeriodic()
