@@ -125,4 +125,7 @@ class Robot : public frc::TimedRobot {
       Joystick * driverStick = new Joystick(0);
       Joystick * operatorStick = new Joystick(1);
 
+      //Vision
+      UDPClient * metrics = new UDPClient();
+
 };

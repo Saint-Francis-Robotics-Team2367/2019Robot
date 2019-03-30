@@ -14,6 +14,8 @@ using namespace std;
 #define MAX_BUFF 100000   
 
 class UDPClient{
+
+    public:
      int bCastSock = 0;
     int srcaddrSize;
     struct sockaddr_in localUdp; 
