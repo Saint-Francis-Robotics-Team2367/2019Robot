@@ -70,11 +70,12 @@ class Robot : public frc::TimedRobot {
       const int cargoMechLeftSolenoidNum = 4;
       const int cargoMechRightSolenoidNum = 2;
       const int hatchMechSolenoidNum = 0;
-      const int lifterFrontSolenoidNum = 6;//NEEDS TO TEST
-      const int lifterBackSolenoidNum = 7;//NEEDS TO TEST
+      const int lifterFrontSolenoidNum = 0;//NEEDS TO TEST
+      const int lifterBackSolenoidNum = 2;//NEEDS TO TEST
+      const int PCMOneNum = 0;
+      const int PCMTwoNum = 20;
 
       //Servo IDs
-      const int hatchMechTopServoNum = 2;
       const int hatchMechBottomServoNum = 4;
 
       //Drive Constants
@@ -113,14 +114,13 @@ class Robot : public frc::TimedRobot {
       WPI_VictorSPX * cargoTopMotor = new WPI_VictorSPX(cargoTopMotorNum);
 
       //Solenoids
-      DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
-      DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
-      DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
-      Solenoid * lifterFrontSolenoid = new Solenoid(lifterFrontSolenoidNum);//WRONG NEEDS TO BE UPDATED
-      Solenoid * lifterBackSolenoid = new Solenoid(lifterBackSolenoidNum);//WRONG NEEDS TO BE UPDATED
+      DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(PCMOneNum, cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
+      DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(PCMOneNum, cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
+      DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(PCMOneNum, hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
+      DoubleSolenoid * lifterFrontSolenoid = new DoubleSolenoid(PCMTwoNum, lifterFrontSolenoidNum, lifterFrontSolenoidNum + 1);//WRONG NEEDS TO BE UPDATED
+      DoubleSolenoid * lifterBackSolenoid = new DoubleSolenoid(PCMTwoNum, lifterBackSolenoidNum, lifterBackSolenoidNum + 1);//WRONG NEEDS TO BE UPDATED
 
       //Servo
-      Servo * hatchMechTopServo = new Servo(hatchMechTopServoNum);
       Servo * hatchMechBottomServo = new Servo(hatchMechBottomServoNum);
 
       //SfDrive Object

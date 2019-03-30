@@ -94,8 +94,8 @@ void Robot::TeleopInit()
     cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
     hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    lifterFrontSolenoid->Set(false);
-    lifterBackSolenoid->Set(false);
+    lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
 }
 
 void Robot::TeleopPeriodic()
@@ -237,6 +237,7 @@ void Robot::TeleopPeriodic()
         {
             hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
             hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+            DriverStation::ReportError("Hatch Up. Pneumatics Back.");
         }
         else if(hatchMechState == 1)
         {
@@ -256,29 +257,30 @@ void Robot::TeleopPeriodic()
     }
 
     //Driver Lifter Controls
+    
     if(driverStick->GetPOV() == 0) //Lifter front pneumatics down (DPAD UP)
     {
         DriverStation::ReportError("Lifter Forward Pneumatics Down");
         lifterFrontDown = true;
-        lifterFrontSolenoid->Set(true);
+        lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
     if(driverStick->GetPOV() == 180) //Lifter back pneumatics down (DPAD DOWN)
     {
         DriverStation::ReportError("Lifter Back Pneumatics Down");
         lifterBackDown = true;
-        lifterBackSolenoid->Set(true);
+        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
     if(driverStick->GetPOV() == 270) //Lifter front pneumatics up (DPAD LEFT)
     {
         DriverStation::ReportError("Lifter Forward Pneumatics Up");
         lifterFrontDown = false;
-        lifterFrontSolenoid->Set(false);
+        lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
     if(driverStick->GetPOV() == 90) //Lifter back pneumatics up (DPAD RIGHT)
     {
         DriverStation::ReportError("Lifter Back Pneumatics Up");
         lifterBackDown = false;
-        lifterBackSolenoid->Set(false);
+        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
 
     if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
