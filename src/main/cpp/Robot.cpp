@@ -32,6 +32,9 @@ void Robot::RobotInit()
     lMotorFront->SetSmartCurrentLimit(driveMotorCurrentLimit);
     rMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
     lMotorBack->SetSmartCurrentLimit(driveMotorCurrentLimit);
+    SmartDashboard::PutNumber("Acceleration: ", profileAccel);
+    SmartDashboard::PutNumber("Speed: ", profileSpeed);
+    SmartDashboard::PutNumber("Distance: ", travelDistance);
     /*
     //Config elevator motor
     elevatorMotor->SelectProfileSlot(0, 0);
@@ -298,43 +301,47 @@ void Robot::placeHatchThreaded() {
 }
 void Robot::AutonomousPeriodic() {
     if(moveFlag) {
+        lMotorFront->GetPIDController().SetReference((profile->getValue(motionTimer) / inchesPerRev) * 60, rev::ControlType::kVelocity, 0, 0);
+        rMotorFront->GetPIDController().SetReference((profile->getValue(motionTimer) / inchesPerRev) * 60, rev::ControlType::kVelocity, 0, 0);
         if(profile->getValue(motionTimer) == 0) {
             moveFlag = false;
             return;
         }
-        lMotorFront->GetPIDController().SetReference((profile->getValue(motionTimer) / inchesPerRev) * 60, rev::ControlType::kVelocity, 0, 0);
-        rMotorFront->GetPIDController().SetReference((profile->getValue(motionTimer) / inchesPerRev) * 60, rev::ControlType::kVelocity, 0, 0);
-        
     }
     if(operatorStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) {
-        //auton here
-        leftDist = ultra->getLeftDist();
-        rightDist = ultra->getRightDist();
-        angle = 90 - ultra->getAngle();
+        profileAccel = SmartDashboard::GetNumber("Acceleration: ", profileAccel);
+        profileSpeed = SmartDashboard::GetNumber("Speed: ", profileSpeed);
+        travelDistance = SmartDashboard::GetNumber("Distance: ", travelDistance);
 
-        if(leftDist == 0 || rightDist == 0) {
-            DriverStation::ReportError("One or more of the sensors cannot read a valid value. Exiting...");
-            return;
-        }
-        arcLength = 3.1415*robotWidth*(angle/360);
-
-        if(leftDist > rightDist) {
-            lMotorFront->GetPIDController().SetReference(arcLength / inchesPerRev, rev::ControlType::kPosition, 0, 0);
-        } else if(rightDist > leftDist) {
-            rMotorFront->GetPIDController().SetReference(arcLength / inchesPerRev, rev::ControlType::kPosition, 0, 0);
-        }
-
-        ultra->getLeftDist();
-        ultra->getRightDist();
-
-        if(std::abs(ultra->getAngle()) - 90 >= 5) {
-            DriverStation::ReportError("Is the robot correctly aligned with the cargo ship? The sensors received: " + std::to_string(ultra->getAngle()) + " which is not within the 10 degree tolerance");
-            return;
-        }
         motionTimer->Start();
-        profile = new motionProfiler(profileAccel, profileSpeed, ultra->getLeftDist());
+        profile = new motionProfiler(profileAccel, profileSpeed, travelDistance);
         moveFlag = true;
         return;
+        //auton here
+        //leftDist = ultra->getLeftDist();
+        //rightDist = ultra->getRightDist();
+        //angle = 90 - ultra->getAngle();
+
+        //if(leftDist == 0 || rightDist == 0) {
+        //    DriverStation::ReportError("One or more of the sensors cannot read a valid value. Exiting...");
+       //    return;
+       // }
+       // arcLength = 3.1415*robotWidth*(angle/360);
+
+       // if(leftDist > rightDist) {
+      //      lMotorFront->GetPIDController().SetReference(arcLength / inchesPerRev, rev::ControlType::kPosition, 0, 0);
+      //  } else if(rightDist > leftDist) {
+       //     rMotorFront->GetPIDController().SetReference(arcLength / inchesPerRev, rev::ControlType::kPosition, 0, 0);
+     //   }
+
+      //  ultra->getLeftDist();
+      //  ultra->getRightDist();
+
+      //  if(std::abs(ultra->getAngle()) - 90 >= 5) {
+     //       DriverStation::ReportError("Is the robot correctly aligned with the cargo ship? The sensors received: " + std::to_string(ultra->getAngle()) + " which is not within the 10 degree tolerance");
+     //       return;
+
+ 
     }
     TeleopPeriodic();
     

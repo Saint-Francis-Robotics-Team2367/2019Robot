@@ -152,9 +152,10 @@ class Robot : public frc::TimedRobot {
     double angle;
     bool moveFlag = false;
     motionProfiler *profile;
-    const double profileAccel = 60; // inches per second
-    const double profileSpeed = 60; // inches per second
-    const double robotWidth = 25; // inches
+    double profileAccel = 60; // inches per second
+    double profileSpeed = 60; // inches per second
+    double robotWidth = 25; // inches
     double arcLength;
+    double travelDistance = 100;
 
 };

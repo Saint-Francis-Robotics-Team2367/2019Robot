@@ -45,8 +45,7 @@ double motionProfiler::getValue(frc::Timer* timer) {
         
         //If we are still accelerating, return 1/2at^2
         //return 0.5*accel*(pow(timer->Get(), 2.0));
-        return accel*timer->Get()
-        ;
+        return accel*timer->Get();
     } else if(timer->Get() > timeToLinear && timer->Get() <= (timeToDecel + timeToLinear)) {
 
         // If we are in linear, return the line Vmax*t + distance when we stopped accelerating	
@@ -69,6 +68,6 @@ double motionProfiler::getValue(frc::Timer* timer) {
         return maxSpeed - (accel*(timer->Get() - (timeToLinear + timeToDecel)));
     }
 
-	return finalPos;
+	return 0.0;
 
 }
