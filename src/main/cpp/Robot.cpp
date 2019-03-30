@@ -249,7 +249,7 @@ void Robot::TeleopPeriodic()
     }*/
     else if(hatchMechState == 3)
     {
-        DriverStation::ReportError("I am in stage 3 right now");
+        DriverStation::ReportError("I am in stage 3 right now");    
         hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
     else if(hatchMechState == totalHatchStages)
