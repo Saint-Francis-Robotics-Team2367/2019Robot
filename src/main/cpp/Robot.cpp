@@ -228,34 +228,31 @@ void Robot::TeleopPeriodic()
     {
         hatchMechState = 0;
         DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
+        hatchMechStateSwitched = true;
     }
-    if(hatchMechState == 0)
+    if(hatchMechStateSwitched)
     {
-        DriverStation::ReportError("I am in the reset stage right now");
-        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
-        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    }
-    else if(hatchMechState == 1)
-    {
-        DriverStation::ReportError("I am in stage 1 right now");
-        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
-        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    }
-    /*else if(hatchMechState == 2)
-    {
-        DriverStation::ReportError("I am in stage 2 right now");
-        hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
-        
-    }*/
-    else if(hatchMechState == 3)
-    {
-        DriverStation::ReportError("I am in stage 3 right now");    
-        hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
-    }
-    else if(hatchMechState == totalHatchStages)
-    {
-        DriverStation::ReportError("I am in stage 4 right now");
-        hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+        hatchMechStateSwitched = false;
+        if(hatchMechState == 0)
+        {
+            hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+        }
+        else if(hatchMechState == 1)
+        {
+            hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        }
+        else if(hatchMechState == 2)
+        {
+            hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        }
+        else if(hatchMechState == 3)
+        {
+            hatchMechBottomServo->SetAngle(bottomServoDownSetpoint);
+            hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+        }
     }
 
     //Driver Lifter Controls

@@ -53,7 +53,7 @@ class Robot : public frc::TimedRobot {
       bool lifterFrontDown = false;
       bool lifterBackDown = false;
       int hatchMechStage = 0;
-      const int totalHatchStages = 4;
+      const int totalHatchStages = 3;
 
       //Motor IDs
       const int rMotorFrontNum = 13;
