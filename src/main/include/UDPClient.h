@@ -29,6 +29,7 @@ class UDPClient{
     ssize_t currPacket;
     
     UDPClient();
+    void setup_socket();
     void read();
     int angle();
     int distance();

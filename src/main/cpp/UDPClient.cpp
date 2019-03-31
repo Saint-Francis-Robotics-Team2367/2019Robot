@@ -1,6 +1,20 @@
 #include "UDPClient.h"
 
-UDPClient:: UDPClient(){
+/*UDPClient::UDPClient(){
+    cout<<"stuff";
+}*/
+
+void UDPClient::read(){
+
+   do{
+        cout << "Waiting for broadcast..." <<endl;
+        memset(&bCastRecv, '0', sizeof(bCastRecv));
+        currPacket = recvfrom(bCastSock, buffer, MAX_BUFF, 0, (struct sockaddr *) &bCastRecv, &addrlen);
+    }while(currPacket != -1);
+     
+}
+
+void UDPClient::setup_socket(){
     if ((bCastSock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) 
     { 
         perror("UDP socket failed"); 
@@ -17,17 +31,6 @@ UDPClient:: UDPClient(){
     localUdp.sin_port = htons( bCastPort ); 
 
     bind(bCastSock, (struct sockaddr *)&localUdp,sizeof(localUdp)); 
-
-}
-
-void UDPClient::read(){
-
-   do{
-        cout << "Waiting for broadcast..." <<endl;
-        memset(&bCastRecv, '0', sizeof(bCastRecv));
-        currPacket = recvfrom(bCastSock, buffer, MAX_BUFF, 0, (struct sockaddr *) &bCastRecv, &addrlen);
-    }while(currPacket != -1);
-     
 }
 
 int UDPClient::angle(){
