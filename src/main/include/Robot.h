@@ -48,12 +48,12 @@ class Robot : public frc::TimedRobot {
       bool elevatorFlag = false;
       bool elevatorCargoLevel = false;
       int hatchMechSetpoint = 0;
-      double bottomServoUpSetpoint = 0;
-      double bottomServoDownSetpoint = 67;
+      double bottomServoUpSetpoint = 67;
+      double bottomServoDownSetpoint = 0;
       bool lifterFrontDown = false;
       bool lifterBackDown = false;
       int hatchMechStage = 0;
-      const int totalHatchStages = 3;
+      double elevatorCurrentTicks = 0;
 
       //Motor IDs
       const int rMotorFrontNum = 13;
@@ -70,10 +70,10 @@ class Robot : public frc::TimedRobot {
       const int cargoMechLeftSolenoidNum = 4;
       const int cargoMechRightSolenoidNum = 2;
       const int hatchMechSolenoidNum = 0;
-      const int lifterFrontSolenoidNum = 0;//NEEDS TO TEST
-      const int lifterBackSolenoidNum = 2;//NEEDS TO TEST
-      const int PCMOneNum = 0;
-      const int PCMTwoNum = 20;
+      const int lifterFrontSolenoidNum = 0;
+      const int lifterBackSolenoidNum = 2;
+      const int PCMOneNum = 20;
+      const int PCMTwoNum = 0;
 
       //Servo IDs
       const int hatchMechBottomServoNum = 4;
@@ -88,17 +88,16 @@ class Robot : public frc::TimedRobot {
       //Elevator Constants
       const int cargoRocket1 = -10135;
       const int cargoRocket2 = -24271;
-      const int cargoRocket3 = -37080; 
+      const int cargoRocket3 = -37080;
       const int cargoShip = -15366;
-      const int hatchRocket2 = -14565;
-      const int hatchRocket3 = -30711;
+      const int hatchRocket2 = -15366;
+      const int hatchRocket3 = -29099;
       const double pConstantElevator = 1;
       const double iConstantElevator = 0;
       const double dConstantElevator = 0;
       const int elevatorPeakMotorCurrentLimit = 40;
       const int elevatorContinuousMotorCurrentLimit = 30;
-      const int elevatorPeakMotorCurrentLimitDuration = 500;//in milliseconds
-      const int hatchIntake = -1000;
+      const int elevatorPeakMotorCurrentLimitDuration = 500; //in milliseconds
 
       //Drive motors
       rev::CANSparkMax * lMotorFront = new rev::CANSparkMax(lMotorFrontNum, rev::CANSparkMax::MotorType::kBrushless);
@@ -117,8 +116,8 @@ class Robot : public frc::TimedRobot {
       DoubleSolenoid * cargoMechLeftSolenoid = new DoubleSolenoid(PCMOneNum, cargoMechLeftSolenoidNum, cargoMechLeftSolenoidNum + 1);
       DoubleSolenoid * cargoMechRightSolenoid = new DoubleSolenoid(PCMOneNum, cargoMechRightSolenoidNum, cargoMechRightSolenoidNum + 1);
       DoubleSolenoid * hatchMechSolenoid = new DoubleSolenoid(PCMOneNum, hatchMechSolenoidNum, hatchMechSolenoidNum + 1);
-      DoubleSolenoid * lifterFrontSolenoid = new DoubleSolenoid(PCMTwoNum, lifterFrontSolenoidNum, lifterFrontSolenoidNum + 1);//WRONG NEEDS TO BE UPDATED
-      DoubleSolenoid * lifterBackSolenoid = new DoubleSolenoid(PCMTwoNum, lifterBackSolenoidNum, lifterBackSolenoidNum + 1);//WRONG NEEDS TO BE UPDATED
+      DoubleSolenoid * lifterFrontSolenoid = new DoubleSolenoid(PCMTwoNum, lifterFrontSolenoidNum, lifterFrontSolenoidNum + 1);
+      DoubleSolenoid * lifterBackSolenoid = new DoubleSolenoid(PCMTwoNum, lifterBackSolenoidNum, lifterBackSolenoidNum + 1);
 
       //Servo
       Servo * hatchMechBottomServo = new Servo(hatchMechBottomServoNum);

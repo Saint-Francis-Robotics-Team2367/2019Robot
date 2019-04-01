@@ -49,20 +49,31 @@ void Robot::RobotInit()
     SmartDashboard::PutBoolean("Rumble Driver Joystick", rumbleDriver);
     SmartDashboard::PutBoolean("Rumble Operator Joystick", rumbleOperator);
 
+    elevatorCurrentTicks = elevatorMotor->GetSelectedSensorPosition();
+
     //Test stuff
     sender->addNumber(&myRobot->m_lowSpeedControlMultiplier, "Low Speed Control Multiplier");
     sender->addNumber(&myRobot->m_highSpeedControlMultiplier, "High Speed Control Multiplier");
     sender->addNumber(&myRobot->m_deadband, "Deadzone");
     sender->addNumber(&myRobot->m_thresholdPercentage, "Threshold Percentage");
+    sender->addNumber(&elevatorCurrentTicks, "Current Elevator Position (Ticks)");
 
-    sender->putNumbers();
+    
+
+    cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
+    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
 }
 
 void Robot::RobotPeriodic()
 {
     rumbleDriver = SmartDashboard::GetBoolean("Rumble Driver Joystick", rumbleDriver);
     rumbleOperator = SmartDashboard::GetBoolean("Rumble Operator Joystick", rumbleOperator); 
-    
+    elevatorCurrentTicks = elevatorMotor->GetSelectedSensorPosition();
+
     sender->getNumbers();
 
     if(rumbleDriver)
@@ -90,12 +101,7 @@ void Robot::RobotPeriodic()
 
 void Robot::TeleopInit()
 {
-    cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    cargoMechRightSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
-    hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    lifterFrontSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-    lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+    
 }
 
 void Robot::TeleopPeriodic()
@@ -125,7 +131,7 @@ void Robot::TeleopPeriodic()
         {
             setpoint = -40000;
         }
-        if(elevatorFlag && setpoint < -400) //If elevator flag triggered and setpoint > -420, set elevator to brake mode and untrigger flag
+        if(elevatorFlag && setpoint < -400) //If elevator flag triggered and setpoint < -400, set elevator to brake mode and untrigger flag
         {
             elevatorFlag = false;
             elevatorMotor->SetNeutralMode(NeutralMode::Brake);
@@ -139,7 +145,7 @@ void Robot::TeleopPeriodic()
     {
         elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::Position, setpoint);
     }
-    if(driverStick->GetRawButton(JoystickButtons::START_BUTTON) || operatorStick->GetRawButton(JoystickButtons::START_BUTTON))
+    if(driverStick->GetRawButton(JoystickButtons::START_BUTTON) || operatorStick->GetRawButton(JoystickButtons::START_BUTTON) || operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180)
     {
         if(elevatorMotor->GetSelectedSensorPosition() < cargoRocket1)
         {
@@ -154,7 +160,6 @@ void Robot::TeleopPeriodic()
             elevatorFlag = true;
             elevatorCargoLevel = false;
             setpoint = 0;
-            //DriverStation::ReportError("In Coast Mode");
             elevatorMotor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
             elevatorMotor->SetNeutralMode(NeutralMode::Coast);
         }
@@ -162,7 +167,7 @@ void Robot::TeleopPeriodic()
     }
 
     //Driver Cargo Intake Controls
-    if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) //Intake wheels in (LEFT BUMPER)
+    if(driverStick->GetRawButton(JoystickButtons::LEFT_BUMPER)) //Intake wheels inputting (LEFT BUMPER)
     {
         cargoLeftMotor->Set(1);
         cargoRightMotor->Set(1);
@@ -170,7 +175,7 @@ void Robot::TeleopPeriodic()
         cargoTopMotor->Set(1);
         outputtingCargo = false;
     }
-    else if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) //Intake wheels out (RIGHT BUMPER)
+    else if(driverStick->GetRawButton(JoystickButtons::RIGHT_BUMPER)) //Intake wheels outputting (RIGHT BUMPER)
     {
         if(elevatorCargoLevel)
         {
@@ -197,7 +202,7 @@ void Robot::TeleopPeriodic()
         cargoIntakeMotor->Set(0);
     }
 
-    //Driver Cargo Pneumatic Controls
+    //Driver Intake Pneumatic Controls
     if(driverStick->GetRawButton(JoystickButtons::A_BUTTON)) //Retract cargo mech pneumatics (A BUTTON)
     {
         cargoMechLeftSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
@@ -210,25 +215,28 @@ void Robot::TeleopPeriodic()
     }
 
     //Driver Hatch Mech Controls
-    if(driverStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Iterates down through the stages
+    if(driverStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Intaking Hatch
     {
-        if(hatchMechState == 0) hatchMechState = totalHatchStages;
-        else hatchMechState = hatchMechState - 1;
+        if(hatchMechState == 0) hatchMechState = 3;
+        else hatchMechState = hatchMechState - 1; //Intaking can cycle 
         hatchMechStateSwitched = true;
         DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
+        DriverStation::ReportError("Cycling for intaking hatch.");
     }
-    if(driverStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Iterates up through the stages
+    if(driverStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Placing Hatch
     {
-        if(hatchMechState == totalHatchStages) hatchMechState = 0;
+        if(hatchMechState == 3) hatchMechState = hatchMechState; //Placing cannot cycle because of possible driver error. Simply requires hitting back button to reset
         else hatchMechState = hatchMechState + 1;
         hatchMechStateSwitched = true;
         DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
+        DriverStation::ReportError("Cycling for placing hatch.");
     }
     if(driverStick->GetRawButton(JoystickButtons::BACK_BUTTON) || operatorStick->GetRawButton(JoystickButtons::BACK_BUTTON))
     {
-        hatchMechState = 0;
-        DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
+        hatchMechState = 0; //Reseting hatch mech
         hatchMechStateSwitched = true;
+        DriverStation::ReportError("Hatch mech stage: " + std::to_string(hatchMechState));
+        DriverStation::ReportError("Hatch Up. Pneumatics Back.");
     }
     if(hatchMechStateSwitched)
     {
@@ -237,7 +245,6 @@ void Robot::TeleopPeriodic()
         {
             hatchMechBottomServo->SetAngle(bottomServoUpSetpoint);
             hatchMechSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
-            DriverStation::ReportError("Hatch Up. Pneumatics Back.");
         }
         else if(hatchMechState == 1)
         {
@@ -257,7 +264,6 @@ void Robot::TeleopPeriodic()
     }
 
     //Driver Lifter Controls
-    
     if(driverStick->GetPOV() == 0) //Lifter front pneumatics down (DPAD UP)
     {
         DriverStation::ReportError("Lifter Forward Pneumatics Down");
@@ -268,7 +274,7 @@ void Robot::TeleopPeriodic()
     {
         DriverStation::ReportError("Lifter Back Pneumatics Down");
         lifterBackDown = true;
-        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
+        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
     }
     if(driverStick->GetPOV() == 270) //Lifter front pneumatics up (DPAD LEFT)
     {
@@ -280,43 +286,44 @@ void Robot::TeleopPeriodic()
     {
         DriverStation::ReportError("Lifter Back Pneumatics Up");
         lifterBackDown = false;
-        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kReverse);
+        lifterBackSolenoid->Set(frc::DoubleSolenoid::Value::kForward);
     }
 
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Hatch level cargo ship (A button)
+    //Operator Elevator Setpoint Controls
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::A_BUTTON)) //Cargo level cargo ship (A button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level CargoShip");
         setpoint = cargoShip;
         elevatorFlag = false;
         elevatorCargoLevel = true;
     }
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Hatch rocket level 1 (X button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::X_BUTTON)) //Cargo rocket level 1 (X button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 1");
         setpoint = cargoRocket1;
         elevatorFlag = false;
         elevatorCargoLevel = false;
     }
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Hatch rocket level 2 (B button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::B_BUTTON)) //Cargo rocket level 2 (B button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 2");
         setpoint = cargoRocket2;
         elevatorFlag = false;
         elevatorCargoLevel = false;
     }
-    if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Hatch rocket level 3 (Y button)
+    if(operatorStick->GetRawButtonPressed(JoystickButtons::Y_BUTTON)) //Cargo rocket level 3 (Y button)
     {
         DriverStation::ReportError("Elevator Set to Ball Level 3");
-        setpoint = cargoRocket3;
-        elevatorFlag = false;
-        elevatorCargoLevel = false;
+        //setpoint = cargoRocket3;
+        //elevatorFlag = false;
+        //elevatorCargoLevel = false; Commented out because level three cargo has not been implemented.
     }
-    if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 (DPAD-LEFT)
+    if(operatorStick->GetPOV() == 270 || operatorStick->GetPOV() == 180) //Hatch rocket level 1 and Hatch cargo ship (DPAD-LEFT)
     {
         DriverStation::ReportError("Elevator Set to Level 1");
-        setpoint = -400;
-        elevatorFlag = false;
-        elevatorCargoLevel = false;
+        //setpoint = -400;
+        //elevatorFlag = false;
+        //elevatorCargoLevel = false;
     }
     if(operatorStick->GetPOV() == 90) //Hatch rocket level 2 (DPAD RIGHT)
     {
@@ -336,7 +343,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::AutonomousInit()
 {
-
+    TeleopInit();
 }
 
 
