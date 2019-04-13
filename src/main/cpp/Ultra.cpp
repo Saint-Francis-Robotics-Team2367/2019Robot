@@ -34,7 +34,8 @@ double Ultra::getRightDist()
     return rightDist;
 }
 
-double Ultra::getAngle(){
+double Ultra::getAngle()
+{
 // return the angle between robot and wall
     double diffBtwRange = abs(getLeftDist() - getRightDist()); 
     angle = atan(diffBtwSensors/diffBtwRange) * 180 / PI;
